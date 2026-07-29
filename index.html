@@ -16,11 +16,35 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 999;
-      background: rgba(0,0,0,0.75);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
       color: #fff;
       padding: 10px 14px;
       font-size: 13px;
       line-height: 1.5;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    #info-panel.collapsed {
+      opacity: 0;
+      transform: translateY(-100%);
+      pointer-events: none;
+    }
+
+    #info-toggle {
+      position: fixed;
+      top: 10px; right: 10px;
+      z-index: 1000;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      display: none;
+    }
+
+    #info-toggle.visible {
+      display: block;
     }
 
     #start-button {
@@ -119,6 +143,8 @@
   </style>
 </head>
 <body>
+
+  <button id="info-toggle">ℹ️</button>
 
   <div id="info-panel">
     <strong>甲府城AR PoC(近景・遠景・導線 統合版)</strong><br>
@@ -389,6 +415,16 @@
     function startAR() {
       document.getElementById('start-button').style.display = 'none';
       document.getElementById('ar-scene').style.display = 'block';
+
+      // カメラ映像を最大限見せるため、説明パネルは自動的に折りたたむ
+      const infoPanel = document.getElementById('info-panel');
+      const infoToggle = document.getElementById('info-toggle');
+      infoPanel.classList.add('collapsed');
+      infoToggle.classList.add('visible');
+
+      infoToggle.addEventListener('click', () => {
+        infoPanel.classList.toggle('collapsed');
+      });
 
       // カメラ映像(video要素)が実際に流れているかを監視し、
       // 問題があれば画面上に理由を表示する(デバッグ用)
