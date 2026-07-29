@@ -37,6 +37,58 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
+    /* 許可ダイアログの前に見せる説明モーダル */
+    #permission-explainer {
+      position: fixed;
+      inset: 0;
+      z-index: 1001;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #permission-explainer .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px 20px;
+      max-width: 340px;
+      text-align: left;
+      line-height: 1.7;
+      color: #222;
+    }
+
+    #permission-explainer .card h2 {
+      font-size: 17px;
+      margin: 0 0 12px;
+    }
+
+    #permission-explainer .card p {
+      font-size: 14px;
+      margin: 0 0 10px;
+    }
+
+    #permission-explainer .highlight {
+      display: inline-block;
+      background: #1ec8e6;
+      color: #003;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    #permission-explainer button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      background: #b5342a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+    }
+
     #distance-indicator {
       position: fixed;
       bottom: 20px; left: 0; right: 0;
@@ -58,6 +110,25 @@
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
+
+  <div id="permission-explainer">
+    <div class="card">
+      <h2>この後、iPhoneの確認画面が出ます</h2>
+      <p>
+        次に、<strong>英語の確認メッセージ</strong>が表示されます。
+        これはiPhone自体の標準機能で、あやしいものではありません。
+      </p>
+      <p>
+        スマホの向き(方位)を使って、実際の景色に江戸時代の門を
+        重ねて表示するために必要です。
+      </p>
+      <p>
+        表示されたら、必ず <span class="highlight">Allow(許可)</span> を
+        タップしてください。
+      </p>
+      <button id="proceed-button">次へ進む</button>
+    </div>
+  </div>
 
   <div id="distance-indicator"></div>
 
@@ -112,22 +183,40 @@
   </a-scene>
 
   <script>
-    document.getElementById('start-button').addEventListener('click', async () => {
-
-      // iOS 13+ はモーションセンサーの許可が別途必要
+    document.getElementById('start-button').addEventListener('click', () => {
+      // モーションセンサーの許可リクエストが必要な端末(iOS 13+)だけ、
+      // 先に日本語の説明モーダルを見せる
       if (typeof DeviceOrientationEvent !== 'undefined' &&
           typeof DeviceOrientationEvent.requestPermission === 'function') {
-        try {
-          const permState = await DeviceOrientationEvent.requestPermission();
-          if (permState !== 'granted') {
-            alert('方位センサーの利用が許可されませんでした。設定から許可してください。');
-            return;
-          }
-        } catch (e) {
-          console.error(e);
+        document.getElementById('permission-explainer').style.display = 'flex';
+      } else {
+        startAR();
+      }
+    });
+
+    document.getElementById('proceed-button').addEventListener('click', async () => {
+      document.getElementById('permission-explainer').style.display = 'none';
+
+      try {
+        const permState = await DeviceOrientationEvent.requestPermission();
+        if (permState !== 'granted') {
+          alert(
+            '方位センサーの利用が許可されませんでした。\n\n' +
+            '許可し直すには、Safari画面左上の「aA」アイコン → ' +
+            '「Webサイトの設定」から、このサイトの設定をリセットして、' +
+            'ページを再読み込みしてください。'
+          );
+          return;
         }
+      } catch (e) {
+        console.error(e);
+        return;
       }
 
+      startAR();
+    });
+
+    function startAR() {
       document.getElementById('start-button').style.display = 'none';
       document.getElementById('ar-scene').style.display = 'block';
 
@@ -145,7 +234,7 @@
           console.error(err);
         }, { enableHighAccuracy: true });
       }
-    });
+    }
 
     function getDistanceMeters(lat1, lon1, lat2, lon2) {
       const R = 6371000;
