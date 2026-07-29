@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>甲府城AR PoC - 山手御門</title>
+
+  <!-- A-Frame / AR.js (CDN経由) -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; font-family: sans-serif; }
+
+    #info-panel {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    #start-button {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      padding: 16px 28px;
+      font-size: 16px;
+      background: #b5342a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    #distance-indicator {
+      position: fixed;
+      bottom: 20px; left: 0; right: 0;
+      z-index: 999;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 0 4px #000, 0 0 4px #000;
+      font-size: 14px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="info-panel">
+    <strong>甲府城AR PoC(プレースホルダー版)</strong><br>
+    対象:山手御門(柳沢吉保時代・1700年頃の姿を想定)<br>
+    現時点では仮の箱を実寸感覚で表示し、GPS/方位の精度確認を行うためのテストです。
+  </div>
+
+  <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
+
+  <div id="distance-indicator"></div>
+
+  <a-scene
+    vr-mode-ui="enabled: false"
+    embedded
+    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+    renderer="antialias: true; alpha: true"
+    style="display:none;"
+    id="ar-scene"
+  >
+    <a-camera gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
+
+    <!--
+      山手御門(仮モデル)
+      実際の山手渡櫓門・山手門はおおよそ以下のスケール感を想定した仮ボックス:
+        幅(門全体の間口感):約8m
+        奥行き:約4m
+        高さ(渡櫓部分):約6m
+      正確な寸法は現地実測後に更新すること。
+      色は白漆喰(壁)+黒瓦(屋根)のコントラストを仮再現。
+    -->
+    <a-entity
+      gps-new-entity-place="latitude: 35.667226; longitude: 138.570866;"
+      id="yamate-gomon-placeholder"
+    >
+      <!-- 壁(白漆喰イメージ) -->
+      <a-box
+        position="0 3 0"
+        width="8" height="6" depth="4"
+        color="#f5f2e9"
+      ></a-box>
+      <!-- 屋根(黒瓦イメージ、寄棟風の簡易表現) -->
+      <a-cone
+        position="0 6.3 0"
+        radius-bottom="6.5" radius-top="0"
+        height="2.2"
+        segments-radial="4"
+        rotation="0 45 0"
+        color="#2b2b2b"
+      ></a-cone>
+      <!-- ラベル -->
+      <a-text
+        value="山手御門(仮・柳沢吉保時代)"
+        position="0 8 0"
+        align="center"
+        color="#ffffff"
+        width="12"
+        side="double"
+      ></a-text>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    document.getElementById('start-button').addEventListener('click', async () => {
+
+      // iOS 13+ はモーションセンサーの許可が別途必要
+      if (typeof DeviceOrientationEvent !== 'undefined' &&
+          typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const permState = await DeviceOrientationEvent.requestPermission();
+          if (permState !== 'granted') {
+            alert('方位センサーの利用が許可されませんでした。設定から許可してください。');
+            return;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      document.getElementById('start-button').style.display = 'none';
+      document.getElementById('ar-scene').style.display = 'block';
+
+      // 簡易的な距離表示(現在地から山手御門仮座標までの距離)
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition((pos) => {
+          const target = { lat: 35.667226, lng: 138.570866 };
+          const dist = getDistanceMeters(
+            pos.coords.latitude, pos.coords.longitude,
+            target.lat, target.lng
+          );
+          document.getElementById('distance-indicator').innerText =
+            `山手御門(仮)まで:約 ${dist.toFixed(0)} m`;
+        }, (err) => {
+          console.error(err);
+        }, { enableHighAccuracy: true });
+      }
+    });
+
+    function getDistanceMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const toRad = (deg) => deg * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+  </script>
+
+</body>
+</html>
