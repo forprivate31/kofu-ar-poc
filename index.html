@@ -156,37 +156,49 @@
     <a-camera gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
 
     <!--
-      山手御門(仮モデル)
-      実際の山手渡櫓門・山手門はおおよそ以下のスケール感を想定した仮ボックス:
-        幅(門全体の間口感):約8m
-        奥行き:約4m
-        高さ(渡櫓部分):約6m
-      正確な寸法は現地実測後に更新すること。
-      色は白漆喰(壁)+黒瓦(屋根)のコントラストを仮再現。
+      山手御門(仮モデル・Ver.2)
+      実際は「山手門(高麗門・小さめの門)」と「山手渡櫓門(2階建ての櫓門)」の
+      2つの構造物からなる複合門。石垣の上に建っている。
+      正確な寸法・質感は現地実測・撮影後に更新すること。
+      色は白漆喰(壁)+黒瓦(屋根)+木部(柱・扉)のコントラストを仮再現。
     -->
     <a-entity
       gps-new-entity-place="latitude: 35.667226; longitude: 138.570866;"
       id="yamate-gomon-placeholder"
     >
-      <!-- 壁(白漆喰イメージ) -->
+      <!-- 石垣(土台・野面積みイメージ) -->
       <a-box
-        position="0 3 0"
-        width="8" height="6" depth="4"
-        color="#f5f2e9"
+        position="0 1 0"
+        width="16" height="2" depth="10"
+        color="#8a8478"
       ></a-box>
-      <!-- 屋根(黒瓦イメージ、寄棟風の簡易表現) -->
-      <a-cone
-        position="0 6.3 0"
-        radius-bottom="6.5" radius-top="0"
-        height="2.2"
-        segments-radial="4"
-        rotation="0 45 0"
-        color="#2b2b2b"
-      ></a-cone>
+
+      <!-- ① 山手門(高麗門・手前の小さい門) -->
+      <a-entity position="0 2 4">
+        <!-- 木部の柱・扉 -->
+        <a-box position="0 1.5 0" width="4" height="3" depth="1.2" color="#5a4632"></a-box>
+        <!-- 小さめの切妻屋根(黒瓦) -->
+        <a-box position="0 3.2 0" width="4.6" height="0.4" depth="1.8" color="#2b2b2b"></a-box>
+      </a-entity>
+
+      <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
+      <a-entity position="0 2 -2">
+        <!-- 1階部分(木部・門扉) -->
+        <a-box position="0 1.5 0" width="9" height="3" depth="3" color="#5a4632"></a-box>
+        <!-- 2階部分(白漆喰の壁) -->
+        <a-box position="0 4.2 0" width="10" height="2.5" depth="3.6" color="#f5f2e9"></a-box>
+        <!-- 寄棟屋根(黒瓦) -->
+        <a-cone
+          position="0 6" radius-bottom="7.5" radius-top="0"
+          height="2.4" segments-radial="4" rotation="0 45 0"
+          color="#2b2b2b"
+        ></a-cone>
+      </a-entity>
+
       <!-- ラベル -->
       <a-text
         value="山手御門(仮・柳沢吉保時代)"
-        position="0 8 0"
+        position="0 9 0"
         align="center"
         color="#ffffff"
         width="12"
