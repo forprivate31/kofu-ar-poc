@@ -192,49 +192,73 @@
     <a-camera id="ar-camera" gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
 
     <!--
-      山手御門(仮モデル・Ver.2)
-      実際は「山手門(高麗門・小さめの門)」と「山手渡櫓門(2階建ての櫓門)」の
-      2つの構造物からなる複合門。石垣の上に建っている。
-      正確な寸法・質感は現地実測・撮影後に更新すること。
+      山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
+      実際は「山手門(高麗門)」と「山手渡櫓門(2階建ての櫓門)」の
+      2つの独立した構造物からなる複合門。それぞれ自前の石垣・通路を持つ。
+
+      【この版での変更点(発案者提供の参考写真をもとに調整)】
+      - 山手門・山手渡櫓門を、共通の石垣に乗せるのではなく、
+        それぞれ独立した石垣・構造として分離
+      - 山手渡櫓門を人物比較から推定し、全体高さを約8mに引き上げ
+        (門扉部分だけで人物の2倍近い高さがあるため)
+      - 山手門は、独立して自立する門として、屋根形状を調整
+      - 【Ver.4追記】離れた場所(夢小路手前)から撮影された別角度の写真では、
+        土橋状の高まりの上に建ち、石垣がより高く堂々として見えたため、
+        石垣の高さをさらに引き上げ(全体高さ約13m程度に)
+
+      正確な寸法・質感は今後の現地実測・撮影でさらに更新予定。
       色は白漆喰(壁)+黒瓦(屋根)+木部(柱・扉)のコントラストを仮再現。
     -->
+
+    <!-- ① 山手門(高麗門・独立した小さめの門) -->
+    <a-entity
+      gps-new-entity-place="latitude: 35.667180; longitude: 138.570780;"
+      id="yamate-mon-placeholder"
+    >
+      <!-- 自前の石垣土台 -->
+      <a-box position="0 0.8 0" width="7" height="1.6" depth="4" color="#8a8478"></a-box>
+      <!-- 木部の柱・扉 -->
+      <a-box position="0 2.8 0" width="4" height="3.2" depth="1.4" color="#4a3826"></a-box>
+      <!-- 切妻屋根(黒瓦) -->
+      <a-cone
+        position="0 4.8 0" radius-bottom="3.2" radius-top="0"
+        height="1.4" segments-radial="4" rotation="0 45 0"
+        color="#2b2b2b"
+      ></a-cone>
+      <a-text
+        value="山手門(高麗門)"
+        position="0 6 0"
+        align="center"
+        color="#ffffff"
+        width="10"
+        side="double"
+      ></a-text>
+    </a-entity>
+
+    <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
     <a-entity
       gps-new-entity-place="latitude: 35.667226; longitude: 138.570866;"
-      id="yamate-gomon-placeholder"
+      id="yamate-watariyagura-mon-placeholder"
     >
-      <!-- 石垣(土台・野面積みイメージ) -->
-      <a-box
-        position="0 1 0"
-        width="16" height="2" depth="10"
-        color="#8a8478"
-      ></a-box>
-
-      <!-- ① 山手門(高麗門・手前の小さい門) -->
-      <a-entity position="0 2 4">
-        <!-- 木部の柱・扉 -->
-        <a-box position="0 1.5 0" width="4" height="3" depth="1.2" color="#5a4632"></a-box>
-        <!-- 小さめの切妻屋根(黒瓦) -->
-        <a-box position="0 3.2 0" width="4.6" height="0.4" depth="1.8" color="#2b2b2b"></a-box>
-      </a-entity>
-
-      <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
-      <a-entity position="0 2 -2">
-        <!-- 1階部分(木部・門扉) -->
-        <a-box position="0 1.5 0" width="9" height="3" depth="3" color="#5a4632"></a-box>
-        <!-- 2階部分(白漆喰の壁) -->
-        <a-box position="0 4.2 0" width="10" height="2.5" depth="3.6" color="#f5f2e9"></a-box>
-        <!-- 寄棟屋根(黒瓦) -->
-        <a-cone
-          position="0 6" radius-bottom="7.5" radius-top="0"
-          height="2.4" segments-radial="4" rotation="0 45 0"
-          color="#2b2b2b"
-        ></a-cone>
-      </a-entity>
-
-      <!-- ラベル -->
+      <!--
+        自前の石垣土台
+        別角度(離れた場所)からの参考写真では、土橋状の高まりの上に
+        建っており、石垣がより高く堂々として見えるため、高さを引き上げ。
+      -->
+      <a-box position="0 2 0" width="14" height="4" depth="6" color="#8a8478"></a-box>
+      <!-- 1階部分(木部・門扉、人物比較で高めに設定) -->
+      <a-box position="0 5.6 0" width="9" height="3.2" depth="3" color="#4a3826"></a-box>
+      <!-- 2階部分(白漆喰の壁、格子窓は簡略化) -->
+      <a-box position="0 8.6 0" width="10" height="2.6" depth="3.6" color="#f5f2e9"></a-box>
+      <!-- 寄棟屋根(黒瓦) -->
+      <a-cone
+        position="0 10.5 0" radius-bottom="7.5" radius-top="0"
+        height="2.4" segments-radial="4" rotation="0 45 0"
+        color="#2b2b2b"
+      ></a-cone>
       <a-text
-        value="山手御門(仮・柳沢吉保時代)"
-        position="0 9 0"
+        value="山手渡櫓門(柳沢吉保時代)"
+        position="0 13.5 0"
         align="center"
         color="#ffffff"
         width="12"
@@ -377,6 +401,46 @@
         side="double"
       ></a-text>
     </a-entity>
+
+    <!--
+      ============================================
+      天守台(遠景・確定:石垣は現存/建物は非表示)
+      ============================================
+      史実:天守台(石垣の土台)は現存するが、その上に建物(天守)が
+      実際に建てられていたかどうかは確認されていない(4.3節参照)。
+      そのため、ここでは「石垣の土台のみ」を表示し、
+      建物は意図的に配置しない。これにより「実は天守がなかった」
+      という史実そのものを、体験のコンテンツとして活かす。
+
+      山手御門から実際に「天守台と稲荷櫓、その脇に富士山」が
+      セットで見えるという記録があるため、稲荷櫓と近い位置に配置し、
+      同じ視界内で遠景として構成する。
+
+      【座標について:象徴的配置】
+      天守台の正確な座標は今回未特定のため、稲荷櫓に近接する
+      本丸エリアの象徴的な一点として暫定配置している。
+
+      【確度:確定(石垣の実在・建物が無いこと)/推定(座標)】
+    -->
+    <a-entity
+      gps-new-entity-place="latitude: 35.665700; longitude: 138.571700;"
+      id="tenshudai-placeholder"
+    >
+      <!-- 石垣土台のみ(建物は意図的に配置しない) -->
+      <a-box
+        position="0 5 0"
+        width="14" height="10" depth="14"
+        color="#8a8478"
+      ></a-box>
+      <a-text
+        value="天守台(石垣のみ現存・建物は無かったとされる)"
+        position="0 11.5 0"
+        align="center"
+        color="#a8e6a1"
+        width="13"
+        side="double"
+      ></a-text>
+    </a-entity>
   </a-scene>
 
   <script>
@@ -461,9 +525,11 @@
 
       // 簡易的な距離表示(現在地から各ARオブジェクト座標までの距離)
       const targets = [
-        { name: '山手御門(導線)', lat: 35.667226, lng: 138.570866 },
+        { name: '山手渡櫓門(導線)', lat: 35.667226, lng: 138.570866 },
+        { name: '山手門(導線)', lat: 35.667180, lng: 138.570780 },
         { name: '清水櫓(近景)', lat: 35.667900, lng: 138.569700 },
-        { name: '稲荷櫓(遠景)', lat: 35.665948, lng: 138.572013 }
+        { name: '稲荷櫓(遠景)', lat: 35.665948, lng: 138.572013 },
+        { name: '天守台(遠景)', lat: 35.665700, lng: 138.571700 }
       ];
 
       function renderDistances(myLat, myLng) {
