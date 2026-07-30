@@ -189,7 +189,7 @@
     style="display:none;"
     id="ar-scene"
   >
-    <a-camera gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
+    <a-camera id="ar-camera" gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
 
     <!--
       山手御門(仮モデル・Ver.2)
@@ -466,20 +466,47 @@
         { name: '稲荷櫓(遠景)', lat: 35.665948, lng: 138.572013 }
       ];
 
-      if (navigator.geolocation) {
-        navigator.geolocation.watchPosition((pos) => {
-          const lines = targets.map((t) => {
-            const dist = getDistanceMeters(
-              pos.coords.latitude, pos.coords.longitude,
-              t.lat, t.lng
-            );
-            return `${t.name}:約${dist.toFixed(0)}m`;
-          });
-          document.getElementById('distance-indicator').innerHTML = lines.join('<br>');
-        }, (err) => {
-          console.error(err);
-        }, { enableHighAccuracy: true });
+      function renderDistances(myLat, myLng) {
+        const lines = targets.map((t) => {
+          const dist = getDistanceMeters(myLat, myLng, t.lat, t.lng);
+          return `${t.name}:約${dist.toFixed(0)}m`;
+        });
+        document.getElementById('distance-indicator').innerHTML = lines.join('<br>');
       }
+
+      // AR.js(gps-new-camera)が内部で取得している位置情報イベントを利用する。
+      // 独自にwatchPositionを併走させると、端末・ブラウザによっては
+      // 位置情報取得が競合し不安定になることがあるため、これを避けている。
+      const arCamera = document.getElementById('ar-camera');
+      let receivedPosition = false;
+
+      arCamera.addEventListener('gps-camera-update-position', (e) => {
+        receivedPosition = true;
+        renderDistances(e.detail.position.latitude, e.detail.position.longitude);
+      });
+
+      // AR.js側のイベントが発火しない環境向けのフォールバック。
+      // 一定時間イベントが来ない場合のみ、独自に位置情報取得を試みる。
+      setTimeout(() => {
+        if (receivedPosition) return;
+
+        if (!navigator.geolocation) {
+          document.getElementById('distance-indicator').innerText =
+            'この端末は位置情報に対応していません。';
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition((pos) => {
+          renderDistances(pos.coords.latitude, pos.coords.longitude);
+        }, (err) => {
+          let reason = '不明なエラー';
+          if (err.code === 1) reason = '位置情報の利用が許可されていません';
+          if (err.code === 2) reason = '位置情報を取得できませんでした(電波状況等)';
+          if (err.code === 3) reason = '位置情報の取得がタイムアウトしました';
+          document.getElementById('distance-indicator').innerText =
+            `位置情報を取得できません(${reason})`;
+        }, { enableHighAccuracy: true, timeout: 10000 });
+      }, 4000);
     }
 
     function getDistanceMeters(lat1, lon1, lat2, lon2) {
