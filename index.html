@@ -184,12 +184,34 @@
   <a-scene
     vr-mode-ui="enabled: false"
     embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;"
-    renderer="antialias: true; alpha: true"
+    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+    renderer="antialias: true"
     style="display:none;"
     id="ar-scene"
   >
     <a-camera id="ar-camera" gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
+    <script>
+      // ============================================
+      // テストモード:GPS座標の偽装(AR.js公式のsimulate機能を利用)
+      // ============================================
+      // URLに ?simLat=35.667226&simLng=138.570866 を付けてアクセスすると、
+      // 実際のGPSではなく、指定した座標に自分がいることにしてテストできる。
+      // これにより、現地に行かなくても「オブジェクトが正しく表示・
+      // 配置されるか」を自宅などから検証できる。
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const simLat = params.get('simLat');
+        const simLng = params.get('simLng');
+        if (simLat && simLng) {
+          const cam = document.getElementById('ar-camera');
+          cam.setAttribute('gps-new-camera', {
+            gpsMinDistance: 0,
+            simulateLatitude: parseFloat(simLat),
+            simulateLongitude: parseFloat(simLng)
+          });
+        }
+      })();
+    </script>
 
     <!--
       山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
@@ -218,7 +240,7 @@
       <!-- 自前の石垣土台 -->
       <a-box position="0 0.8 0" width="7" height="1.6" depth="4" color="#8a8478"></a-box>
       <!-- 木部の柱・扉 -->
-      <a-box position="0 2.8 0" width="4" height="3.2" depth="1.4" color="#4a3826"></a-box>
+      <a-box position="0 2.8 0" width="4" height="3.2" depth="1.4" color="#9c5a3c"></a-box>
       <!-- 切妻屋根(黒瓦) -->
       <a-cone
         position="0 4.8 0" radius-bottom="3.2" radius-top="0"
@@ -242,23 +264,28 @@
     >
       <!--
         自前の石垣土台
-        別角度(離れた場所)からの参考写真では、土橋状の高まりの上に
-        建っており、石垣がより高く堂々として見えるため、高さを引き上げ。
+
+        【Ver.5・重要な訂正】人物と門扉を直接比較できる写真(現地取得)
+        では、門扉はほぼ地面と同じ高さから始まっており、目立った
+        石垣の段差は見られなかった。以前(Ver.4)、離れた場所から
+        見上げるアングルの写真をもとに石垣を大きく引き上げたが、
+        これは遠近感による誇張だった可能性が高いと判断し、
+        人物比較というより信頼できる根拠を優先して石垣を低く戻す。
       -->
-      <a-box position="0 2 0" width="14" height="4" depth="6" color="#8a8478"></a-box>
-      <!-- 1階部分(木部・門扉、人物比較で高めに設定) -->
-      <a-box position="0 5.6 0" width="9" height="3.2" depth="3" color="#4a3826"></a-box>
+      <a-box position="0 0.75 0" width="14" height="1.5" depth="6" color="#8a8478"></a-box>
+      <!-- 1階部分(木部・門扉、人物比較で高さ約2.5倍相当に設定) -->
+      <a-box position="0 2.9 0" width="9" height="3.2" depth="3" color="#9c5a3c"></a-box>
       <!-- 2階部分(白漆喰の壁、格子窓は簡略化) -->
-      <a-box position="0 8.6 0" width="10" height="2.6" depth="3.6" color="#f5f2e9"></a-box>
+      <a-box position="0 5.9 0" width="10" height="2.6" depth="3.6" color="#f5f2e9"></a-box>
       <!-- 寄棟屋根(黒瓦) -->
       <a-cone
-        position="0 10.5 0" radius-bottom="7.5" radius-top="0"
+        position="0 7.8 0" radius-bottom="7.5" radius-top="0"
         height="2.4" segments-radial="4" rotation="0 45 0"
         color="#2b2b2b"
       ></a-cone>
       <a-text
         value="山手渡櫓門(柳沢吉保時代)"
-        position="0 13.5 0"
+        position="0 10.8 0"
         align="center"
         color="#ffffff"
         width="12"
@@ -523,69 +550,44 @@
         }, 500);
       }
 
-      // 簡易的な距離表示(現在地から各ARオブジェクト座標までの距離)
-      const targets = [
-        { name: '山手渡櫓門(導線)', lat: 35.667226, lng: 138.570866 },
-        { name: '山手門(導線)', lat: 35.667180, lng: 138.570780 },
-        { name: '清水櫓(近景)', lat: 35.667900, lng: 138.569700 },
-        { name: '稲荷櫓(遠景)', lat: 35.665948, lng: 138.572013 },
-        { name: '天守台(遠景)', lat: 35.665700, lng: 138.571700 }
+      // 距離表示:AR.js(gps-new-entity-place)が各エンティティに公式に
+      // 保持している「distance」プロパティを、一定間隔で直接読み取る。
+      // (以前はイベント頼みだったが、new-location-based系コンポーネントは
+      // 一部のイベントに対応していないため、より確実なこの方式に変更)
+      const targetIds = [
+        'yamate-watariyagura-mon-placeholder',
+        'yamate-mon-placeholder',
+        'shimizu-yagura-placeholder',
+        'inari-yagura-placeholder',
+        'tenshudai-placeholder'
       ];
+      const targetLabels = {
+        'yamate-watariyagura-mon-placeholder': '山手渡櫓門(導線)',
+        'yamate-mon-placeholder': '山手門(導線)',
+        'shimizu-yagura-placeholder': '清水櫓(近景)',
+        'inari-yagura-placeholder': '稲荷櫓(遠景)',
+        'tenshudai-placeholder': '天守台(遠景)'
+      };
 
-      function renderDistances(myLat, myLng) {
-        const lines = targets.map((t) => {
-          const dist = getDistanceMeters(myLat, myLng, t.lat, t.lng);
-          return `${t.name}:約${dist.toFixed(0)}m`;
+      setInterval(() => {
+        const lines = [];
+        targetIds.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el || !el.components || !el.components['gps-new-entity-place']) {
+            lines.push(`${targetLabels[id]}:取得待ち`);
+            return;
+          }
+          const dist = el.components['gps-new-entity-place'].distance;
+          if (dist === undefined || dist === null || isNaN(dist)) {
+            lines.push(`${targetLabels[id]}:取得待ち`);
+          } else {
+            lines.push(`${targetLabels[id]}:約${dist.toFixed(0)}m`);
+          }
         });
         document.getElementById('distance-indicator').innerHTML = lines.join('<br>');
-      }
-
-      // AR.js(gps-new-camera)が内部で取得している位置情報イベントを利用する。
-      // 独自にwatchPositionを併走させると、端末・ブラウザによっては
-      // 位置情報取得が競合し不安定になることがあるため、これを避けている。
-      const arCamera = document.getElementById('ar-camera');
-      let receivedPosition = false;
-
-      arCamera.addEventListener('gps-camera-update-position', (e) => {
-        receivedPosition = true;
-        renderDistances(e.detail.position.latitude, e.detail.position.longitude);
-      });
-
-      // AR.js側のイベントが発火しない環境向けのフォールバック。
-      // 一定時間イベントが来ない場合のみ、独自に位置情報取得を試みる。
-      setTimeout(() => {
-        if (receivedPosition) return;
-
-        if (!navigator.geolocation) {
-          document.getElementById('distance-indicator').innerText =
-            'この端末は位置情報に対応していません。';
-          return;
-        }
-
-        navigator.geolocation.getCurrentPosition((pos) => {
-          renderDistances(pos.coords.latitude, pos.coords.longitude);
-        }, (err) => {
-          let reason = '不明なエラー';
-          if (err.code === 1) reason = '位置情報の利用が許可されていません';
-          if (err.code === 2) reason = '位置情報を取得できませんでした(電波状況等)';
-          if (err.code === 3) reason = '位置情報の取得がタイムアウトしました';
-          document.getElementById('distance-indicator').innerText =
-            `位置情報を取得できません(${reason})`;
-        }, { enableHighAccuracy: true, timeout: 10000 });
-      }, 4000);
+      }, 1000);
     }
 
-    function getDistanceMeters(lat1, lon1, lat2, lon2) {
-      const R = 6371000;
-      const toRad = (deg) => deg * Math.PI / 180;
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    }
   </script>
 
 </body>
