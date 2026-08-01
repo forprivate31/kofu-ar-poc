@@ -84,9 +84,20 @@
     })();
   </script>
 
-  <!-- A-Frame / AR.js (CDN経由) -->
+  <!--
+    A-Frame / AR.js (CDN経由)
+
+    【重要】location-based(GPS型)ARには、以下の2つのスクリプトが
+    両方とも必要。片方(ar-threex-location-only.js)が不足していたため、
+    内部で「THREEx」という名前の仕組みが見つからず、エラーで
+    オブジェクトの位置計算が止まっていた(診断パネルで判明)。
+
+    あわせて、不安定な"master"(開発中の最新版)ではなく、
+    公式ドキュメントが例示する安定版バージョン(3.4.7)に固定する。
+  -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@master/aframe/build/aframe-ar.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
 
   <style>
     body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
@@ -329,7 +340,7 @@
     vr-mode-ui="enabled: false"
     embedded
     arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
-    renderer="antialias: true"
+    renderer="antialias: true; alpha: true"
     style="display:none;"
     id="ar-scene"
   >
