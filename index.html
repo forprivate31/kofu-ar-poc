@@ -52,9 +52,14 @@
           coords: {
             latitude: simLat,
             longitude: simLng,
-            altitude: 370, // 甲府市周辺のおおよその標高
+            // 【重要】あえて標高を指定しない(null)。
+            // オブジェクト側も標高を指定していないため、370mなど
+            // 適当な値を入れると、カメラとオブジェクトの標高差分により
+            // 上下方向の位置計算が大きくズレ、オブジェクトが地中や
+            // 上空はるか遠くに配置され「見えなくなる」原因になりうる。
+            altitude: null,
             accuracy: 5,
-            altitudeAccuracy: 5,
+            altitudeAccuracy: null,
             heading: null,
             speed: null
           },
@@ -790,7 +795,20 @@
           try {
             parts.push(`  設定値: ${JSON.stringify(comp.data)}`);
           } catch (e) {}
+          try {
+            const pos = el.object3D.position;
+            parts.push(`  3D空間上の座標(x,y,z): ${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)}`);
+            parts.push(`  visible: ${el.object3D.visible}`);
+          } catch (e) {
+            parts.push('  3D座標の取得でエラー: ' + e.message);
+          }
         });
+
+        try {
+          const camPos = document.getElementById('ar-camera').object3D.position;
+          parts.push('');
+          parts.push(`カメラの3D空間上の座標(x,y,z): ${camPos.x.toFixed(1)}, ${camPos.y.toFixed(1)}, ${camPos.z.toFixed(1)}`);
+        } catch (e) {}
 
         parts.push('');
         parts.push('=== ログ(最新50件) ===');
