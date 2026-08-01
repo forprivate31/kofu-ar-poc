@@ -298,15 +298,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v15
+    build: v16
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v15]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v16]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v15(距離計算方式の修正、ライト追加、向きセンサー診断を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v16(GPSと無関係なサニティチェック用の赤い箱を追加)');
   </script>
 
   <div id="info-panel">
@@ -369,7 +369,27 @@
     <a-entity light="type: ambient; intensity: 0.8; color: #fff"></a-entity>
     <a-entity light="type: directional; intensity: 0.6; color: #fff" position="1 3 1"></a-entity>
 
-    <a-camera id="ar-camera" gps-projected-camera="gpsMinDistance: 0" rotation-reader></a-camera>
+    <a-camera id="ar-camera" gps-projected-camera="gpsMinDistance: 0" rotation-reader>
+      <!--
+        サニティチェック用オブジェクト(GPS・コンパスと完全に無関係)
+        カメラの子要素として配置しているため、常にカメラの真正面
+        5m先に固定表示される。これが見えれば「3D描画の仕組み自体は
+        正常」と判断でき、問題はGPS/コンパスの計算側に絞り込める。
+      -->
+      <a-box
+        position="0 0 -5"
+        width="1" height="1" depth="1"
+        color="red"
+        id="sanity-check-box"
+      ></a-box>
+      <a-text
+        value="テスト用の赤い箱(常に正面に表示)"
+        position="0 0.8 -5"
+        align="center"
+        color="#ffffff"
+        width="4"
+      ></a-text>
+    </a-camera>
 
     <!--
       山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
