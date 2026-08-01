@@ -298,15 +298,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v16
+    build: v17
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v16]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v17]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v16(GPSと無関係なサニティチェック用の赤い箱を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v17(検証のためvideoTextureを一時的に無効化)');
   </script>
 
   <div id="info-panel">
@@ -356,10 +356,20 @@
     <div id="distance-indicator"></div>
   </div>
 
+  <!--
+    【v17・検証中】videoTexture: true を一時的に外している。
+    GPS/コンパスと無関係な固定表示のテスト用オブジェクト(赤い箱)
+    すら表示されない不具合の原因切り分けのため。videoTexture方式が
+    3Dオブジェクトの描画を妨げている可能性を検証している。
+    赤い箱が見えるようになれば、この設定が原因と確定する。
+    見えるようになった場合、遠景オブジェクトの表示については
+    別途対策を検討する必要がある(videoTextureは本来、遠距離の
+    コンテンツ表示に有利とされていたため)。
+  -->
   <a-scene
     vr-mode-ui="enabled: false"
     embedded
-    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+    arjs="sourceType: webcam; debugUIEnabled: false;"
     renderer="antialias: true; alpha: true"
     style="display:none;"
     id="ar-scene"
