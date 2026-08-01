@@ -5,6 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>甲府城AR PoC - 山手御門</title>
 
+  <script>
+    // ============================================
+    // テストモード:位置情報APIそのものを差し替える方式(Ver.2)
+    // ============================================
+    // AR.js公式の「simulateLatitude/simulateLongitude」機能は、
+    // ライブラリ自体の既知の不具合により正しく動作しないことが
+    // 確認されている(AR-js-org/AR.js issue #14)。
+    // そのため、AR.jsに頼らず、ブラウザの位置情報API
+    // (navigator.geolocation)そのものを、AR.jsが読み込まれる前に
+    // 差し替える方式に変更する。これにより、AR.js側の不具合の
+    // 影響を受けずに、確実に座標を偽装できる。
+    //
+    // 使い方:URLに ?simLat=35.667226&simLng=138.570866 を付けて開く
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const simLat = parseFloat(params.get('simLat'));
+      const simLng = parseFloat(params.get('simLng'));
+
+      if (!isNaN(simLat) && !isNaN(simLng)) {
+        console.log('[テストモード] 位置情報を偽装します:', simLat, simLng);
+
+        const fakePosition = {
+          coords: {
+            latitude: simLat,
+            longitude: simLng,
+            altitude: 370, // 甲府市周辺のおおよその標高
+            accuracy: 5,
+            altitudeAccuracy: 5,
+            heading: null,
+            speed: null
+          },
+          timestamp: Date.now()
+        };
+
+        navigator.geolocation.getCurrentPosition = function (success) {
+          success(fakePosition);
+        };
+
+        navigator.geolocation.watchPosition = function (success) {
+          success(fakePosition);
+          // 実際のwatchPositionのように、擬似的なwatch IDを返す
+          return setInterval(() => success(fakePosition), 2000);
+        };
+
+        navigator.geolocation.clearWatch = function (id) {
+          clearInterval(id);
+        };
+
+        window.__AR_TEST_MODE__ = true;
+      }
+    })();
+  </script>
+
   <!-- A-Frame / AR.js (CDN経由) -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@master/aframe/build/aframe-ar.js"></script>
@@ -147,6 +200,10 @@
 
   <button id="info-toggle">ℹ️</button>
 
+  <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
+    🧪 テストモード中(位置情報は偽装座標を使用しています)
+  </div>
+
   <div id="info-panel">
     <strong>甲府城AR PoC(近景・遠景・導線 統合版)</strong><br>
     近景:清水櫓(推定復元)/ 境界ライン(象徴表示)<br>
@@ -156,6 +213,12 @@
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
+
+  <script>
+    if (window.__AR_TEST_MODE__) {
+      document.getElementById('test-mode-banner').style.display = 'block';
+    }
+  </script>
 
   <div id="permission-explainer">
     <div class="card">
@@ -190,28 +253,6 @@
     id="ar-scene"
   >
     <a-camera id="ar-camera" gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
-    <script>
-      // ============================================
-      // テストモード:GPS座標の偽装(AR.js公式のsimulate機能を利用)
-      // ============================================
-      // URLに ?simLat=35.667226&simLng=138.570866 を付けてアクセスすると、
-      // 実際のGPSではなく、指定した座標に自分がいることにしてテストできる。
-      // これにより、現地に行かなくても「オブジェクトが正しく表示・
-      // 配置されるか」を自宅などから検証できる。
-      (function () {
-        const params = new URLSearchParams(window.location.search);
-        const simLat = params.get('simLat');
-        const simLng = params.get('simLng');
-        if (simLat && simLng) {
-          const cam = document.getElementById('ar-camera');
-          cam.setAttribute('gps-new-camera', {
-            gpsMinDistance: 0,
-            simulateLatitude: parseFloat(simLat),
-            simulateLongitude: parseFloat(simLng)
-          });
-        }
-      })();
-    </script>
 
     <!--
       山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
