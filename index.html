@@ -7,6 +7,28 @@
 
   <script>
     // ============================================
+    // 診断ログ:何が実際に起きているかを、常時記録しておく
+    // ============================================
+    window.__diagLog = [];
+    window.__diagPush = function (msg) {
+      const time = new Date().toLocaleTimeString('ja-JP', { hour12: false });
+      window.__diagLog.push(`[${time}] ${msg}`);
+      if (window.__diagLog.length > 200) window.__diagLog.shift();
+    };
+
+    // ページ内で起きた予期しないエラーも、画面上で確認できるようにする
+    window.addEventListener('error', (e) => {
+      window.__diagPush(`❌ ERROR: ${e.message} (${e.filename}:${e.lineno})`);
+    });
+    window.addEventListener('unhandledrejection', (e) => {
+      window.__diagPush(`❌ PROMISE ERROR: ${e.reason}`);
+    });
+
+    window.__diagPush('ページ読み込み開始');
+  </script>
+
+  <script>
+    // ============================================
     // テストモード:位置情報APIそのものを差し替える方式(Ver.2)
     // ============================================
     // AR.js公式の「simulateLatitude/simulateLongitude」機能は、
@@ -24,7 +46,7 @@
       const simLng = parseFloat(params.get('simLng'));
 
       if (!isNaN(simLat) && !isNaN(simLng)) {
-        console.log('[テストモード] 位置情報を偽装します:', simLat, simLng);
+        window.__diagPush(`テストモード有効:偽装座標 ${simLat}, ${simLng}`);
 
         const fakePosition = {
           coords: {
@@ -40,10 +62,12 @@
         };
 
         navigator.geolocation.getCurrentPosition = function (success) {
+          window.__diagPush('geolocation.getCurrentPosition が呼び出された → 偽装座標を返却');
           success(fakePosition);
         };
 
         navigator.geolocation.watchPosition = function (success) {
+          window.__diagPush('geolocation.watchPosition が呼び出された → 偽装座標を返却(継続配信開始)');
           success(fakePosition);
           // 実際のwatchPositionのように、擬似的なwatch IDを返す
           return setInterval(() => success(fakePosition), 2000);
@@ -54,6 +78,8 @@
         };
 
         window.__AR_TEST_MODE__ = true;
+      } else {
+        window.__diagPush('テストモード無効(通常のGPSを使用)');
       }
     })();
   </script>
@@ -194,6 +220,54 @@
       font-size: 12px;
       display: none; /* 通常は非表示。?debug 付きURLでのみ表示 */
     }
+
+    #diag-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(0,0,0,0.92);
+      color: #7CFC7C;
+      font-family: monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      padding: 12px;
+      overflow-y: auto;
+      display: none;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    #diag-panel.visible {
+      display: block;
+    }
+
+    #diag-close {
+      position: sticky;
+      top: 0;
+      float: right;
+      background: #b5342a;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: sans-serif;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    #diag-open-button {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: rgba(0,0,0,0.6);
+      color: #7CFC7C;
+      border: 1px solid #7CFC7C;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
@@ -213,6 +287,13 @@
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
+
+  <button id="diag-open-button">🔍 診断</button>
+
+  <div id="diag-panel">
+    <button id="diag-close">閉じる</button>
+    <div id="diag-content">診断情報を準備中...</div>
+  </div>
 
   <script>
     if (window.__AR_TEST_MODE__) {
@@ -628,6 +709,106 @@
         document.getElementById('distance-indicator').innerHTML = lines.join('<br>');
       }, 1000);
     }
+
+    // ============================================
+    // 診断パネル:今、内部で何が起きているかを可視化する
+    // ============================================
+    // ボタン操作で開閉できる。AR開始前から状態を確認できるよう、
+    // ページ読み込み直後から独立して動作する。
+    (function () {
+      const targetIds = [
+        'yamate-watariyagura-mon-placeholder',
+        'yamate-mon-placeholder',
+        'shimizu-yagura-placeholder',
+        'inari-yagura-placeholder',
+        'tenshudai-placeholder'
+      ];
+
+      function buildDiagText() {
+        const parts = [];
+
+        parts.push('=== ライブラリの読み込み状況 ===');
+        parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? 'あり(バージョン ' + AFRAME.version + ')' : '❌ 読み込まれていません'}`);
+
+        if (typeof AFRAME !== 'undefined') {
+          const hasGpsCamera = !!AFRAME.components['gps-new-camera'];
+          const hasGpsEntity = !!AFRAME.components['gps-new-entity-place'];
+          parts.push(`gps-new-camera 部品: ${hasGpsCamera ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
+          parts.push(`gps-new-entity-place 部品: ${hasGpsEntity ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
+        }
+
+        parts.push('');
+        parts.push('=== テストモード ===');
+        parts.push(`有効: ${window.__AR_TEST_MODE__ ? 'はい' : 'いいえ(通常のGPSを使用)'}`);
+
+        parts.push('');
+        parts.push('=== カメラ(#ar-camera)の状態 ===');
+        const cam = document.getElementById('ar-camera');
+        if (!cam) {
+          parts.push('❌ #ar-camera が見つかりません');
+        } else {
+          parts.push(`要素: 存在する`);
+          if (cam.components && cam.components['gps-new-camera']) {
+            const camComp = cam.components['gps-new-camera'];
+            parts.push('gps-new-cameraコンポーネント: 存在する');
+            try {
+              parts.push(`  現在地(内部保持値): ${JSON.stringify(camComp.currentCoords || camComp.position || 'なし')}`);
+            } catch (e) {
+              parts.push('  現在地情報の取得でエラー: ' + e.message);
+            }
+          } else {
+            parts.push('❌ gps-new-cameraコンポーネントが初期化されていません');
+          }
+        }
+
+        parts.push('');
+        parts.push('=== 各オブジェクトの状態 ===');
+        targetIds.forEach((id) => {
+          const el = document.getElementById(id);
+          parts.push(`[${id}]`);
+          if (!el) {
+            parts.push('  ❌ 要素が見つかりません');
+            return;
+          }
+          if (!el.components || !el.components['gps-new-entity-place']) {
+            parts.push('  ❌ gps-new-entity-placeコンポーネントが初期化されていません');
+            return;
+          }
+          const comp = el.components['gps-new-entity-place'];
+          parts.push(`  distance: ${comp.distance !== undefined ? comp.distance : '未設定'}`);
+          try {
+            parts.push(`  設定値: ${JSON.stringify(comp.data)}`);
+          } catch (e) {}
+        });
+
+        parts.push('');
+        parts.push('=== ログ(最新50件) ===');
+        const recentLogs = (window.__diagLog || []).slice(-50);
+        parts.push(recentLogs.join('\n'));
+
+        return parts.join('\n');
+      }
+
+      function refreshDiag() {
+        const panel = document.getElementById('diag-content');
+        if (panel) panel.innerText = buildDiagText();
+      }
+
+      document.getElementById('diag-open-button').addEventListener('click', () => {
+        document.getElementById('diag-panel').classList.add('visible');
+        refreshDiag();
+      });
+
+      document.getElementById('diag-close').addEventListener('click', () => {
+        document.getElementById('diag-panel').classList.remove('visible');
+      });
+
+      setInterval(() => {
+        if (document.getElementById('diag-panel').classList.contains('visible')) {
+          refreshDiag();
+        }
+      }, 1000);
+    })();
 
   </script>
 
