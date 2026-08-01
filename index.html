@@ -290,9 +290,17 @@
 
   <button id="info-toggle">ℹ️</button>
 
-  <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています)
+  <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
+    build: v14
   </div>
+
+  <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v14]
+  </div>
+
+  <script>
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v14(gps-projected-camera方式に変更)');
+  </script>
 
   <div id="info-panel">
     <strong>甲府城AR PoC(近景・遠景・導線 統合版)</strong><br>
@@ -349,7 +357,7 @@
     style="display:none;"
     id="ar-scene"
   >
-    <a-camera id="ar-camera" gps-new-camera="gpsMinDistance: 0" rotation-reader></a-camera>
+    <a-camera id="ar-camera" gps-projected-camera="gpsMinDistance: 0" rotation-reader></a-camera>
 
     <!--
       山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
@@ -372,7 +380,7 @@
 
     <!-- ① 山手門(高麗門・独立した小さめの門) -->
     <a-entity
-      gps-new-entity-place="latitude: 35.667180; longitude: 138.570780;"
+      gps-projected-entity-place="latitude: 35.667180; longitude: 138.570780;"
       id="yamate-mon-placeholder"
     >
       <!-- 自前の石垣土台 -->
@@ -397,7 +405,7 @@
 
     <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
     <a-entity
-      gps-new-entity-place="latitude: 35.667226; longitude: 138.570866;"
+      gps-projected-entity-place="latitude: 35.667226; longitude: 138.570866;"
       id="yamate-watariyagura-mon-placeholder"
     >
       <!--
@@ -452,7 +460,7 @@
       として暫定配置している。現地調査・追加史料により更新予定。
     -->
     <a-entity
-      gps-new-entity-place="latitude: 35.667900; longitude: 138.569700;"
+      gps-projected-entity-place="latitude: 35.667900; longitude: 138.569700;"
       id="shimizu-yagura-placeholder"
     >
       <!-- 石垣土台 -->
@@ -506,7 +514,7 @@
       主張しない、あくまで象徴的な演出であることをラベルで明示。
     -->
     <a-entity id="shimizu-kuruwa-boundary">
-      <a-entity gps-new-entity-place="latitude: 35.668100; longitude: 138.569900;">
+      <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569900;">
         <a-box
           width="60" height="0.3" depth="3"
           rotation="0 30 0"
@@ -538,7 +546,7 @@
       【確度:確定(建物の実在・場所)/推定(仮モデルの外観)】
     -->
     <a-entity
-      gps-new-entity-place="latitude: 35.665948; longitude: 138.572013;"
+      gps-projected-entity-place="latitude: 35.665948; longitude: 138.572013;"
       id="inari-yagura-placeholder"
     >
       <!-- 石垣土台(高台の上にあることを表現するため高めに設定) -->
@@ -588,7 +596,7 @@
       【確度:確定(石垣の実在・建物が無いこと)/推定(座標)】
     -->
     <a-entity
-      gps-new-entity-place="latitude: 35.665700; longitude: 138.571700;"
+      gps-projected-entity-place="latitude: 35.665700; longitude: 138.571700;"
       id="tenshudai-placeholder"
     >
       <!-- 石垣土台のみ(建物は意図的に配置しない) -->
@@ -688,7 +696,7 @@
         }, 500);
       }
 
-      // 距離表示:AR.js(gps-new-entity-place)が各エンティティに公式に
+      // 距離表示:AR.js(gps-projected-entity-place)が各エンティティに公式に
       // 保持している「distance」プロパティを、一定間隔で直接読み取る。
       // (以前はイベント頼みだったが、new-location-based系コンポーネントは
       // 一部のイベントに対応していないため、より確実なこの方式に変更)
@@ -711,11 +719,11 @@
         const lines = [];
         targetIds.forEach((id) => {
           const el = document.getElementById(id);
-          if (!el || !el.components || !el.components['gps-new-entity-place']) {
+          if (!el || !el.components || !el.components['gps-projected-entity-place']) {
             lines.push(`${targetLabels[id]}:取得待ち`);
             return;
           }
-          const dist = el.components['gps-new-entity-place'].distance;
+          const dist = el.components['gps-projected-entity-place'].distance;
           if (dist === undefined || dist === null || isNaN(dist)) {
             lines.push(`${targetLabels[id]}:取得待ち`);
           } else {
@@ -747,10 +755,10 @@
         parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? 'あり(バージョン ' + AFRAME.version + ')' : '❌ 読み込まれていません'}`);
 
         if (typeof AFRAME !== 'undefined') {
-          const hasGpsCamera = !!AFRAME.components['gps-new-camera'];
-          const hasGpsEntity = !!AFRAME.components['gps-new-entity-place'];
-          parts.push(`gps-new-camera 部品: ${hasGpsCamera ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
-          parts.push(`gps-new-entity-place 部品: ${hasGpsEntity ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
+          const hasGpsCamera = !!AFRAME.components['gps-projected-camera'];
+          const hasGpsEntity = !!AFRAME.components['gps-projected-entity-place'];
+          parts.push(`gps-projected-camera 部品: ${hasGpsCamera ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
+          parts.push(`gps-projected-entity-place 部品: ${hasGpsEntity ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
         }
 
         parts.push('');
@@ -764,16 +772,16 @@
           parts.push('❌ #ar-camera が見つかりません');
         } else {
           parts.push(`要素: 存在する`);
-          if (cam.components && cam.components['gps-new-camera']) {
-            const camComp = cam.components['gps-new-camera'];
-            parts.push('gps-new-cameraコンポーネント: 存在する');
+          if (cam.components && cam.components['gps-projected-camera']) {
+            const camComp = cam.components['gps-projected-camera'];
+            parts.push('gps-projected-cameraコンポーネント: 存在する');
             try {
               parts.push(`  現在地(内部保持値): ${JSON.stringify(camComp.currentCoords || camComp.position || 'なし')}`);
             } catch (e) {
               parts.push('  現在地情報の取得でエラー: ' + e.message);
             }
           } else {
-            parts.push('❌ gps-new-cameraコンポーネントが初期化されていません');
+            parts.push('❌ gps-projected-cameraコンポーネントが初期化されていません');
           }
         }
 
@@ -786,11 +794,11 @@
             parts.push('  ❌ 要素が見つかりません');
             return;
           }
-          if (!el.components || !el.components['gps-new-entity-place']) {
-            parts.push('  ❌ gps-new-entity-placeコンポーネントが初期化されていません');
+          if (!el.components || !el.components['gps-projected-entity-place']) {
+            parts.push('  ❌ gps-projected-entity-placeコンポーネントが初期化されていません');
             return;
           }
-          const comp = el.components['gps-new-entity-place'];
+          const comp = el.components['gps-projected-entity-place'];
           parts.push(`  distance: ${comp.distance !== undefined ? comp.distance : '未設定'}`);
           try {
             parts.push(`  設定値: ${JSON.stringify(comp.data)}`);
