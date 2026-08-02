@@ -298,15 +298,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v17
+    build: v18
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v17]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v18]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v17(検証のためvideoTextureを一時的に無効化)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v18(videoTexture無効を正式確定。サニティチェック箱はdebugモード限定に)');
   </script>
 
   <div id="info-panel">
@@ -357,14 +357,16 @@
   </div>
 
   <!--
-    【v17・検証中】videoTexture: true を一時的に外している。
-    GPS/コンパスと無関係な固定表示のテスト用オブジェクト(赤い箱)
-    すら表示されない不具合の原因切り分けのため。videoTexture方式が
-    3Dオブジェクトの描画を妨げている可能性を検証している。
-    赤い箱が見えるようになれば、この設定が原因と確定する。
-    見えるようになった場合、遠景オブジェクトの表示については
-    別途対策を検討する必要がある(videoTextureは本来、遠距離の
-    コンテンツ表示に有利とされていたため)。
+    【確定】videoTexture: true は使用しない。
+
+    検証の結果、videoTexture方式が3Dオブジェクトの描画を妨げていた
+    ことが判明した(GPS/コンパスと無関係な、カメラ正面固定の
+    テスト用オブジェクトを使った切り分けテストで確認済み)。
+
+    もともとvideoTextureは「1km以上離れた遠景コンテンツの表示」に
+    推奨される設定だったが、本プロジェクトの対象物はすべて
+    200m以内のため、そもそも不要な設定だった。今後もこの設定は
+    使用しない方針とする。
   -->
   <a-scene
     vr-mode-ui="enabled: false"
@@ -385,12 +387,17 @@
         カメラの子要素として配置しているため、常にカメラの真正面
         5m先に固定表示される。これが見えれば「3D描画の仕組み自体は
         正常」と判断でき、問題はGPS/コンパスの計算側に絞り込める。
+
+        通常は非表示。今後同様の切り分けが必要になった場合のために
+        残してあり、URLに ?debug を付けた時のみ表示する
+        (表示切り替えはJS側で行う)。
       -->
       <a-box
         position="0 0 -5"
         width="1" height="1" depth="1"
         color="red"
         id="sanity-check-box"
+        visible="false"
       ></a-box>
       <a-text
         value="テスト用の赤い箱(常に正面に表示)"
@@ -398,6 +405,8 @@
         align="center"
         color="#ffffff"
         width="4"
+        id="sanity-check-label"
+        visible="false"
       ></a-text>
     </a-camera>
 
@@ -712,6 +721,9 @@
       const isDebugMode = new URLSearchParams(window.location.search).has('debug');
 
       if (isDebugMode) {
+        document.getElementById('sanity-check-box').setAttribute('visible', 'true');
+        document.getElementById('sanity-check-label').setAttribute('visible', 'true');
+
         document.getElementById('camera-status').style.display = 'block';
 
         let checkCount = 0;
