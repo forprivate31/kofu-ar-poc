@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v19
+    build: v20
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v19]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v20]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v19(山手渡櫓門・山手門に瓦/木目/石垣/格子窓テクスチャを追加、屋根形状を2段構成に)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v20(清水櫓・稲荷櫓・天守台にもテクスチャを展開。全オブジェクトの質感を統一)');
   </script>
 
   <div id="info-panel">
@@ -644,23 +644,25 @@
       <a-box
         position="0 1 0"
         width="7" height="2" depth="7"
-        color="#8a8478"
+        material="src: #tex-stone-wall; repeat: 1.5 1"
       ></a-box>
       <!-- 1階(木部) -->
-      <a-box position="0 3.5 0" width="6" height="3" depth="6" color="#5a4632"></a-box>
+      <a-box position="0 3.5 0" width="6" height="3" depth="6"
+        material="src: #tex-wood; repeat: 1.5 1"></a-box>
       <!-- 2階(白漆喰、1階よりひと回り小さい) -->
-      <a-box position="0 6 0" width="5" height="2.5" depth="5" color="#f5f2e9"></a-box>
+      <a-box position="0 6 0" width="5" height="2.5" depth="5"
+        material="src: #tex-lattice-wall"></a-box>
       <!-- 千鳥破風(2階正面の小さな三角屋根アクセント) -->
       <a-cone
         position="0 7.6 2.6" radius-bottom="1.8" radius-top="0"
         height="1.2" segments-radial="4" rotation="0 45 0"
-        color="#2b2b2b"
+        material="src: #tex-roof-tile"
       ></a-cone>
       <!-- 大屋根(黒瓦、寄棟) -->
       <a-cone
         position="0 8 0" radius-bottom="4.5" radius-top="0"
         height="2" segments-radial="4" rotation="0 45 0"
-        color="#2b2b2b"
+        material="src: #tex-roof-tile; repeat: 1.5 1.5"
       ></a-cone>
       <a-text
         value="清水櫓(推定復元・戌亥櫓)"
@@ -730,17 +732,19 @@
       <a-box
         position="0 4 0"
         width="9" height="8" depth="9"
-        color="#8a8478"
+        material="src: #tex-stone-wall; repeat: 2 2"
       ></a-box>
       <!-- 1階(木部) -->
-      <a-box position="0 9.5 0" width="8" height="3" depth="8" color="#5a4632"></a-box>
+      <a-box position="0 9.5 0" width="8" height="3" depth="8"
+        material="src: #tex-wood; repeat: 2 1"></a-box>
       <!-- 2階(白漆喰) -->
-      <a-box position="0 12.3 0" width="6.5" height="2.6" depth="6.5" color="#f5f2e9"></a-box>
+      <a-box position="0 12.3 0" width="6.5" height="2.6" depth="6.5"
+        material="src: #tex-lattice-wall"></a-box>
       <!-- 大屋根(黒瓦) -->
       <a-cone
         position="0 14.2 0" radius-bottom="6" radius-top="0"
         height="2.6" segments-radial="4" rotation="0 45 0"
-        color="#2b2b2b"
+        material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
       <a-text
         value="稲荷櫓(実在・復元済み/遠景)"
@@ -780,7 +784,7 @@
       <a-box
         position="0 5 0"
         width="14" height="10" depth="14"
-        color="#8a8478"
+        material="src: #tex-stone-wall; repeat: 3 3"
       ></a-box>
       <a-text
         value="天守台(石垣のみ現存・建物は無かったとされる)"
