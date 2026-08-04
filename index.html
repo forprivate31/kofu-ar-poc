@@ -111,6 +111,116 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/three.js/build/ar-threex-location-only.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
 
+  <script>
+    // ============================================
+    // 質感テクスチャの自動生成(写真は使わず、コードで模様を描画する)
+    // ============================================
+    // 単純な単色の箱・屋根だけでは情報量が乏しいため、
+    // canvas上に瓦・格子窓・木目のパターンをプログラムで描画し、
+    // それを3Dオブジェクトの表面に貼り付けるテクスチャとして使う。
+    // 実在の写真を複製しているわけではなく、あくまで模様の
+    // 自動生成であるため、著作権上の問題もない。
+
+    function makeCanvasTexture(id, width, height, drawFn) {
+      const canvas = document.createElement('canvas');
+      canvas.id = id;
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.display = 'none';
+      const ctx = canvas.getContext('2d');
+      drawFn(ctx, width, height);
+      document.body.appendChild(canvas);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 瓦模様(黒瓦・本瓦葺きの丸みをイメージした波模様)
+      makeCanvasTexture('tex-roof-tile', 256, 256, (ctx, w, h) => {
+        ctx.fillStyle = '#26282b';
+        ctx.fillRect(0, 0, w, h);
+        const rowH = 20;
+        for (let y = 0; y < h; y += rowH) {
+          for (let x = 0; x < w; x += 24) {
+            const grad = ctx.createRadialGradient(x + 12, y + 6, 1, x + 12, y + 6, 12);
+            grad.addColorStop(0, '#45484d');
+            grad.addColorStop(1, '#1c1e20');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x + 12, y + 6, 11, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      });
+
+      // 格子窓模様(白壁に、縦格子の窓が並ぶイメージ)
+      makeCanvasTexture('tex-lattice-wall', 512, 256, (ctx, w, h) => {
+        ctx.fillStyle = '#f5f2e9';
+        ctx.fillRect(0, 0, w, h);
+        // 窓を3つ均等に配置
+        const winW = 110, winH = 130, gap = (w - winW * 3) / 4;
+        for (let i = 0; i < 3; i++) {
+          const wx = gap + i * (winW + gap);
+          const wy = (h - winH) / 2;
+          ctx.fillStyle = '#3a3a3a';
+          ctx.fillRect(wx, wy, winW, winH);
+          // 縦格子
+          ctx.fillStyle = '#e8e4d8';
+          const barCount = 7;
+          const barW = winW / barCount * 0.4;
+          for (let b = 0; b < barCount; b++) {
+            const bx = wx + (winW / barCount) * b + (winW / barCount - barW) / 2;
+            ctx.fillRect(bx, wy, barW, winH);
+          }
+        }
+      });
+
+      // 木目模様(門扉・柱用)
+      makeCanvasTexture('tex-wood', 256, 256, (ctx, w, h) => {
+        ctx.fillStyle = '#9c5a3c';
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 40; i++) {
+          const y = Math.random() * h;
+          ctx.strokeStyle = `rgba(60, 30, 15, ${0.08 + Math.random() * 0.12})`;
+          ctx.lineWidth = 1 + Math.random() * 2;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          for (let x = 0; x <= w; x += 16) {
+            ctx.lineTo(x, y + (Math.random() - 0.5) * 6);
+          }
+          ctx.stroke();
+        }
+        // 縦板の継ぎ目
+        for (let x = 0; x < w; x += 32) {
+          ctx.strokeStyle = 'rgba(40, 20, 10, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+          ctx.stroke();
+        }
+      });
+
+      // 石垣模様(野面積みをイメージした不揃いな石)
+      makeCanvasTexture('tex-stone-wall', 256, 256, (ctx, w, h) => {
+        ctx.fillStyle = '#7d786c';
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 60; i++) {
+          const x = Math.random() * w;
+          const y = Math.random() * h;
+          const r = 12 + Math.random() * 18;
+          ctx.fillStyle = `rgb(${110 + Math.random()*30}, ${105 + Math.random()*30}, ${95 + Math.random()*25})`;
+          ctx.beginPath();
+          ctx.ellipse(x, y, r, r * 0.7, Math.random() * Math.PI, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(40,38,32,0.5)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      });
+
+      window.__diagPush && window.__diagPush('テクスチャ(瓦・格子窓・木目・石垣)を生成しました');
+    });
+  </script>
+
   <style>
     body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
 
@@ -298,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v18
+    build: v19
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v18]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v19]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v18(videoTexture無効を正式確定。サニティチェック箱はdebugモード限定に)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v19(山手渡櫓門・山手門に瓦/木目/石垣/格子窓テクスチャを追加、屋根形状を2段構成に)');
   </script>
 
   <div id="info-panel">
@@ -435,14 +545,16 @@
       id="yamate-mon-placeholder"
     >
       <!-- 自前の石垣土台 -->
-      <a-box position="0 0.8 0" width="7" height="1.6" depth="4" color="#8a8478"></a-box>
+      <a-box position="0 0.8 0" width="7" height="1.6" depth="4"
+        material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
       <!-- 木部の柱・扉 -->
-      <a-box position="0 2.8 0" width="4" height="3.2" depth="1.4" color="#9c5a3c"></a-box>
+      <a-box position="0 2.8 0" width="4" height="3.2" depth="1.4"
+        material="src: #tex-wood; repeat: 1 1"></a-box>
       <!-- 切妻屋根(黒瓦) -->
       <a-cone
         position="0 4.8 0" radius-bottom="3.2" radius-top="0"
         height="1.4" segments-radial="4" rotation="0 45 0"
-        color="#2b2b2b"
+        material="src: #tex-roof-tile; repeat: 1 1"
       ></a-cone>
       <a-text
         value="山手門(高麗門)"
@@ -468,17 +580,31 @@
         見上げるアングルの写真をもとに石垣を大きく引き上げたが、
         これは遠近感による誇張だった可能性が高いと判断し、
         人物比較というより信頼できる根拠を優先して石垣を低く戻す。
+
+        【Ver.19】現地写真(山手渡櫓門正面)との一致度が高かったため、
+        寸法・比率は維持しつつ、瓦・格子窓・木目・石垣のテクスチャを
+        追加し、質感の情報量を底上げする。屋根は単純な四角錐から、
+        裾が広がる二段構成にし、実物で見られた反りのある
+        シルエットに近づける。
       -->
-      <a-box position="0 0.75 0" width="14" height="1.5" depth="6" color="#8a8478"></a-box>
-      <!-- 1階部分(木部・門扉、人物比較で高さ約2.5倍相当に設定) -->
-      <a-box position="0 2.9 0" width="9" height="3.2" depth="3" color="#9c5a3c"></a-box>
-      <!-- 2階部分(白漆喰の壁、格子窓は簡略化) -->
-      <a-box position="0 5.9 0" width="10" height="2.6" depth="3.6" color="#f5f2e9"></a-box>
-      <!-- 寄棟屋根(黒瓦) -->
+      <a-box position="0 0.75 0" width="14" height="1.5" depth="6"
+        material="src: #tex-stone-wall; repeat: 3 1"></a-box>
+      <!-- 1階部分(木部・門扉) -->
+      <a-box position="0 2.9 0" width="9" height="3.2" depth="3"
+        material="src: #tex-wood; repeat: 2 1"></a-box>
+      <!-- 2階部分(白漆喰の壁+格子窓) -->
+      <a-box position="0 5.9 0" width="10" height="2.6" depth="3.6"
+        material="src: #tex-lattice-wall"></a-box>
+      <!-- 寄棟屋根(黒瓦・二段構成で裾の反りを表現) -->
       <a-cone
-        position="0 7.8 0" radius-bottom="7.5" radius-top="0"
-        height="2.4" segments-radial="4" rotation="0 45 0"
-        color="#2b2b2b"
+        position="0 7.5 0" radius-bottom="8.2" radius-top="6.8"
+        height="0.5" segments-radial="4" rotation="0 45 0"
+        material="src: #tex-roof-tile; repeat: 2 2"
+      ></a-cone>
+      <a-cone
+        position="0 8.7 0" radius-bottom="6.8" radius-top="0"
+        height="1.9" segments-radial="4" rotation="0 45 0"
+        material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
       <a-text
         value="山手渡櫓門(柳沢吉保時代)"
