@@ -408,21 +408,21 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v20
+    build: v21
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v20]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v21]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v20(清水櫓・稲荷櫓・天守台にもテクスチャを展開。全オブジェクトの質感を統一)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v21(焔硝蔵・武家屋敷2棟・米蔵を追加。確度に応じてラベルを明記)');
   </script>
 
   <div id="info-panel">
     <strong>甲府城AR PoC(近景・遠景・導線 統合版)</strong><br>
-    近景:清水櫓(推定復元)/ 境界ライン(象徴表示)<br>
-    遠景:稲荷櫓(実在・確定)<br>
+    近景:清水櫓(推定復元)/ 武家屋敷・米蔵(推定・一般的イメージ)/ 境界ライン(象徴表示)<br>
+    遠景:稲荷櫓(実在・確定)/ 天守台(石垣のみ現存)/ 焔硝蔵(発掘調査+文献で確認)<br>
     導線:山手御門(実物への案内)<br>
     柳沢吉保時代(1700年頃)を想定。距離表示・仮モデルでの精度確認テストです。
   </div>
@@ -795,6 +795,132 @@
         side="double"
       ></a-text>
     </a-entity>
+
+    <!--
+      ============================================
+      焔硝蔵(火薬庫)(遠景・確度高い)
+      ============================================
+      史実:稲荷曲輪の西側にあったとされる火薬庫。発掘調査で
+      検出され、かつ『楽只堂年録』(柳沢吉保時代の記録)にも
+      記載があり、両者が一致することから確度の高い建物と判断。
+      ただし17世紀の絵図には見られないため、柳沢吉保時代
+      またはそれ以降に設けられたと考えられる。
+
+      【確度:建物の実在・時代=確定に近い/座標=推定(稲荷曲輪の
+      西側という記述をもとに、稲荷櫓付近から西寄りに象徴配置)】
+
+      外観:火薬を扱う性質上、装飾性のない実務的な土蔵造りを
+      想定。白漆喰壁+簡素な切妻屋根という、他の櫓建築とは
+      異なる、控えめな外観にしている。
+    -->
+    <a-entity
+      gps-projected-entity-place="latitude: 35.666100; longitude: 138.571400;"
+      id="enshoguda-placeholder"
+    >
+      <a-box position="0 0.5 0" width="6" height="1" depth="5"
+        material="src: #tex-stone-wall; repeat: 1 1"></a-box>
+      <a-box position="0 2.3 0" width="5.5" height="2.6" depth="4.5"
+        material="src: #tex-lattice-wall; repeat: 0.3 1"></a-box>
+      <a-cone
+        position="0 4.1 0" radius-bottom="4.2" radius-top="0"
+        height="1.6" segments-radial="4" rotation="0 45 0"
+        material="src: #tex-roof-tile"
+      ></a-cone>
+      <a-text
+        value="焔硝蔵(火薬庫・発掘調査と楽只堂年録で確認)"
+        position="0 5.4 0"
+        align="center"
+        color="#a8e6a1"
+        width="11"
+        side="double"
+      ></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      武家屋敷・蔵(近景・推定/一般的イメージ)
+      ============================================
+      史実:甲府城の二ノ堀に囲まれた武家地(内郭)には、甲府勤番
+      役宅・勤番士の屋敷・年貢米を集める米蔵・御花畑・薬園・
+      徽典館(学問所)があったことが記録されている。清水曲輪も
+      この武家地の一部だった。
+
+      ただし、1棟ごとの正確な位置・形状を示す絵図は今回未特定。
+      そのため、ここに配置する建物は「特定の実在建物の復元」
+      ではなく、「この地区に一般的にあった建物種別(屋敷・蔵)の
+      イメージ」として、推定・象徴的に配置する。
+
+      【確度:建物種別・地区としての実在=確定/個別の位置・形状=創作補完】
+      ラベルに「推定・一般的イメージ」である旨を明記する。
+    -->
+    <a-entity
+      gps-projected-entity-place="latitude: 35.667950; longitude: 138.569550;"
+      id="bukeyashiki-1-placeholder"
+    >
+      <a-box position="0 0.3 0" width="5" height="0.6" depth="4"
+        material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.8 0" width="4.5" height="2.4" depth="3.5"
+        material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone
+        position="0 3.4 0" radius-bottom="3.4" radius-top="0"
+        height="1.4" segments-radial="4" rotation="0 45 0"
+        material="src: #tex-roof-tile"
+      ></a-cone>
+      <a-text
+        value="武家屋敷(推定・一般的イメージ)"
+        position="0 4.6 0"
+        align="center"
+        color="#ffd166"
+        width="9"
+        side="double"
+      ></a-text>
+    </a-entity>
+
+    <a-entity
+      gps-projected-entity-place="latitude: 35.667820; longitude: 138.569850;"
+      id="bukeyashiki-2-placeholder"
+    >
+      <a-box position="0 0.3 0" width="4.5" height="0.6" depth="3.5"
+        material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.6 0" width="4" height="2" depth="3"
+        material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone
+        position="0 3 0" radius-bottom="3" radius-top="0"
+        height="1.2" segments-radial="4" rotation="0 45 0"
+        material="src: #tex-roof-tile"
+      ></a-cone>
+      <a-text
+        value="武家屋敷(推定・一般的イメージ)"
+        position="0 4 0"
+        align="center"
+        color="#ffd166"
+        width="9"
+        side="double"
+      ></a-text>
+    </a-entity>
+
+    <a-entity
+      gps-projected-entity-place="latitude: 35.668000; longitude: 138.569900;"
+      id="kura-1-placeholder"
+    >
+      <a-box position="0 0.3 0" width="4" height="0.6" depth="3.5"
+        material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 2 0" width="3.5" height="3.4" depth="3"
+        material="src: #tex-lattice-wall; repeat: 0.2 1"></a-box>
+      <a-cone
+        position="0 4.2 0" radius-bottom="2.7" radius-top="0"
+        height="1.1" segments-radial="4" rotation="0 45 0"
+        material="src: #tex-roof-tile"
+      ></a-cone>
+      <a-text
+        value="米蔵(推定・一般的イメージ)"
+        position="0 5.2 0"
+        align="center"
+        color="#ffd166"
+        width="9"
+        side="double"
+      ></a-text>
+    </a-entity>
   </a-scene>
 
   <script>
@@ -889,14 +1015,22 @@
         'yamate-mon-placeholder',
         'shimizu-yagura-placeholder',
         'inari-yagura-placeholder',
-        'tenshudai-placeholder'
+        'tenshudai-placeholder',
+        'enshoguda-placeholder',
+        'bukeyashiki-1-placeholder',
+        'bukeyashiki-2-placeholder',
+        'kura-1-placeholder'
       ];
       const targetLabels = {
         'yamate-watariyagura-mon-placeholder': '山手渡櫓門(導線)',
         'yamate-mon-placeholder': '山手門(導線)',
         'shimizu-yagura-placeholder': '清水櫓(近景)',
         'inari-yagura-placeholder': '稲荷櫓(遠景)',
-        'tenshudai-placeholder': '天守台(遠景)'
+        'tenshudai-placeholder': '天守台(遠景)',
+        'enshoguda-placeholder': '焔硝蔵(遠景)',
+        'bukeyashiki-1-placeholder': '武家屋敷1(近景・推定)',
+        'bukeyashiki-2-placeholder': '武家屋敷2(近景・推定)',
+        'kura-1-placeholder': '米蔵(近景・推定)'
       };
 
       // 距離表示:コンポーネント固有の「distance」プロパティに頼るのをやめ、
@@ -937,7 +1071,11 @@
         'yamate-mon-placeholder',
         'shimizu-yagura-placeholder',
         'inari-yagura-placeholder',
-        'tenshudai-placeholder'
+        'tenshudai-placeholder',
+        'enshoguda-placeholder',
+        'bukeyashiki-1-placeholder',
+        'bukeyashiki-2-placeholder',
+        'kura-1-placeholder'
       ];
 
       function buildDiagText() {
