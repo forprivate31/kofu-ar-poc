@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v21
+    build: v22
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v21]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v22]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v21(焔硝蔵・武家屋敷2棟・米蔵を追加。確度に応じてラベルを明記)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v22(土塀・堀の水面・人物シルエットを追加し、密度と一体感を強化)');
   </script>
 
   <div id="info-panel">
@@ -920,6 +920,79 @@
         width="9"
         side="double"
       ></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      土塀(近景・構成上の演出・象徴表示)
+      ============================================
+      史実:甲府城の武家地(内郭)は塀・堀で区画されていたことが
+      記録されている。ただし、清水櫓・武家屋敷・米蔵の間を実際に
+      結んでいた塀の正確な経路を示す絵図は、今回未特定。
+
+      そのため、これらの建物群を「塀で区切られた一区画だった」と
+      いう一般的な史実を伝えるための、構成上の演出として、
+      建物間を緩やかに結ぶ塀を象徴的に配置する。
+      個々の塀の位置・長さの正確性は主張しない。
+
+      【確度:武家地が塀で区画されていたこと=確定/塀の個別経路=創作補完】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667930; longitude: 138.569620;">
+      <a-box position="0 1 0" width="10" height="1.8" depth="0.4"
+        rotation="0 60 0" material="src: #tex-stone-wall; repeat: 2 1"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667880; longitude: 138.569750;">
+      <a-box position="0 1 0" width="9" height="1.8" depth="0.4"
+        rotation="0 20 0" material="src: #tex-stone-wall; repeat: 2 1"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667960; longitude: 138.569820;">
+      <a-box position="0 1 0" width="8" height="1.8" depth="0.4"
+        rotation="0 100 0" material="src: #tex-stone-wall; repeat: 2 1"></a-box>
+    </a-entity>
+
+    <!--
+      ============================================
+      堀の水面(近景・象徴表示)
+      ============================================
+      史実:武家地(内郭)は二ノ堀に囲まれていたことが記録されている。
+      正確な堀の位置・幅を示す絵図は今回未特定のため、既存の
+      境界ラインと同じ地点に、水面をイメージした半透明の
+      青緑色の面を象徴的に重ねる。
+
+      【確度:堀の存在=確定/正確な位置・形状=推定・象徴表示】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569900;">
+      <a-box
+        width="60" height="0.15" depth="6"
+        rotation="0 30 0"
+        color="#3f7a7a"
+        opacity="0.45"
+        position="0 0.05 0"
+      ></a-box>
+    </a-entity>
+
+    <!--
+      ============================================
+      人物シルエット(近景・一般的イメージ)
+      ============================================
+      史実:特定の人物・出来事の記録ではない。江戸期の城下町に
+      武士・町人が生活していたという、一般的な史実を伝えるための
+      演出。単純な円柱+球の組み合わせによる、抽象的な
+      シルエット表現とし、実在の人物を装わないようにしている。
+
+      【確度:創作補完(一般的な生活風景の演出)】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667910; longitude: 138.569680;">
+      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#3a3a3a"></a-cylinder>
+      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
+      <a-text value="(当時の人々のイメージ・推定)" position="0 2.4 0" align="center"
+        color="#ffd166" width="7" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667200; longitude: 138.570700;">
+      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#5a4632"></a-cylinder>
+      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
+      <a-text value="(当時の人々のイメージ・推定)" position="0 2.4 0" align="center"
+        color="#ffd166" width="7" side="double"></a-text>
     </a-entity>
   </a-scene>
 
