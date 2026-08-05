@@ -408,21 +408,21 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v22
+    build: v23
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v22]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v23]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v22(土塀・堀の水面・人物シルエットを追加し、密度と一体感を強化)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v23(実在確認済みの櫓4棟を追加、武家地の建物群を6棟増量、人物も追加)');
   </script>
 
   <div id="info-panel">
     <strong>甲府城AR PoC(近景・遠景・導線 統合版)</strong><br>
-    近景:清水櫓(推定復元)/ 武家屋敷・米蔵(推定・一般的イメージ)/ 境界ライン(象徴表示)<br>
-    遠景:稲荷櫓(実在・確定)/ 天守台(石垣のみ現存)/ 焔硝蔵(発掘調査+文献で確認)<br>
+    近景:清水櫓+武家地の建物群・人々(推定・一般的イメージ)/ 境界ライン・堀(象徴表示)<br>
+    遠景:稲荷櫓・本丸櫓・月見櫓・数寄屋櫓・太鼓櫓(実在・確定)/ 天守台(石垣のみ現存)/ 焔硝蔵(発掘調査+文献で確認)<br>
     導線:山手御門(実物への案内)<br>
     柳沢吉保時代(1700年頃)を想定。距離表示・仮モデルでの精度確認テストです。
   </div>
@@ -993,6 +993,126 @@
       <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
       <a-text value="(当時の人々のイメージ・推定)" position="0 2.4 0" align="center"
         color="#ffd166" width="7" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      実在確認済みの追加の櫓4棟(遠景・確度高い)
+      ============================================
+      史実:稲荷櫓・清水櫓以外にも、以下の櫓の実在が記録されている。
+      いずれも名称・大まかな位置(方角)が文献上確認できる、
+      「一般的なイメージ」ではない具体的な建造物。
+
+      - 本丸櫓(本丸、二重櫓、古写真あり)
+      - 月見櫓(二の丸南西部、三重櫓)
+      - 数寄屋櫓(別名辰巳櫓、二重櫓、古写真あり)
+      - 太鼓櫓(柳門内)
+
+      【確度:建物の実在・大まかな方角=確定/正確な座標=推定(方角の
+      記述をもとに、天守台・稲荷櫓を基準とした象徴配置)】
+      各建物の詳細な形状(層数以外)は、稲荷櫓と同型の外観を
+      流用した推定復元である。
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.571900;">
+      <a-box position="0 3 0" width="7" height="6" depth="7" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
+      <a-box position="0 7 0" width="6" height="2.4" depth="6" material="src: #tex-wood; repeat: 1.5 1"></a-box>
+      <a-box position="0 9 0" width="5" height="2" depth="5" material="src: #tex-lattice-wall"></a-box>
+      <a-cone position="0 10.5 0" radius-bottom="4.5" radius-top="0" height="2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <a-text value="本丸櫓(実在・二重櫓)" position="0 12.5 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.665300; longitude: 138.571100;">
+      <a-box position="0 3 0" width="8" height="6" depth="8" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
+      <a-box position="0 7.2 0" width="7" height="2.4" depth="7" material="src: #tex-wood; repeat: 1.5 1"></a-box>
+      <a-box position="0 9.4 0" width="6" height="2.2" depth="6" material="src: #tex-lattice-wall"></a-box>
+      <a-box position="0 11.3 0" width="5" height="2" depth="5" material="src: #tex-wood; repeat: 1 1"></a-box>
+      <a-cone position="0 13 0" radius-bottom="4.2" radius-top="0" height="2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <a-text value="月見櫓(実在・三重櫓)" position="0 15 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.572300;">
+      <a-box position="0 2.5 0" width="6" height="5" depth="6" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
+      <a-box position="0 6 0" width="5" height="2" depth="5" material="src: #tex-wood; repeat: 1.5 1"></a-box>
+      <a-box position="0 7.8 0" width="4.2" height="1.8" depth="4.2" material="src: #tex-lattice-wall"></a-box>
+      <a-cone position="0 9.2 0" radius-bottom="3.8" radius-top="0" height="1.8" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <a-text value="数寄屋櫓(実在・辰巳櫓)" position="0 11 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.570900;">
+      <a-box position="0 2 0" width="5" height="4" depth="5" material="src: #tex-stone-wall; repeat: 1.2 1.2"></a-box>
+      <a-box position="0 4.8 0" width="4.2" height="1.8" depth="4.2" material="src: #tex-wood; repeat: 1.2 1"></a-box>
+      <a-cone position="0 6.2 0" radius-bottom="3.2" radius-top="0" height="1.6" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
+      <a-text value="太鼓櫓(実在・柳門内)" position="0 7.8 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      武家地の建物群・増量(近景・推定/一般的イメージ)
+      ============================================
+      史実:武家地が屋敷・蔵で密に建て詰まっていたこと自体は
+      確実な史実。個々の建物の正確な位置までは分からないため、
+      これまでと同じ「推定・一般的イメージ」という誠実な位置づけ
+      のまま、数を大幅に増やし、密度のある街並みとして表現する。
+      「棟数を増やすこと」自体は、忠実度の方針(5章)に反しない
+      (個々の位置精度を偽って主張しない限り、量を増やすことは
+      史実の捏造にはあたらない)。
+
+      【確度:地区として建て詰まっていたこと=確定/個別棟数・配置=創作補完】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667750; longitude: 138.569500;">
+      <a-box position="0 0.25 0" width="3.5" height="0.5" depth="3" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.5 0" width="3" height="2" depth="2.5" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 2.8 0" radius-bottom="2.3" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667700; longitude: 138.569680;">
+      <a-box position="0 0.25 0" width="3.2" height="0.5" depth="2.8" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.4 0" width="2.8" height="1.8" depth="2.4" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 2.6 0" radius-bottom="2.1" radius-top="0" height="1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667650; longitude: 138.569900;">
+      <a-box position="0 0.25 0" width="3.8" height="0.5" depth="3.2" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.6 0" width="3.3" height="2.2" depth="2.7" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 3 0" radius-bottom="2.5" radius-top="0" height="1.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668050; longitude: 138.569600;">
+      <a-box position="0 0.25 0" width="3" height="0.5" depth="2.6" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.3 0" width="2.6" height="1.6" depth="2.2" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 2.3 0" radius-bottom="1.9" radius-top="0" height="0.9" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668130; longitude: 138.569780;">
+      <a-box position="0 0.25 0" width="3.4" height="0.5" depth="3" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.5 0" width="3" height="2" depth="2.5" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 2.8 0" radius-bottom="2.3" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667600; longitude: 138.570050;">
+      <a-box position="0 0.25 0" width="3.2" height="0.5" depth="2.8" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.4 0" width="2.8" height="1.8" depth="2.4" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 2.6 0" radius-bottom="2.1" radius-top="0" height="1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667990; longitude: 138.570100;">
+      <a-box position="0 0.25 0" width="3" height="0.5" depth="2.6" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.3 0" width="2.6" height="1.6" depth="2.2" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 2.3 0" radius-bottom="1.9" radius-top="0" height="0.9" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+
+    <!-- 建物群全体の説明ラベル(誤解を避けるため1箇所に集約) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667850; longitude: 138.569750;">
+      <a-text value="この一帯の建物群は、武家地の密度を伝える推定・一般的イメージです"
+        position="0 5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!-- 人物シルエットも増量(一般的イメージ) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667780; longitude: 138.569650;">
+      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#4a5a3a"></a-cylinder>
+      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667930; longitude: 138.569880;">
+      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#6a3a3a"></a-cylinder>
+      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667250; longitude: 138.570600;">
+      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#3a3a5a"></a-cylinder>
+      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
     </a-entity>
   </a-scene>
 
