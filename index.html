@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v24
+    build: v25
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v24]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v25]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v24(薮田重守屋敷・勤番山手役宅・3つの小路を追加し、空白方角を史実に基づき埋めた)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v25(御納戸町/愛宕町/元城屋町/三念坂/追加の町家群と人物を追加し、さらに密度を強化)');
   </script>
 
   <div id="info-panel">
@@ -1156,6 +1156,79 @@
     <a-entity gps-projected-entity-place="latitude: 35.667850; longitude: 138.569750;">
       <a-text value="この一帯の建物群は、武家地の密度を伝える推定・一般的イメージです"
         position="0 5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      町人地(御納戸町・愛宕町・元城屋町)(近景・推定/一般的イメージ)
+      ============================================
+      史実:「北口(甲府市)」の記録によれば、北口地域には町人地
+      だった御納戸町・愛宕町・元城屋町(の一部)も含まれていた。
+      御納戸町は、江戸期に納戸役の組屋敷(役人の集合住宅)が
+      あったことに由来する町名。
+
+      個々の店舗・住居の正確な配置は不明のため、「町人地としての
+      一般的な町並みイメージ」として、武家屋敷とは異なる、
+      商家・町家らしい外観(軒の低い、間口の狭い町家造り)で
+      象徴的に配置する。
+
+      【確度:町の実在・名称=確定/個別建物の配置=創作補完】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.668350; longitude: 138.570100;">
+      <a-box position="0 0.2 0" width="3" height="0.4" depth="6" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.4 0" width="2.6" height="2.4" depth="5.6" material="src: #tex-wood; repeat: 1 2"></a-box>
+      <a-box position="0 2.9 0" width="3.2" height="0.3" depth="6.2" material="src: #tex-roof-tile; repeat: 1 2"></a-box>
+      <a-text value="御納戸町(町人地・納戸役組屋敷に由来/推定配置)"
+        position="0 4 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.667350; longitude: 138.570550;">
+      <a-box position="0 0.2 0" width="3" height="0.4" depth="5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.3 0" width="2.6" height="2.2" depth="4.6" material="src: #tex-wood; repeat: 1 1.5"></a-box>
+      <a-box position="0 2.6 0" width="3.2" height="0.3" depth="5.2" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
+      <a-text value="愛宕町(町人地/推定配置)"
+        position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.667050; longitude: 138.569900;">
+      <a-box position="0 0.2 0" width="3" height="0.4" depth="5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.3 0" width="2.6" height="2.2" depth="4.6" material="src: #tex-wood; repeat: 1 1.5"></a-box>
+      <a-box position="0 2.6 0" width="3.2" height="0.3" depth="5.2" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
+      <a-text value="元城屋町(町人地/推定配置)"
+        position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!-- 三念坂(近景・確度高い:坂道の実在・名称は確定、ルートは推定) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667900; longitude: 138.570350;">
+      <a-box width="20" height="0.1" depth="3" rotation="0 55 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
+      <a-text value="三念坂(江戸期の坂道/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!-- 追加の町家群(近景・推定・一般的イメージ、密度をさらに底上げ) -->
+    <a-entity gps-projected-entity-place="latitude: 35.668280; longitude: 138.569780;">
+      <a-box position="0 0.2 0" width="2.6" height="0.4" depth="4.5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.2 0" width="2.2" height="2" depth="4.1" material="src: #tex-wood; repeat: 1 1.5"></a-box>
+      <a-box position="0 2.4 0" width="2.8" height="0.3" depth="4.7" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667450; longitude: 138.570800;">
+      <a-box position="0 0.2 0" width="2.6" height="0.4" depth="4.2" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.2 0" width="2.2" height="2" depth="3.8" material="src: #tex-wood; repeat: 1 1.5"></a-box>
+      <a-box position="0 2.4 0" width="2.8" height="0.3" depth="4.4" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666900; longitude: 138.570150;">
+      <a-box position="0 0.2 0" width="2.4" height="0.4" depth="4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.1 0" width="2" height="1.8" depth="3.6" material="src: #tex-wood; repeat: 1 1.5"></a-box>
+      <a-box position="0 2.2 0" width="2.6" height="0.3" depth="4.2" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
+    </a-entity>
+
+    <!-- 追加の人物シルエット(町人地の賑わいを表現) -->
+    <a-entity gps-projected-entity-place="latitude: 35.668300; longitude: 138.570000;">
+      <a-cylinder position="0 0.85 0" radius="0.24" height="1.4" color="#7a5a3a"></a-cylinder>
+      <a-sphere position="0 1.75 0" radius="0.21" color="#d8c3a5"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667400; longitude: 138.570600;">
+      <a-cylinder position="0 0.85 0" radius="0.24" height="1.4" color="#3a5a4a"></a-cylinder>
+      <a-sphere position="0 1.75 0" radius="0.21" color="#d8c3a5"></a-sphere>
     </a-entity>
 
     <!-- 人物シルエットも増量(一般的イメージ) -->
