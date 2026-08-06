@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v23
+    build: v24
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v23]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v24]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v23(実在確認済みの櫓4棟を追加、武家地の建物群を6棟増量、人物も追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v24(薮田重守屋敷・勤番山手役宅・3つの小路を追加し、空白方角を史実に基づき埋めた)');
   </script>
 
   <div id="info-panel">
@@ -1043,6 +1043,63 @@
       <a-box position="0 4.8 0" width="4.2" height="1.8" depth="4.2" material="src: #tex-wood; repeat: 1.2 1"></a-box>
       <a-cone position="0 6.2 0" radius-bottom="3.2" radius-top="0" height="1.6" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
       <a-text value="太鼓櫓(実在・柳門内)" position="0 7.8 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      薮田重守屋敷・甲府勤番山手役宅(近景・確度中)
+      ============================================
+      史実:「北口(甲府市)」の記録によれば、北口地域には
+      柳沢城主時代の家老・薮田重守の屋敷地と、甲府勤番山手役宅が
+      存在した。人物名・役職名は具体的に特定できるが、
+      「柳沢家老屋敷や甲府勤番役宅の所在地は不明である」と
+      明記されているため、座標は象徴的な配置とする。
+
+      これまでの「一般的な武家屋敷」より一段具体的な、実在の
+      人物・役職に紐づく建物として区別する。北口地域内の、
+      これまで建物を置いていなかった方角に配置し、空白を埋める。
+
+      【確度:人物・役職の実在=確定/建物の所在地=不明のため象徴配置】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.668250; longitude: 138.570300;">
+      <a-box position="0 0.4 0" width="6" height="0.8" depth="5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 2.3 0" width="5.3" height="3" depth="4.3" material="src: #tex-wood; repeat: 1.3 1"></a-box>
+      <a-cone position="0 4.2 0" radius-bottom="3.8" radius-top="0" height="1.5" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-text value="家老・薮田重守屋敷(柳沢時代/所在地不明のため象徴配置)"
+        position="0 5.4 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.667400; longitude: 138.570200;">
+      <a-box position="0 0.3 0" width="4.5" height="0.6" depth="4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.7 0" width="4" height="2.2" depth="3.5" material="src: #tex-wood; repeat: 1.2 1"></a-box>
+      <a-cone position="0 3.1 0" radius-bottom="2.9" radius-top="0" height="1.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-text value="甲府勤番山手役宅(所在地不明のため象徴配置)"
+        position="0 4.2 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      小路(道)の表示:桜小路・先手小路・森下小路(近景・確度高い)
+      ============================================
+      史実:北口地域には、明治期にそれぞれ弥生町・水門町・
+      日向町へ改称される前の江戸期の小路(道)として、
+      桜小路・先手小路・森下小路の名が記録されている。
+      正確なルートまでは今回未特定のため、方角を示す象徴的な
+      帯として、これまで建物を置いていなかった方角に配置する。
+
+      【確度:小路の実在・名称=確定/正確なルート=推定・象徴表示】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.668300; longitude: 138.569900;">
+      <a-box width="30" height="0.1" depth="3" rotation="0 80 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
+      <a-text value="桜小路(江戸期の道・現在の弥生町/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667500; longitude: 138.569400;">
+      <a-box width="30" height="0.1" depth="3" rotation="0 10 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
+      <a-text value="先手小路(江戸期の道・現在の水門町/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667100; longitude: 138.570400;">
+      <a-box width="25" height="0.1" depth="3" rotation="0 130 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
+      <a-text value="森下小路(江戸期の道・現在の日向町/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
     </a-entity>
 
     <!--
