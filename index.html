@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v26
+    build: v27
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v26]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v27]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v26(稲荷曲輪門・鍛冶曲輪門(実物復元済み)・数寄屋曲輪の土塀を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v27(山手御門の寸法を公式データ(12m/14m、6m/5m)に合わせ調整。番所を追加)');
   </script>
 
   <div id="info-panel">
@@ -544,26 +544,40 @@
       gps-projected-entity-place="latitude: 35.667180; longitude: 138.570780;"
       id="yamate-mon-placeholder"
     >
-      <!-- 自前の石垣土台 -->
-      <a-box position="0 0.8 0" width="7" height="1.6" depth="4"
+      <!-- 自前の石垣土台(【Ver.27】公式資料の幅約5mに合わせて微調整) -->
+      <a-box position="0 0.8 0" width="5.5" height="1.6" depth="4"
         material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
       <!-- 木部の柱・扉 -->
-      <a-box position="0 2.8 0" width="4" height="3.2" depth="1.4"
+      <a-box position="0 2.8 0" width="3.5" height="3.2" depth="1.4"
         material="src: #tex-wood; repeat: 1 1"></a-box>
       <!-- 切妻屋根(黒瓦) -->
       <a-cone
-        position="0 4.8 0" radius-bottom="3.2" radius-top="0"
-        height="1.4" segments-radial="4" rotation="0 45 0"
+        position="0 4.9 0" radius-bottom="2.9" radius-top="0"
+        height="1.6" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 1 1"
       ></a-cone>
       <a-text
-        value="山手門(高麗門)"
-        position="0 6 0"
+        value="山手門(高麗門・高さ約6m)"
+        position="0 6.2 0"
         align="center"
         color="#ffffff"
         width="10"
         side="double"
       ></a-text>
+    </a-entity>
+
+    <!--
+      番所(見張り小屋)(近景・確定:実在の記録あり)
+      史実:「甲府城」Wikipediaによれば、山手門には番所が
+      設置されていたことが記録されている。小規模な建物のため、
+      詳細な形状は簡略化した推定復元とする。
+      【確度:実在=確定/形状・座標=推定】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667100; longitude: 138.570820;">
+      <a-box position="0 0.2 0" width="2" height="0.4" depth="2" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1 0" width="1.7" height="1.2" depth="1.7" material="src: #tex-wood"></a-box>
+      <a-cone position="0 1.9 0" radius-bottom="1.5" radius-top="0" height="0.8" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-text value="番所(山手門の見張り小屋・実在)" position="0 2.6 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
     </a-entity>
 
     <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
@@ -586,29 +600,32 @@
         追加し、質感の情報量を底上げする。屋根は単純な四角錐から、
         裾が広がる二段構成にし、実物で見られた反りのある
         シルエットに近づける。
+
+        【Ver.27】公式資料により「高さ約12m・幅約14m」という寸法が
+        確認できたため、これに合わせて高さを微調整(幅は既に一致)。
       -->
-      <a-box position="0 0.75 0" width="14" height="1.5" depth="6"
+      <a-box position="0 1 0" width="14" height="2" depth="6"
         material="src: #tex-stone-wall; repeat: 3 1"></a-box>
       <!-- 1階部分(木部・門扉) -->
-      <a-box position="0 2.9 0" width="9" height="3.2" depth="3"
+      <a-box position="0 4 0" width="9" height="4" depth="3"
         material="src: #tex-wood; repeat: 2 1"></a-box>
       <!-- 2階部分(白漆喰の壁+格子窓) -->
-      <a-box position="0 5.9 0" width="10" height="2.6" depth="3.6"
+      <a-box position="0 7.55 0" width="10" height="3.1" depth="3.6"
         material="src: #tex-lattice-wall"></a-box>
       <!-- 寄棟屋根(黒瓦・二段構成で裾の反りを表現) -->
       <a-cone
-        position="0 7.5 0" radius-bottom="8.2" radius-top="6.8"
+        position="0 9.35 0" radius-bottom="8.2" radius-top="6.8"
         height="0.5" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
       <a-cone
-        position="0 8.7 0" radius-bottom="6.8" radius-top="0"
-        height="1.9" segments-radial="4" rotation="0 45 0"
+        position="0 10.8 0" radius-bottom="6.8" radius-top="0"
+        height="2.4" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
       <a-text
-        value="山手渡櫓門(柳沢吉保時代)"
-        position="0 10.8 0"
+        value="山手渡櫓門(柳沢吉保時代・高さ約12m)"
+        position="0 13.2 0"
         align="center"
         color="#ffffff"
         width="12"
