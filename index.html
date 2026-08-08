@@ -401,22 +401,130 @@
       font-size: 11px;
       font-family: monospace;
     }
+
+    /* 忠実度の常設バッジ */
+    #fidelity-badge {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: rgba(0,0,0,0.55);
+      color: #ffe08a;
+      border: 1px solid #ffe08a;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-family: sans-serif;
+    }
+
+    #fidelity-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2001;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #fidelity-modal.visible {
+      display: flex;
+    }
+
+    #fidelity-modal .card {
+      background: #fffdf5;
+      border-radius: 12px;
+      padding: 22px 20px;
+      max-width: 380px;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: left;
+      line-height: 1.7;
+      color: #2a2a2a;
+      font-size: 13.5px;
+    }
+
+    #fidelity-modal h2 {
+      font-size: 16px;
+      margin: 0 0 10px;
+    }
+
+    #fidelity-modal table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 12.5px;
+    }
+
+    #fidelity-modal th, #fidelity-modal td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    #fidelity-modal th {
+      background: #f0ead8;
+    }
+
+    #fidelity-close {
+      margin-top: 14px;
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      background: #b5342a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
 
   <button id="info-toggle">ℹ️</button>
 
+  <button id="fidelity-badge">📜 推定復元について</button>
+
+  <div id="fidelity-modal">
+    <div class="card">
+      <h2>この復元について(忠実度の方針)</h2>
+      <p>
+        本ARは、柳沢吉保時代(1700年頃)の甲府城・城下町を、
+        史料に基づいて再現を試みたものです。ただし、すべてが
+        同じ確からしさで再現されているわけではありません。
+        表示される各オブジェクトは、以下の3段階の確度に
+        分類されています。
+      </p>
+      <table>
+        <tr><th>確度</th><th>意味</th></tr>
+        <tr><td><strong>確定</strong></td><td>発掘調査・現存する建造物・複数の史料が一致する箇所</td></tr>
+        <tr><td><strong>推定</strong></td><td>史料はあるが確証が薄い、または類似建造物・他城の
+          事例から類推した箇所(例:堀の幅、建物の一部の座標)</td></tr>
+        <tr><td><strong>創作補完</strong></td><td>史料が乏しく、視覚的な一体感を出すために最小限
+          補った箇所(例:一般的な武家屋敷・町家のイメージ、
+          当時の人々のシルエット)</td></tr>
+      </table>
+      <p>
+        各オブジェクトのラベルには、できる限りこの確度を
+        明記しています。本ARは学術的な完全性よりも、史実に
+        反しない範囲での体験の分かりやすさを優先しています。
+        内容は今後の調査により随時更新されます。
+      </p>
+      <button id="fidelity-close">閉じる</button>
+    </div>
+  </div>
+
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v30
+    build: v31
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v30]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v31]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v30(近景・遠景を繋ぐ塀5本を追加し連続性を強化。銅門跡・水溜・石切場を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v31(忠実度の常設バッジを追加。確定/推定/創作補完の区分をいつでも確認できるように)');
   </script>
 
   <div id="info-panel">
@@ -1644,6 +1752,14 @@
 
       document.getElementById('diag-close').addEventListener('click', () => {
         document.getElementById('diag-panel').classList.remove('visible');
+      });
+
+      // 忠実度バッジ(常時表示・AR開始前後を問わず機能する)
+      document.getElementById('fidelity-badge').addEventListener('click', () => {
+        document.getElementById('fidelity-modal').classList.add('visible');
+      });
+      document.getElementById('fidelity-close').addEventListener('click', () => {
+        document.getElementById('fidelity-modal').classList.remove('visible');
       });
 
       setInterval(() => {
