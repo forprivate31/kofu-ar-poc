@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v29
+    build: v30
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v29]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v30]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v29(堀の幅を4-6m→約20mに修正。他城参考の推定値であることを明記)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v30(近景・遠景を繋ぐ塀5本を追加し連続性を強化。銅門跡・水溜・石切場を追加)');
   </script>
 
   <div id="info-panel">
@@ -1314,6 +1314,64 @@
     <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.571500;">
       <a-box width="18" height="1.6" depth="0.4" rotation="0 70 0" material="src: #tex-lattice-wall; repeat: 3 1" position="0 0.8 0"></a-box>
       <a-text value="数寄屋曲輪の土塀(実在・推定ルート)" position="0 2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      連結用の塀(近景〜遠景クラスターの連続性強化)
+      ============================================
+      史実:「史跡範囲」の図(現地案内板)によれば、城の外周は
+      堀・石垣・土塀で途切れることなく一周していたことが
+      分かる。これまでの実装は、近景(武家地)と遠景(城郭中心部)
+      のクラスターが離れて配置され、間が途切れていたため、
+      この連続性を補うための塀を追加する。
+
+      正確なルートは示す絵図の座標を持たないため、2つの
+      クラスターを結ぶ、象徴的な経路として配置する。
+
+      【確度:外周が連続していたこと=確定(現地案内板の史跡範囲図)/
+      経路の正確な位置=推定・象徴表示】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.666600; longitude: 138.570700;">
+      <a-box width="16" height="1.5" depth="0.4" rotation="0 40 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.570500;">
+      <a-box width="16" height="1.5" depth="0.4" rotation="0 50 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.570300;">
+      <a-box width="16" height="1.5" depth="0.4" rotation="0 30 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665900; longitude: 138.571300;">
+      <a-box width="16" height="1.5" depth="0.4" rotation="0 80 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.571550;">
+      <a-box width="14" height="1.5" depth="0.4" rotation="0 60 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
+    </a-entity>
+
+    <!--
+      ============================================
+      銅門跡・水溜・石切場(遠景・確度高い:現地案内板に記載)
+      ============================================
+      史実:現地の案内板(史跡範囲の図)に記載されている、
+      内松陰門近くの銅門跡(出入口跡)、稲荷曲輪内の水溜
+      (貯水施設)、石垣用の石を切り出した石切場。
+      いずれも現存する遺構・痕跡として確認されているが、
+      建物ではなく「跡」「施設」のため、簡易な表示にとどめる。
+
+      【確度:実在・案内板記載=確定/正確な座標=推定(案内板の図の
+      位置関係をもとにした象徴配置)】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.665950; longitude: 138.571600;">
+      <a-box position="0 0.3 0" width="3" height="0.6" depth="2" material="src: #tex-stone-wall"></a-box>
+      <a-text value="銅門跡(出入口の跡・現地案内板に記載)" position="0 1.2 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665850; longitude: 138.572100;">
+      <a-box position="0 0.1 0" width="3" height="0.15" depth="3" color="#3f7a7a" opacity="0.5"></a-box>
+      <a-text value="水溜(貯水施設・現地案内板に記載)" position="0 1 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665700; longitude: 138.572200;">
+      <a-box position="0 0.4 0" width="4" height="0.8" depth="3" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
+      <a-text value="石切場(石垣用の石を切り出した跡・現地案内板に記載)" position="0 1.4 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
     </a-entity>
 
     <!-- 人物シルエットも増量(一般的イメージ) -->
