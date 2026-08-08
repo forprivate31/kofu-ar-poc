@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v28
+    build: v29
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v28]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v29]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v28(山手御門前に堀と木橋を追加。城の内外の境界を可視化)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v29(堀の幅を4-6m→約20mに修正。他城参考の推定値であることを明記)');
   </script>
 
   <div id="info-panel">
@@ -582,24 +582,31 @@
 
     <!--
       ============================================
-      山手御門前の堀と橋(近景・確定:記録あり/正確な位置は推定)
+      山手御門前の堀と橋(近景・確定:記録あり/正確な幅は未確認のため推定)
       ============================================
       史実:人々は木橋と土橋で堀を渡り、城内に出入りしていた
       という記録がある。山手御門は「城の内と外の境界」そのもの
       であり、この堀と橋が、その境界を目に見える形で示す
       最も重要な要素。門のすぐ外側(北側)に配置する。
 
-      【確度:堀・橋の実在=確定/正確な位置・幅=推定・象徴表示】
+      【幅について】甲府城の堀の正確な幅を示す史料は今回未特定。
+      当初は暫定的に4mとしていたが、これは明らかに過小であり、
+      他城の堀の一般的な規模(例:高田城で幅約36〜58m)を参考に、
+      主要な虎口の堀として現実的な規模(約20m)に修正した。
+      「確定した数値」ではなく、一般的な城郭規模を参考にした
+      推定値であることを明記する。
+
+      【確度:堀・橋の実在=確定/正確な位置・幅=推定(他城参考の推定値)】
     -->
     <a-entity gps-projected-entity-place="latitude: 35.667080; longitude: 138.570730;">
-      <!-- 堀の水面 -->
-      <a-box width="14" height="0.15" depth="4" rotation="0 20 0"
+      <!-- 堀の水面(幅を約4m→約20mに修正) -->
+      <a-box width="30" height="0.15" depth="20" rotation="0 20 0"
         color="#3f7a7a" opacity="0.5" position="0 0.05 0"></a-box>
-      <!-- 木橋(門へ渡るための橋) -->
-      <a-box width="3" height="0.2" depth="5" rotation="0 20 0"
+      <!-- 木橋(門へ渡るための橋、堀の幅拡大にあわせて延長) -->
+      <a-box width="3" height="0.2" depth="22" rotation="0 20 0"
         material="src: #tex-wood" position="0 0.15 0"></a-box>
-      <a-text value="堀と橋(木橋・土橋で渡り城内へ出入り/推定位置)"
-        position="0 1.5 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+      <a-text value="堀と橋(木橋・土橋で渡り城内へ出入り/幅は他城参考の推定値・約20m)"
+        position="0 2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
     </a-entity>
 
     <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
@@ -998,11 +1005,15 @@
       境界ラインと同じ地点に、水面をイメージした半透明の
       青緑色の面を象徴的に重ねる。
 
-      【確度:堀の存在=確定/正確な位置・形状=推定・象徴表示】
+      【幅について】山手御門前の堀と同様、正確な幅の史料は
+      未確認のため、他城の一般的な規模を参考に約20mに修正
+      (当初の6mは過小だったため)。
+
+      【確度:堀の存在=確定/正確な位置・形状=推定(他城参考の推定値)】
     -->
     <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569900;">
       <a-box
-        width="60" height="0.15" depth="6"
+        width="60" height="0.15" depth="20"
         rotation="0 30 0"
         color="#3f7a7a"
         opacity="0.45"
