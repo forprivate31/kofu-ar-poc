@@ -408,15 +408,15 @@
   <button id="info-toggle">ℹ️</button>
 
   <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v27
+    build: v28
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v27]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v28]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v27(山手御門の寸法を公式データ(12m/14m、6m/5m)に合わせ調整。番所を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v28(山手御門前に堀と木橋を追加。城の内外の境界を可視化)');
   </script>
 
   <div id="info-panel">
@@ -578,6 +578,28 @@
       <a-box position="0 1 0" width="1.7" height="1.2" depth="1.7" material="src: #tex-wood"></a-box>
       <a-cone position="0 1.9 0" radius-bottom="1.5" radius-top="0" height="0.8" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
       <a-text value="番所(山手門の見張り小屋・実在)" position="0 2.6 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      山手御門前の堀と橋(近景・確定:記録あり/正確な位置は推定)
+      ============================================
+      史実:人々は木橋と土橋で堀を渡り、城内に出入りしていた
+      という記録がある。山手御門は「城の内と外の境界」そのもの
+      であり、この堀と橋が、その境界を目に見える形で示す
+      最も重要な要素。門のすぐ外側(北側)に配置する。
+
+      【確度:堀・橋の実在=確定/正確な位置・幅=推定・象徴表示】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667080; longitude: 138.570730;">
+      <!-- 堀の水面 -->
+      <a-box width="14" height="0.15" depth="4" rotation="0 20 0"
+        color="#3f7a7a" opacity="0.5" position="0 0.05 0"></a-box>
+      <!-- 木橋(門へ渡るための橋) -->
+      <a-box width="3" height="0.2" depth="5" rotation="0 20 0"
+        material="src: #tex-wood" position="0 0.15 0"></a-box>
+      <a-text value="堀と橋(木橋・土橋で渡り城内へ出入り/推定位置)"
+        position="0 1.5 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
     </a-entity>
 
     <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
