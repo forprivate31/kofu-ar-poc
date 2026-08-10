@@ -26,6 +26,34 @@
 
     window.__diagPush('ページ読み込み開始');
 
+    // ============================================
+    // 開発者向け表示の一括制御
+    // ============================================
+    // URLに ?debug を付けた時だけ、バージョン番号・診断ボタン・
+    // 距離表示などの開発者向け要素を表示する。通常のURLでは、
+    // 一般利用者向けに、これらを非表示にする。
+    // URLに ?debug を付けた時、または座標偽装のテストモード
+    // (?simLat=...)使用時は、開発者向け表示を自動的に有効にする
+    // (テストモードを使っている時点で、それは開発者による
+    // 動作確認である可能性が高いため)
+    // 【注意】この時点ではテストモード判定スクリプトがまだ実行前
+    // のため、window.__AR_TEST_MODE__ではなく、URLパラメータを
+    // 直接判定する。
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      window.__DEBUG_MODE__ = params.has('debug') || params.has('simLat');
+    })();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.__DEBUG_MODE__) {
+        const ids = ['version-label', 'diag-open-button', 'distance-indicator'];
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = (id === 'distance-indicator') ? 'block' : '';
+        });
+      }
+    });
+
     // スマホの向きセンサーの生データを記録(診断パネルで確認するため)
     window.__orientationUpdateCount = 0;
     window.addEventListener('deviceorientation', (e) => {
@@ -339,6 +367,7 @@
     }
 
     #distance-indicator {
+      display: none;
       text-align: center;
       color: #fff;
       text-shadow: 0 0 4px #000, 0 0 4px #000;
@@ -389,6 +418,7 @@
     }
 
     #diag-open-button {
+      display: none;
       position: fixed;
       bottom: 10px;
       right: 10px;
@@ -515,12 +545,12 @@
     </div>
   </div>
 
-  <div id="version-label" style="position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v31
+  <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
+    build: v33
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v31]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v33]
   </div>
 
   <script>
@@ -704,7 +734,12 @@
       「確定した数値」ではなく、一般的な城郭規模を参考にした
       推定値であることを明記する。
 
-      【確度:堀・橋の実在=確定/正確な位置・幅=推定(他城参考の推定値)】
+      【Ver.33】橋は「擬宝珠高欄付きの太鼓橋」だったことが判明。
+      平板な板橋ではなく、欄干(手すり)と擬宝珠(玉ねぎ状の飾り)を
+      追加し、実物に近づける。
+
+      【確度:堀・橋の実在=確定(擬宝珠高欄付き太鼓橋という形式も
+      確定)/正確な位置・幅=推定(他城参考の推定値)】
     -->
     <a-entity gps-projected-entity-place="latitude: 35.667080; longitude: 138.570730;">
       <!-- 堀の水面(幅を約4m→約20mに修正) -->
@@ -713,8 +748,18 @@
       <!-- 木橋(門へ渡るための橋、堀の幅拡大にあわせて延長) -->
       <a-box width="3" height="0.2" depth="22" rotation="0 20 0"
         material="src: #tex-wood" position="0 0.15 0"></a-box>
-      <a-text value="堀と橋(木橋・土橋で渡り城内へ出入り/幅は他城参考の推定値・約20m)"
-        position="0 2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+      <!-- 欄干(手すり、両側) -->
+      <a-box width="0.15" height="0.6" depth="22" rotation="0 20 0"
+        material="src: #tex-wood" position="1.4 0.45 0"></a-box>
+      <a-box width="0.15" height="0.6" depth="22" rotation="0 20 0"
+        material="src: #tex-wood" position="-1.4 0.45 0"></a-box>
+      <!-- 擬宝珠(欄干の柱頭飾り、両端に配置) -->
+      <a-sphere position="1.4 0.9 9.5" radius="0.18" color="#7a9a8a"></a-sphere>
+      <a-sphere position="-1.4 0.9 9.5" radius="0.18" color="#7a9a8a"></a-sphere>
+      <a-sphere position="1.4 0.9 -9.5" radius="0.18" color="#7a9a8a"></a-sphere>
+      <a-sphere position="-1.4 0.9 -9.5" radius="0.18" color="#7a9a8a"></a-sphere>
+      <a-text value="堀と橋(擬宝珠高欄付きの太鼓橋・木橋と土橋で城内へ/幅は推定約20m)"
+        position="0 2.2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
     </a-entity>
 
     <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
@@ -768,6 +813,33 @@
         width="12"
         side="double"
       ></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      桝形の囲い壁(近景・確定:右折れの枡形という構造は確定)
+      ============================================
+      史実:山手御門は「右折れの枡形」だったことがWikipediaで
+      確認されている。山手門(外門)をくぐった後、右に折れて
+      山手渡櫓門(内門)に至る、L字型の防御空間(桝形)を形成して
+      いた。この空間は石垣・土塀で四方を囲まれ、侵入者を
+      内部に足止めして射撃できる構造になっていた。
+
+      2つの門の間を壁で結び、この「囲まれた空間」を表現する。
+      正確な壁の位置・高さは絵図から未特定のため、2つの門を
+      自然につなぐ経路として象徴的に配置する。
+
+      【確度:右折れの枡形という構造=確定/壁の正確な位置・高さ=推定】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667195; longitude: 138.570810;">
+      <a-box width="10" height="2.2" depth="0.5" rotation="0 75 0"
+        material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667215; longitude: 138.570840;">
+      <a-box width="8" height="2.2" depth="0.5" rotation="0 15 0"
+        material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
+      <a-text value="桝形(右折れ・侵入者を足止めする防御構造/実在)"
+        position="0 2.8 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
     </a-entity>
 
     <!--
@@ -1548,7 +1620,7 @@
       // カメラ映像(video要素)が実際に流れているかを監視し、
       // 問題があれば画面上に理由を表示する(開発者向けデバッグ用)
       // 通常のユーザーには表示せず、URLに ?debug を付けた時だけ動作する
-      const isDebugMode = new URLSearchParams(window.location.search).has('debug');
+      const isDebugMode = window.__DEBUG_MODE__;
 
       if (isDebugMode) {
         document.getElementById('sanity-check-box').setAttribute('visible', 'true');
