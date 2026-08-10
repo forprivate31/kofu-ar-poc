@@ -546,11 +546,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v33
+    build: v34
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v33]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v34]
   </div>
 
   <script>
@@ -1622,10 +1622,17 @@
       // 通常のユーザーには表示せず、URLに ?debug を付けた時だけ動作する
       const isDebugMode = window.__DEBUG_MODE__;
 
-      if (isDebugMode) {
+      // サニティチェック用の赤い箱は、テストモード(?simLat=)だけでは
+      // 表示せず、明示的に ?debug を付けた時だけ表示する。
+      // (景色を確認したいだけの時に、画面中央を塞いでしまうため)
+      const isExplicitDebug = new URLSearchParams(window.location.search).has('debug');
+
+      if (isExplicitDebug) {
         document.getElementById('sanity-check-box').setAttribute('visible', 'true');
         document.getElementById('sanity-check-label').setAttribute('visible', 'true');
+      }
 
+      if (isDebugMode) {
         document.getElementById('camera-status').style.display = 'block';
 
         let checkCount = 0;
