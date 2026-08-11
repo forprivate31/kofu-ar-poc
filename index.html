@@ -49,7 +49,15 @@
         const ids = ['version-label', 'diag-open-button', 'distance-indicator'];
         ids.forEach((id) => {
           const el = document.getElementById(id);
-          if (el) el.style.display = (id === 'distance-indicator') ? 'block' : '';
+          if (!el) return;
+          // 【修正】diag-open-buttonはCSSで display:none が指定されて
+          // いるため、空文字ではなく明示的にblockを指定しないと
+          // 表示が戻らないバグがあった。
+          if (id === 'distance-indicator' || id === 'diag-open-button') {
+            el.style.display = 'block';
+          } else {
+            el.style.display = '';
+          }
         });
       }
     });
@@ -546,11 +554,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v35
+    build: v36
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v35]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v36]
   </div>
 
   <script>
