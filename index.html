@@ -546,11 +546,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v34
+    build: v35
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v34]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v35]
   </div>
 
   <script>
@@ -1638,7 +1638,12 @@
         let checkCount = 0;
         const cameraCheckInterval = setInterval(() => {
           checkCount++;
-          const video = document.querySelector('#ar-scene video');
+          // 【Ver.35修正】videoTextureを無効化して以降、カメラ映像の
+          // <video>要素は#ar-sceneの外側に作られるようになったため、
+          // 検索範囲をページ全体に拡大する(以前は#ar-scene内だけを
+          // 探していたため、実際には正常なのに「見つからない」と
+          // 表示され続ける不具合があった)。
+          const video = document.querySelector('video');
           const statusEl = document.getElementById('camera-status');
 
           if (!video) {
@@ -1654,7 +1659,14 @@
           }
 
           if (checkCount > 20) {
+            // タイムアウトした場合、原因不明のまま数字だけが残り続けない
+            // よう、明示的にタイムアウトした旨を表示してから消す。
+            statusEl.innerText = 'カメラ映像の確認がタイムアウトしました(表示は正常な場合もあります)';
             clearInterval(cameraCheckInterval);
+            setTimeout(() => {
+              statusEl.innerText = '';
+              statusEl.style.display = 'none';
+            }, 3000);
           }
         }, 500);
       }
