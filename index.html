@@ -554,11 +554,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v36
+    build: v37
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v36]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v37]
   </div>
 
   <script>
@@ -1630,12 +1630,13 @@
       // 通常のユーザーには表示せず、URLに ?debug を付けた時だけ動作する
       const isDebugMode = window.__DEBUG_MODE__;
 
-      // サニティチェック用の赤い箱は、テストモード(?simLat=)だけでは
-      // 表示せず、明示的に ?debug を付けた時だけ表示する。
-      // (景色を確認したいだけの時に、画面中央を塞いでしまうため)
-      const isExplicitDebug = new URLSearchParams(window.location.search).has('debug');
+      // サニティチェック用の赤い箱は、?debug でも表示しないように変更。
+      // 診断ボタン等は見たいが、赤い箱が視界を塞ぐのは困るという
+      // フィードバックを受け、完全に独立した専用パラメータ
+      // ?sanitycheck を付けた時だけ表示する方式にする。
+      const isSanityCheckMode = new URLSearchParams(window.location.search).has('sanitycheck');
 
-      if (isExplicitDebug) {
+      if (isSanityCheckMode) {
         document.getElementById('sanity-check-box').setAttribute('visible', 'true');
         document.getElementById('sanity-check-label').setAttribute('visible', 'true');
       }
