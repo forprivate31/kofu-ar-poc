@@ -554,11 +554,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v37
+    build: v38
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v37]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v38]
   </div>
 
   <script>
@@ -848,6 +848,51 @@
         material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
       <a-text value="桝形(右折れ・侵入者を足止めする防御構造/実在)"
         position="0 2.8 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      山手御門から続く塀(近景・確定:記録あり/正確なルートは推定)
+      ============================================
+      史実:公式資料により、山手御門は「高石垣と土塀に囲まれた」
+      施設であり、明治期に破却され、現在は中央線の線路で
+      分断されていることが確認された。つまり、現在見られる
+      「数メートルで途切れる石垣」は、江戸期の姿ではなく、
+      明治以降の破壊・鉄道建設による後世の改変である。
+
+      当時は、門の近くは重厚な高石垣、そこから離れるにつれて
+      より簡易な土塀へと移行する形で、途切れることなく城の
+      外周を形成していたと考えられる。この連続性を、門から
+      両方向(近景の武家地方向/遠景の城郭中心部方向)に
+      塀を延長することで表現する。
+
+      【確度:高石垣+土塀で囲まれ、途切れず連続していたこと=確定
+      (公式資料に明記)/正確なルート・石垣と土塀の切り替え地点=推定】
+    -->
+    <!-- 門から近景(清水櫓・武家地)方向への塀 -->
+    <a-entity gps-projected-entity-place="latitude: 35.667240; longitude: 138.570600;">
+      <a-box width="18" height="2.4" depth="0.5" rotation="0 15 0"
+        material="src: #tex-stone-wall; repeat: 3 1" position="0 1.2 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667280; longitude: 138.570350;">
+      <a-box width="18" height="1.8" depth="0.4" rotation="0 10 0"
+        material="src: #tex-lattice-wall; repeat: 3 1" position="0 0.9 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667350; longitude: 138.570100;">
+      <a-box width="18" height="1.8" depth="0.4" rotation="0 5 0"
+        material="src: #tex-lattice-wall; repeat: 3 1" position="0 0.9 0"></a-box>
+      <a-text value="山手御門から続く塀(高石垣→土塀/現在の途切れは明治期の破壊・鉄道建設による)"
+        position="0 2.5 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!-- 門から遠景(城郭中心部)方向への塀 -->
+    <a-entity gps-projected-entity-place="latitude: 35.667000; longitude: 138.570800;">
+      <a-box width="14" height="2.2" depth="0.5" rotation="0 85 0"
+        material="src: #tex-stone-wall; repeat: 3 1" position="0 1.1 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666800; longitude: 138.570750;">
+      <a-box width="14" height="2" depth="0.4" rotation="0 75 0"
+        material="src: #tex-stone-wall; repeat: 3 1" position="0 1 0"></a-box>
     </a-entity>
 
     <!--
