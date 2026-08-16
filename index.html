@@ -559,11 +559,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v39
+    build: v40
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v39]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v40]
   </div>
 
   <script>
@@ -1660,6 +1660,45 @@
       <a-box position="0 1.3 0" width="2.6" height="1.8" depth="6.6" material="src: #tex-lattice-wall; repeat: 0.3 3"></a-box>
       <a-box position="0 2.5 0" width="3.2" height="0.4" depth="7.2" material="src: #tex-roof-tile; repeat: 1 3"></a-box>
       <a-text value="蔵(公式復元模型に基づく推定配置)" position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      長屋・本丸内建物・二の丸内建物(遠景・高確度の推定)
+      ============================================
+      情報源:甲府城復元模型(甲府市公式展示)。模型には、
+      追手口・出入口付近に細長い長屋状の建物(兵舎・倉庫等の
+      用途と考えられる)、本丸・二の丸内にも小規模な建物群が
+      複数確認できる。これらの外観の多様性を反映するため、
+      これまでにない「長屋」タイプの建物を新設する。
+
+      【確度:公式復元模型に基づく=高確度の推定/
+      正確な座標・用途=模型の相対位置関係をもとにした推定配置】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.665250; longitude: 138.571200;">
+      <a-box position="0 0.15 0" width="2" height="0.3" depth="9" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.1 0" width="1.8" height="1.6" depth="8.6" material="src: #tex-wood; repeat: 0.5 3"></a-box>
+      <a-box position="0 2 0" width="2.2" height="0.3" depth="9.2" material="src: #tex-roof-tile; repeat: 0.8 4"></a-box>
+      <a-text value="長屋(兵舎・倉庫等/公式復元模型に基づく推定配置)" position="0 2.8 0" align="center" color="#ffd166" width="10" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.572000;">
+      <a-box position="0 0.15 0" width="2" height="0.3" depth="8" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.05 0" width="1.8" height="1.5" depth="7.6" material="src: #tex-wood; repeat: 0.5 3"></a-box>
+      <a-box position="0 1.9 0" width="2.2" height="0.3" depth="8.2" material="src: #tex-roof-tile; repeat: 0.8 4"></a-box>
+      <a-text value="長屋(公式復元模型に基づく推定配置)" position="0 2.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.665800; longitude: 138.571850;">
+      <a-box position="0 0.25 0" width="5" height="0.5" depth="4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.6 0" width="4.4" height="2.2" depth="3.4" material="src: #tex-wood; repeat: 1.3 1"></a-box>
+      <a-cone position="0 3 0" radius-bottom="3.3" radius-top="0" height="1.3" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-text value="本丸内の建物(公式復元模型に基づく推定配置)" position="0 4.2 0" align="center" color="#ffd166" width="10" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665550; longitude: 138.571750;">
+      <a-box position="0 0.2 0" width="4.2" height="0.4" depth="3.5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.4 0" width="3.7" height="2" depth="3" material="src: #tex-wood; repeat: 1.2 1"></a-box>
+      <a-cone position="0 2.6 0" radius-bottom="2.8" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-text value="二の丸内の建物(公式復元模型に基づく推定配置)" position="0 3.6 0" align="center" color="#ffd166" width="10" side="double"></a-text>
     </a-entity>
 
     <!-- 人物シルエットも増量(一般的イメージ) -->
