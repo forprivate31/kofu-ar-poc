@@ -559,11 +559,11 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v40
+    build: v43
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v40]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v43]
   </div>
 
   <script>
@@ -1318,12 +1318,23 @@
       <a-text value="月見櫓(実在・三重櫓)" position="0 15 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
     </a-entity>
 
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.572300;">
+    <!--
+      【Ver.41訂正】発案者が撮影した公式復元模型の写真(Image4)により、
+      数寄屋櫓のラベルは天守台南側・鍛冶曲輪付近にあることが判明。
+      別名「辰巳櫓」(辰巳=南東の方角)とも整合するため、
+      以前の座標(稲荷曲輪の東側)は誤りと判断し、修正する。
+    -->
+    <!--
+      【Ver.42再訂正】発案者提供の縮尺・方位記号付き測量図により、
+      数寄屋曲輪は天守曲輪の東側、堀に沿ったカーブ部分にあることが
+      判明。前回(Ver.41)の南寄りの修正から、東寄りに再修正する。
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.572400;">
       <a-box position="0 2.5 0" width="6" height="5" depth="6" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
       <a-box position="0 6 0" width="5" height="2" depth="5" material="src: #tex-wood; repeat: 1.5 1"></a-box>
       <a-box position="0 7.8 0" width="4.2" height="1.8" depth="4.2" material="src: #tex-lattice-wall"></a-box>
       <a-cone position="0 9.2 0" radius-bottom="3.8" radius-top="0" height="1.8" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-text value="数寄屋櫓(実在・辰巳櫓)" position="0 11 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+      <a-text value="数寄屋櫓(実在・辰巳櫓/縮尺付き測量図で位置を再訂正)" position="0 11 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
     </a-entity>
 
     <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.570900;">
@@ -1699,6 +1710,64 @@
       <a-box position="0 1.4 0" width="3.7" height="2" depth="3" material="src: #tex-wood; repeat: 1.2 1"></a-box>
       <a-cone position="0 2.6 0" radius-bottom="2.8" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
       <a-text value="二の丸内の建物(公式復元模型に基づく推定配置)" position="0 3.6 0" align="center" color="#ffd166" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      人質曲輪・花畑(遠景・確度高い:縮尺付き測量図に記載)
+      ============================================
+      情報源:発案者提供の「甲府城曲輪・主要施設の名称」測量図
+      (方位記号・縮尺付き)。稲荷曲輪の北東、花畑の近くに
+      「人質曲輪」という、これまで実装していなかった曲輪が
+      存在することが確認できた。花畑は建物ではなくオープン
+      スペースのため、緑地として表現する。
+
+      【確度:曲輪・花畑の実在・大まかな位置=確定(測量図に明記)/
+      正確な建物配置=未特定のため簡易な表現にとどめる】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.572400;">
+      <a-box position="0 0.3 0" width="5" height="0.6" depth="4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.6 0" width="4.3" height="2" depth="3.3" material="src: #tex-wood; repeat: 1.2 1"></a-box>
+      <a-cone position="0 2.9 0" radius-bottom="3.1" radius-top="0" height="1.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-text value="人質曲輪(実在・縮尺付き測量図で位置確認)" position="0 4 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666500; longitude: 138.572900;">
+      <a-box position="0 0.05 0" width="14" height="0.1" depth="14" color="#6a8a4a" opacity="0.55"></a-box>
+      <a-text value="花畑(オープンスペース/縮尺付き測量図で位置確認)" position="0 1.2 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      帯曲輪・楽屋曲輪(遠景・確度高い:縮尺付き測量図に記載)
+      ============================================
+      情報源:縮尺付き測量図。本丸と二の丸の間に「帯曲輪」という
+      細長い区画、西側(現・山梨県庁議事堂付近)に「楽屋曲輪」が
+      あることが確認できた。
+
+      【確度:曲輪の実在・位置=確定(測量図に明記)/
+      内部の建物配置=未特定のため簡易な表現】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.571350;">
+      <a-box width="10" height="1.6" depth="0.4" rotation="0 20 0"
+        material="src: #tex-stone-wall; repeat: 2 1" position="0 0.8 0"></a-box>
+      <a-text value="帯曲輪(本丸と二の丸の間/測量図で位置確認)" position="0 2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+    </a-entity>
+
+    <a-entity gps-projected-entity-place="latitude: 35.665250; longitude: 138.570700;">
+      <a-box position="0 0.25 0" width="6" height="0.5" depth="5" material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
+      <a-box position="0 1.6 0" width="5.4" height="2.2" depth="4.4" material="src: #tex-wood; repeat: 1.5 1.2"></a-box>
+      <a-cone position="0 3 0" radius-bottom="3.8" radius-top="0" height="1.3" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <a-text value="楽屋曲輪の建物群(測量図で位置確認/推定配置)" position="0 4.2 0" align="center" color="#ffd166" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!-- 西側の堀ライン(屋形曲輪〜楽屋曲輪、測量図の形状に近づける) -->
+    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.570600;">
+      <a-box width="20" height="0.15" depth="10" rotation="0 15 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665350; longitude: 138.570400;">
+      <a-box width="18" height="0.15" depth="10" rotation="0 5 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
     </a-entity>
 
     <!-- 人物シルエットも増量(一般的イメージ) -->
