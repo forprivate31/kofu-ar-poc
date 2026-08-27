@@ -253,7 +253,26 @@
         }
       });
 
-      window.__diagPush && window.__diagPush('テクスチャ(瓦・格子窓・木目・石垣)を生成しました');
+      // 地面模様(v53追加:模型で確認できた、乾いた土・砂利の曲輪地面をイメージ)
+      // 実際の写真ではなく、色と粒状ノイズをコードで生成した模様。
+      makeCanvasTexture('tex-ground', 256, 256, (ctx, w, h) => {
+        ctx.fillStyle = '#8c7451';
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 900; i++) {
+          const x = Math.random() * w;
+          const y = Math.random() * h;
+          const r = 0.6 + Math.random() * 1.8;
+          const shade = Math.random() < 0.5
+            ? `rgba(60,48,32,${0.15 + Math.random()*0.2})`
+            : `rgba(200,180,140,${0.12 + Math.random()*0.18})`;
+          ctx.fillStyle = shade;
+          ctx.beginPath();
+          ctx.ellipse(x, y, r, r * 0.8, Math.random() * Math.PI, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      window.__diagPush && window.__diagPush('テクスチャ(瓦・格子窓・木目・石垣・地面)を生成しました');
     });
   </script>
 
@@ -559,15 +578,15 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v52
+    build: v53
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v52]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v53]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v52(現地写真をもとに山手御門・山手渡櫓門の軒丸瓦・垂木・扉の方立金具・木柵を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v53(地面4枚・樹木34本を北エリアに新規追加)');
   </script>
 
   <div id="info-panel">
@@ -670,6 +689,241 @@
         visible="false"
       ></a-text>
     </a-camera>
+
+    <!--
+      ============================================
+      地面(v53・北エリア忠実度強化)
+      ============================================
+      【背景】これまでARには「地面」が一切存在せず、建物・石垣が
+      宙に浮いたような見え方になっていた。模型では、乾いた土・砂利の
+      明るい色の地面が曲輪全体を隙間なく覆っており、これが模型の
+      落ち着いた雰囲気の大きな要素になっている。
+
+      優先エリア(清水曲輪〜山手御門〜稲荷曲輪〜本丸)を、4枚の
+      平面(実際の区画に合わせて回転・配置)で覆う。区画の正確な
+      形状は複雑な多角形だが、簡易的に矩形で近似している。
+
+      【確度:曲輪内部が地面(土・砂利)で覆われていたこと=確定
+      (模型・現地案内板より)/各平面の正確な範囲・輪郭=推定
+      (矩形による簡易近似)】
+    -->
+    <!-- 地面1:清水曲輪 北半分(よっちゃばれ広場寄り) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667900; longitude: 138.569800;">
+      <a-plane width="42" height="72" rotation="-90 144.6 0"
+        material="src: #tex-ground; repeat: 6 10" position="0 0.01 0"></a-plane>
+    </a-entity>
+    <!-- 地面2:清水曲輪 南半分〜山手御門手前(武家地) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667300; longitude: 138.570300;">
+      <a-plane width="42" height="70" rotation="-90 100 0"
+        material="src: #tex-ground; repeat: 6 10" position="0 0.01 0"></a-plane>
+    </a-entity>
+    <!-- 地面3:山手御門 桝形の内部 -->
+    <a-entity gps-projected-entity-place="latitude: 35.667100; longitude: 138.570800;">
+      <a-plane width="22" height="32" rotation="-90 20 0"
+        material="src: #tex-ground; repeat: 3 5" position="0 0.01 0"></a-plane>
+    </a-entity>
+    <!-- 地面4:稲荷曲輪・本丸 -->
+    <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.571800;">
+      <a-plane width="62" height="92" rotation="-90 144.6 0"
+        material="src: #tex-ground; repeat: 9 13" position="0 0.01 0"></a-plane>
+    </a-entity>
+
+    <!--
+      ============================================
+      樹木(v53・北エリア忠実度強化)
+      ============================================
+      【背景】模型では、曲輪の各所(特に石垣沿い・角地)に松と
+      見られる木がまとまって植えられており、これが景観の重要な
+      要素になっている。一方これまでのARには樹木が1本も
+      なかったため、模型で木が多く見られた区画を中心に、
+      簡略化した木のオブジェクト(幹+葉の塊)を配置する。
+
+      正確な樹種・本数・位置は写真から特定できないため、
+      「木々がまとまって存在していたこと」を伝える象徴的な
+      配置とする。
+
+      【確度:これらの区画に樹木がまとまって存在すること=確定
+      (模型で確認)/正確な樹種・本数・位置=創作補完(象徴配置)】
+    -->
+    <!-- 樹木クラスタ:清水曲輪 北(よっちゃばれ広場寄り)(10本) -->
+    <a-entity gps-projected-entity-place="latitude: 35.668111; longitude: 138.569539;">
+      <a-cylinder position="0 0.52 0" radius="0.07" height="1.04" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.57 0" radius="0.96" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.30 1.33 0.22" radius="0.67" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667838; longitude: 138.570006;">
+      <a-cylinder position="0 0.67 0" radius="0.09" height="1.33" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.00 0" radius="1.22" color="#42663f"></a-sphere>
+      <a-sphere position="0.39 1.70 0.28" radius="0.85" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668027; longitude: 138.569474;">
+      <a-cylinder position="0 0.57 0" radius="0.08" height="1.14" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.71 0" radius="1.04" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.33 1.45 0.24" radius="0.73" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668141; longitude: 138.569846;">
+      <a-cylinder position="0 0.60 0" radius="0.08" height="1.2" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.81 0" radius="1.10" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.35 1.53 0.25" radius="0.77" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668152; longitude: 138.569839;">
+      <a-cylinder position="0 0.66 0" radius="0.09" height="1.31" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.97 0" radius="1.20" color="#42663f"></a-sphere>
+      <a-sphere position="0.38 1.67 0.27" radius="0.84" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668032; longitude: 138.569660;">
+      <a-cylinder position="0 0.63 0" radius="0.08" height="1.26" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.90 0" radius="1.16" color="#375636"></a-sphere>
+      <a-sphere position="0.37 1.61 0.26" radius="0.81" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.668085; longitude: 138.569469;">
+      <a-cylinder position="0 0.71 0" radius="0.09" height="1.42" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.13 0" radius="1.30" color="#375636"></a-sphere>
+      <a-sphere position="0.41 1.81 0.29" radius="0.91" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667939; longitude: 138.569657;">
+      <a-cylinder position="0 0.47 0" radius="0.06" height="0.95" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.43 0" radius="0.87" color="#375636"></a-sphere>
+      <a-sphere position="0.28 1.21 0.20" radius="0.61" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667887; longitude: 138.569561;">
+      <a-cylinder position="0 0.46 0" radius="0.06" height="0.91" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.37 0" radius="0.84" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.27 1.16 0.19" radius="0.59" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667809; longitude: 138.570101;">
+      <a-cylinder position="0 0.64 0" radius="0.08" height="1.27" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.91 0" radius="1.17" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.37 1.62 0.27" radius="0.82" color="#42663f"></a-sphere>
+    </a-entity>
+    <!-- 樹木クラスタ:清水曲輪 南〜武家地(8本) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667089; longitude: 138.570523;">
+      <a-cylinder position="0 0.73 0" radius="0.10" height="1.46" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.20 0" radius="1.34" color="#42663f"></a-sphere>
+      <a-sphere position="0.43 1.86 0.30" radius="0.94" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667348; longitude: 138.570275;">
+      <a-cylinder position="0 0.48 0" radius="0.06" height="0.96" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.44 0" radius="0.88" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.28 1.22 0.20" radius="0.62" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667334; longitude: 138.570436;">
+      <a-cylinder position="0 0.67 0" radius="0.09" height="1.34" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.02 0" radius="1.23" color="#375636"></a-sphere>
+      <a-sphere position="0.39 1.71 0.28" radius="0.86" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667279; longitude: 138.569972;">
+      <a-cylinder position="0 0.65 0" radius="0.09" height="1.3" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.95 0" radius="1.19" color="#42663f"></a-sphere>
+      <a-sphere position="0.38 1.66 0.27" radius="0.83" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667315; longitude: 138.570110;">
+      <a-cylinder position="0 0.59 0" radius="0.08" height="1.18" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.77 0" radius="1.08" color="#375636"></a-sphere>
+      <a-sphere position="0.34 1.50 0.24" radius="0.76" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667338; longitude: 138.570629;">
+      <a-cylinder position="0 0.67 0" radius="0.09" height="1.33" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.00 0" radius="1.22" color="#42663f"></a-sphere>
+      <a-sphere position="0.39 1.70 0.28" radius="0.85" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667419; longitude: 138.570193;">
+      <a-cylinder position="0 0.69 0" radius="0.09" height="1.39" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.09 0" radius="1.28" color="#42663f"></a-sphere>
+      <a-sphere position="0.41 1.77 0.29" radius="0.90" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667425; longitude: 138.570570;">
+      <a-cylinder position="0 0.71 0" radius="0.09" height="1.42" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.13 0" radius="1.30" color="#42663f"></a-sphere>
+      <a-sphere position="0.41 1.81 0.29" radius="0.91" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <!-- 樹木クラスタ:山手御門 桝形(4本) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667132; longitude: 138.570751;">
+      <a-cylinder position="0 0.52 0" radius="0.07" height="1.03" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.55 0" radius="0.95" color="#375636"></a-sphere>
+      <a-sphere position="0.30 1.31 0.21" radius="0.66" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667198; longitude: 138.570865;">
+      <a-cylinder position="0 0.56 0" radius="0.08" height="1.13" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.70 0" radius="1.03" color="#375636"></a-sphere>
+      <a-sphere position="0.33 1.44 0.23" radius="0.72" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667247; longitude: 138.570796;">
+      <a-cylinder position="0 0.60 0" radius="0.08" height="1.21" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.82 0" radius="1.11" color="#375636"></a-sphere>
+      <a-sphere position="0.35 1.54 0.25" radius="0.78" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667009; longitude: 138.570657;">
+      <a-cylinder position="0 0.46 0" radius="0.06" height="0.92" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.39 0" radius="0.85" color="#42663f"></a-sphere>
+      <a-sphere position="0.27 1.18 0.19" radius="0.59" color="#42663f"></a-sphere>
+    </a-entity>
+    <!-- 樹木クラスタ:稲荷曲輪・本丸(13本) -->
+    <a-entity gps-projected-entity-place="latitude: 35.665697; longitude: 138.572022;">
+      <a-cylinder position="0 0.67 0" radius="0.09" height="1.33" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.00 0" radius="1.22" color="#375636"></a-sphere>
+      <a-sphere position="0.39 1.70 0.28" radius="0.85" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665870; longitude: 138.572225;">
+      <a-cylinder position="0 0.69 0" radius="0.09" height="1.38" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.07 0" radius="1.26" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.40 1.76 0.29" radius="0.88" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666020; longitude: 138.571565;">
+      <a-cylinder position="0 0.53 0" radius="0.07" height="1.06" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.59 0" radius="0.97" color="#42663f"></a-sphere>
+      <a-sphere position="0.31 1.35 0.22" radius="0.68" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666428; longitude: 138.571702;">
+      <a-cylinder position="0 0.68 0" radius="0.09" height="1.36" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.04 0" radius="1.24" color="#3d5c3a"></a-sphere>
+      <a-sphere position="0.40 1.73 0.28" radius="0.87" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665626; longitude: 138.571949;">
+      <a-cylinder position="0 0.69 0" radius="0.09" height="1.39" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.09 0" radius="1.28" color="#375636"></a-sphere>
+      <a-sphere position="0.41 1.77 0.29" radius="0.90" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666252; longitude: 138.571573;">
+      <a-cylinder position="0 0.65 0" radius="0.09" height="1.3" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.95 0" radius="1.19" color="#42663f"></a-sphere>
+      <a-sphere position="0.38 1.66 0.27" radius="0.83" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665889; longitude: 138.571621;">
+      <a-cylinder position="0 0.49 0" radius="0.07" height="0.98" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.48 0" radius="0.90" color="#375636"></a-sphere>
+      <a-sphere position="0.29 1.25 0.20" radius="0.63" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666258; longitude: 138.571676;">
+      <a-cylinder position="0 0.76 0" radius="0.10" height="1.52" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.29 0" radius="1.40" color="#375636"></a-sphere>
+      <a-sphere position="0.44 1.94 0.32" radius="0.98" color="#3d5c3a"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665598; longitude: 138.571810;">
+      <a-cylinder position="0 0.64 0" radius="0.08" height="1.27" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.91 0" radius="1.17" color="#375636"></a-sphere>
+      <a-sphere position="0.37 1.62 0.27" radius="0.82" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666255; longitude: 138.571586;">
+      <a-cylinder position="0 0.55 0" radius="0.07" height="1.1" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.66 0" radius="1.01" color="#42663f"></a-sphere>
+      <a-sphere position="0.32 1.40 0.23" radius="0.71" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665651; longitude: 138.571713;">
+      <a-cylinder position="0 0.51 0" radius="0.07" height="1.01" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.52 0" radius="0.92" color="#375636"></a-sphere>
+      <a-sphere position="0.29 1.29 0.21" radius="0.64" color="#42663f"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.666037; longitude: 138.571977;">
+      <a-cylinder position="0 0.45 0" radius="0.06" height="0.9" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 1.36 0" radius="0.83" color="#42663f"></a-sphere>
+      <a-sphere position="0.26 1.15 0.19" radius="0.58" color="#375636"></a-sphere>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665723; longitude: 138.571854;">
+      <a-cylinder position="0 0.78 0" radius="0.10" height="1.55" color="#5c4630"></a-cylinder>
+      <a-sphere position="0 2.33 0" radius="1.42" color="#42663f"></a-sphere>
+      <a-sphere position="0.45 1.98 0.32" radius="0.99" color="#3d5c3a"></a-sphere>
+    </a-entity>
 
     <!--
       山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
