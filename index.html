@@ -578,15 +578,15 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v57
+    build: v58
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v57]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v58]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v57(堀と建物の重なりを4件修正・本丸/二の丸/帯曲輪/鍛冶曲輪に建物8棟を追加)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v58(清水曲輪・武家地に建物8棟を追加、堀との重なりを機械チェック済み)');
   </script>
 
   <div id="info-panel">
@@ -1275,6 +1275,68 @@
       <a-box position="0 0.4 0" width="0.3" height="0.8" depth="0.3" material="src: #tex-stone-wall"></a-box>
       <a-text value="清水曲輪跡(この付近一帯・推定復元)" position="0 1 0" align="center"
         color="#a8e6a1" width="7" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      清水曲輪・武家地 内部の密度アップ(v58)
+      ============================================
+      本丸・二の丸(v57)と同様の考え方で、北エリア(清水曲輪・
+      武家地)にも建物8棟を追加する。配置候補は、既存の堀・石垣
+      チェーンおよび既存建物と機械的に距離チェックした上で
+      (堀の水面帯から3m以上、既存建物から7m以上)採用したもの。
+
+      【確度:このエリア一帯が建物で埋まっていたこと=確定
+      (測量図・模型より)/個々の建物の正確な形状・用途・位置=
+      創作補完(象徴配置)】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.667916; longitude: 138.569621;">
+      <a-box position="0 0.16 0" width="3.0" height="0.32" depth="2.6999999999999997" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.87 0" width="2.6" height="1.1" depth="2.3" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.62 0" radius-bottom="2.34" radius-top="1.92" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.87 0" radius-bottom="1.92" radius-top="0" height="0.96" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667682; longitude: 138.569771;">
+      <a-box position="0 0.24 0" width="2.8" height="0.49" depth="2.5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.98 0" width="2.4" height="0.99" depth="2.1" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.68 0" radius-bottom="2.16" radius-top="1.77" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.93 0" radius-bottom="1.77" radius-top="0" height="0.89" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667181; longitude: 138.570344;">
+      <a-box position="0 0.17 0" width="3.1999999999999997" height="0.33" depth="2.8" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.91 0" width="2.8" height="1.16" depth="2.4" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.69 0" radius-bottom="2.52" radius-top="2.07" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.94 0" radius-bottom="2.07" radius-top="0" height="1.03" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667339; longitude: 138.570632;">
+      <a-box position="0 0.23 0" width="2.9" height="0.45" depth="2.6" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.97 0" width="2.5" height="1.04" depth="2.2" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.69 0" radius-bottom="2.25" radius-top="1.84" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.94 0" radius-bottom="1.84" radius-top="0" height="0.92" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667148; longitude: 138.570244;">
+      <a-box position="0 0.23 0" width="2.6999999999999997" height="0.47" depth="2.4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.94 0" width="2.3" height="0.94" depth="2.0" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.61 0" radius-bottom="2.07" radius-top="1.7" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.86 0" radius-bottom="1.7" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667385; longitude: 138.570446;">
+      <a-box position="0 0.23 0" width="3.0" height="0.45" depth="2.6999999999999997" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.00 0" width="2.6" height="1.1" depth="2.3" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.75 0" radius-bottom="2.34" radius-top="1.92" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 2.00 0" radius-bottom="1.92" radius-top="0" height="0.96" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667203; longitude: 138.570169;">
+      <a-box position="0 0.18 0" width="2.8" height="0.36" depth="2.5" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.85 0" width="2.4" height="0.99" depth="2.1" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.55 0" radius-bottom="2.16" radius-top="1.77" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.80 0" radius-bottom="1.77" radius-top="0" height="0.89" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.667394; longitude: 138.570545;">
+      <a-box position="0 0.18 0" width="2.6" height="0.37" depth="2.3" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.81 0" width="2.2" height="0.88" depth="1.9" material="src: #tex-wood; repeat: 1 0.7"></a-box>
+      <a-cone position="0 1.45 0" radius-bottom="1.98" radius-top="1.62" height="0.25" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.70 0" radius-bottom="1.62" radius-top="0" height="0.81" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
     </a-entity>
 
     <!-- 清水曲輪チェーン 石垣 1/5: 清水曲輪 北端(よっちゃばれ広場付近)→清水曲輪 東縁: 35.668300,138.569600 -> 35.667900,138.569950 (延長約54.6m) -->
