@@ -559,15 +559,15 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v50
+    build: v52
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v50]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v52]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v50(単一行形式の屋根31個を自動的に2段構成へ変換)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v52(現地写真をもとに山手御門・山手渡櫓門の軒丸瓦・垂木・扉の方立金具・木柵を追加)');
   </script>
 
   <div id="info-panel">
@@ -685,6 +685,13 @@
       - 【Ver.4追記】離れた場所(夢小路手前)から撮影された別角度の写真では、
         土橋状の高まりの上に建ち、石垣がより高く堂々として見えたため、
         石垣の高さをさらに引き上げ(全体高さ約13m程度に)
+      - 【Ver.52追記】発案者提供の現地写真3枚(門扉正面・外観・石垣)により、
+        以下を確認し追加:①軒先に丸瓦(軒丸瓦)が連続していること、
+        ②軒下に垂木の先端が並んで見えること、③門扉の表面に対角の
+        方立(化粧材)と金属飾り金具があること、④石垣上端に木柵が
+        設置されていること(現況の安全設備の可能性が高いが、現地の
+        見た目に一致させるため反映)。全体の寸法・配置は従来から
+        変更していない(現地写真と大きな矛盾はなかったため)。
 
       正確な寸法・質感は今後の現地実測・撮影でさらに更新予定。
       色は白漆喰(壁)+黒瓦(屋根)+木部(柱・扉)のコントラストを仮再現。
@@ -701,6 +708,20 @@
       <!-- 木部の柱・扉 -->
       <a-box position="0 2.8 0" width="3.5" height="3.2" depth="1.4"
         material="src: #tex-wood; repeat: 1 1"></a-box>
+      <!--
+        【Ver.52】発案者提供の現地写真(3枚)により、扉面に対角の
+        方立(筋交い状の化粧材)と、下部に金属の飾り金具があることを
+        確認。門扉の質感を近づけるため追加する。
+        【確度:実物の扉に対角材・金具があること=確定(現地写真で確認)/
+        本数・正確な配置=推定(簡略化した象徴表現)】
+      -->
+      <a-box position="0.6 2.8 0.71" width="0.25" height="4.3" depth="0.06"
+        rotation="0 0 32" color="#5a2f18"></a-box>
+      <a-box position="-0.6 2.8 0.71" width="0.25" height="4.3" depth="0.06"
+        rotation="0 0 -32" color="#5a2f18"></a-box>
+      <a-box position="0 1.35 0.72" width="3.3" height="0.35" depth="0.05" color="#2a2a2a"></a-box>
+      <a-box position="-1.5 1.35 0.73" width="0.4" height="0.4" depth="0.03" color="#1c1c1c"></a-box>
+      <a-box position="1.5 1.35 0.73" width="0.4" height="0.4" depth="0.03" color="#1c1c1c"></a-box>
       <!-- 切妻屋根(黒瓦・二段構成で反りを表現/Ver.45アップグレード) -->
       <a-cone
         position="0 4.6 0" radius-bottom="3.3" radius-top="2.7"
@@ -712,6 +733,23 @@
         height="1.2" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 1 1"
       ></a-cone>
+      <!--
+        【Ver.52】軒先の丸瓦(軒丸瓦)の並びと、軒下に覗く垂木を追加。
+        現地写真で、屋根の縁に沿って丸い瓦が連続し、その下に
+        木製の垂木の先端が並んで見えることを確認したための追加。
+        【確度:軒丸瓦・垂木の存在=確定(一般的な城郭建築の様式かつ
+        現地写真で確認)/本数・正確な間隔=簡略化した象徴表現】
+      -->
+      <a-cylinder position="0 4.42 0" radius="3.35" height="0.12"
+        segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
+      <a-box position="0.0 4.5 3.55" width="0.12" height="0.12" depth="0.7" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.51 4.5 2.51" width="0.12" height="0.12" depth="0.7" rotation="0 45.0 0" color="#3a2418"></a-box>
+      <a-box position="3.55 4.5 0.0" width="0.12" height="0.12" depth="0.7" rotation="0 90.0 0" color="#3a2418"></a-box>
+      <a-box position="2.51 4.5 -2.51" width="0.12" height="0.12" depth="0.7" rotation="0 135.0 0" color="#3a2418"></a-box>
+      <a-box position="0.0 4.5 -3.55" width="0.12" height="0.12" depth="0.7" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.51 4.5 -2.51" width="0.12" height="0.12" depth="0.7" rotation="0 225.0 0" color="#3a2418"></a-box>
+      <a-box position="-3.55 4.5 -0.0" width="0.12" height="0.12" depth="0.7" rotation="0 270.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.51 4.5 2.51" width="0.12" height="0.12" depth="0.7" rotation="0 315.0 0" color="#3a2418"></a-box>
       <a-text
         value="山手門(高麗門・高さ約6m)"
         position="0 6.2 0"
@@ -810,6 +848,20 @@
       <!-- 1階部分(木部・門扉) -->
       <a-box position="0 4 0" width="9" height="4" depth="3"
         material="src: #tex-wood; repeat: 2 1"></a-box>
+      <!--
+        【Ver.52】発案者提供の現地写真(3枚)により、巨大な門扉の
+        表面に対角の方立(化粧材)と下部の金属飾り金具が確認できた。
+        山手門と同様に追加し、木部だけの単調な面から質感を近づける。
+        【確度:対角材・金具の存在=確定(現地写真で確認)/
+        本数・正確な配置=推定(簡略化した象徴表現)】
+      -->
+      <a-box position="1.5 4 1.51" width="0.35" height="5.6" depth="0.08"
+        rotation="0 0 30" color="#5a2f18"></a-box>
+      <a-box position="-1.5 4 1.51" width="0.35" height="5.6" depth="0.08"
+        rotation="0 0 -30" color="#5a2f18"></a-box>
+      <a-box position="0 2.3 1.52" width="8.6" height="0.4" depth="0.06" color="#2a2a2a"></a-box>
+      <a-box position="-3.8 2.3 1.53" width="0.5" height="0.5" depth="0.04" color="#1c1c1c"></a-box>
+      <a-box position="3.8 2.3 1.53" width="0.5" height="0.5" depth="0.04" color="#1c1c1c"></a-box>
       <!-- 2階部分(白漆喰の壁+格子窓) -->
       <a-box position="0 7.55 0" width="10" height="3.1" depth="3.6"
         material="src: #tex-lattice-wall"></a-box>
@@ -824,6 +876,26 @@
         height="2.4" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
+      <!--
+        【Ver.52】山手門と同様に、軒丸瓦の帯と軒下の垂木を追加。
+        山手渡櫓門は山手門よりひとまわり大きいため、本数・半径を
+        拡大したスケールで表現する。
+        【確度:軒丸瓦・垂木の存在=確定/本数・間隔=簡略化した象徴表現】
+      -->
+      <a-cylinder position="0 9.1 0" radius="8.3" height="0.2"
+        segments-radial="24" material="src: #tex-roof-tile; repeat: 6 1"></a-cylinder>
+      <a-box position="0.0 9.2 8.5" width="0.2" height="0.2" depth="1.0" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="4.25 9.2 7.36" width="0.2" height="0.2" depth="1.0" rotation="0 30.0 0" color="#3a2418"></a-box>
+      <a-box position="7.36 9.2 4.25" width="0.2" height="0.2" depth="1.0" rotation="0 60.0 0" color="#3a2418"></a-box>
+      <a-box position="8.5 9.2 0.0" width="0.2" height="0.2" depth="1.0" rotation="0 90.0 0" color="#3a2418"></a-box>
+      <a-box position="7.36 9.2 -4.25" width="0.2" height="0.2" depth="1.0" rotation="0 120.0 0" color="#3a2418"></a-box>
+      <a-box position="4.25 9.2 -7.36" width="0.2" height="0.2" depth="1.0" rotation="0 150.0 0" color="#3a2418"></a-box>
+      <a-box position="0.0 9.2 -8.5" width="0.2" height="0.2" depth="1.0" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-4.25 9.2 -7.36" width="0.2" height="0.2" depth="1.0" rotation="0 210.0 0" color="#3a2418"></a-box>
+      <a-box position="-7.36 9.2 -4.25" width="0.2" height="0.2" depth="1.0" rotation="0 240.0 0" color="#3a2418"></a-box>
+      <a-box position="-8.5 9.2 -0.0" width="0.2" height="0.2" depth="1.0" rotation="0 270.0 0" color="#3a2418"></a-box>
+      <a-box position="-7.36 9.2 4.25" width="0.2" height="0.2" depth="1.0" rotation="0 300.0 0" color="#3a2418"></a-box>
+      <a-box position="-4.25 9.2 7.36" width="0.2" height="0.2" depth="1.0" rotation="0 330.0 0" color="#3a2418"></a-box>
       <a-text
         value="山手渡櫓門(柳沢吉保時代・高さ約12m)"
         position="0 13.2 0"
@@ -850,50 +922,109 @@
 
       【確度:右折れの枡形という構造=確定/壁の正確な位置・高さ=推定】
     -->
+    <!--
+      【Ver.52】発案者提供の現地写真により、石垣の上端に沿って
+      木製の柵(転落防止の高欄)が設置されていることを確認した。
+      これは安全対策のための現代の設備である可能性が高いが、
+      現地の実際の見た目に一致させるため追加する。
+      【確度:柵の存在=確定(現地写真で確認)/これが江戸期の意匠か
+      現代の安全設備かは不明のため、史実の再現ではなく
+      「現状の景観再現」という位置づけで扱う】
+    -->
     <a-entity gps-projected-entity-place="latitude: 35.667195; longitude: 138.570810;">
       <a-box width="10" height="2.2" depth="0.5" rotation="0 75 0"
         material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
+      <a-box width="10" height="0.08" depth="0.08" rotation="0 75 0"
+        color="#6b5238" position="0 2.35 0"></a-box>
     </a-entity>
     <a-entity gps-projected-entity-place="latitude: 35.667215; longitude: 138.570840;">
       <a-box width="8" height="2.2" depth="0.5" rotation="0 15 0"
         material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
+      <a-box width="8" height="0.08" depth="0.08" rotation="0 15 0"
+        color="#6b5238" position="0 2.35 0"></a-box>
       <a-text value="桝形(右折れ・侵入者を足止めする防御構造/実在)"
         position="0 2.8 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
     </a-entity>
 
     <!--
       ============================================
-      山手御門から続く塀(近景・確定:記録あり/正確なルートは推定)
+      清水曲輪〜山手御門 連続する石垣・堀ライン(v51・北エリア忠実度強化)
       ============================================
-      史実:公式資料により、山手御門は「高石垣と土塀に囲まれた」
-      施設であり、明治期に破却され、現在は中央線の線路で
-      分断されていることが確認された。つまり、現在見られる
-      「数メートルで途切れる石垣」は、江戸期の姿ではなく、
-      明治以降の破壊・鉄道建設による後世の改変である。
+      【背景】従来はこの区間に、位置が離れた独立の塀オブジェクトが
+      点在するのみで、実際の模型のように「途切れない曲輪の輪郭」には
+      なっていなかった。今回、よっちゃばれ広場付近から山手御門手前まで、
+      石垣と堀を1本の連続した経路として再構成する。
 
-      当時は、門の近くは重厚な高石垣、そこから離れるにつれて
-      より簡易な土塀へと移行する形で、途切れることなく城の
-      外周を形成していたと考えられる。この連続性を、門から
-      両方向(近景の武家地方向/遠景の城郭中心部方向)に
-      塀を延長することで表現する。
+      【区間の根拠】
+      - 山手御門に最も近い区間(既存点を継承):公式資料により
+        高石垣+土塀で連続していたことは確定。正確な区間の
+        切り替え地点は推定。
+      - よっちゃばれ広場寄りの区間:清水曲輪が堀で囲まれた曲輪
+        だったことは測量図・現地案内板で確定。ただし現存しない
+        区間の正確な座標(屈曲点)は、測量図の形状から補間した推定値。
 
-      【確度:高石垣+土塀で囲まれ、途切れず連続していたこと=確定
-      (公式資料に明記)/正確なルート・石垣と土塀の切り替え地点=推定】
+      【技術メモ:回転角度について】
+      各区間の石垣・堀の向き(rotation.y)は、2地点間のGPS方位角
+      (真北基準・時計回り)をそのまま採用している。この方位角と
+      AR.js(gps-projected-entity-place)上の実際の見え方との対応関係は、
+      理論値であり現地での実機検証はまだ行っていない。
+      もしAR上で向きがずれる場合は、生成スクリプト側で一括して
+      オフセットを調整できるようにしてある(/home/claude配下の
+      gen_wall.py・build_north_loop.py。本番コードにはPythonの
+      出力結果のみを貼り付けている)。
+
+      【確度:曲輪が堀・石垣で連続して囲まれていたこと=確定/
+      個々の屈曲点の座標・高さの変化=推定】
     -->
-    <!-- 門から近景(清水櫓・武家地)方向への塀 -->
-    <a-entity gps-projected-entity-place="latitude: 35.667240; longitude: 138.570600;">
-      <a-box width="18" height="2.4" depth="0.5" rotation="0 15 0"
-        material="src: #tex-stone-wall; repeat: 3 1" position="0 1.2 0"></a-box>
+    <!-- 清水曲輪チェーン 石垣 1/5: 清水曲輪 北端(よっちゃばれ広場付近)→清水曲輪 東縁: 35.668300,138.569600 -> 35.667900,138.569950 (延長約54.6m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569775;">
+      <a-box width="0.6" height="2.2" depth="54.57" rotation="0 144.6 0"
+        material="src: #tex-stone-wall" position="0 1.1 0"></a-box>
     </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667280; longitude: 138.570350;">
-      <a-box width="18" height="1.8" depth="0.4" rotation="0 10 0"
-        material="src: #tex-lattice-wall; repeat: 3 1" position="0 0.9 0"></a-box>
+    <!-- 清水曲輪チェーン 堀 1/5(堀水面): 35.668300,138.569600 -> 35.667900,138.569950 (延長約54.6m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569775;">
+      <a-box width="14" height="0.15" depth="54.57" rotation="0 144.6 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
     </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667350; longitude: 138.570100;">
-      <a-box width="18" height="1.8" depth="0.4" rotation="0 5 0"
-        material="src: #tex-lattice-wall; repeat: 3 1" position="0 0.9 0"></a-box>
-      <a-text value="山手御門から続く塀(高石垣→土塀/現在の途切れは明治期の破壊・鉄道建設による)"
-        position="0 2.5 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
+    <!-- 清水曲輪チェーン 石垣 2/5: 清水曲輪 東縁→清水曲輪 東縁(南下): 35.667900,138.569950 -> 35.667600,138.570200 (延長約40.3m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667750; longitude: 138.570075;">
+      <a-box width="0.6" height="2.3" depth="40.28" rotation="0 145.9 0"
+        material="src: #tex-stone-wall" position="0 1.15 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 堀 2/5(堀水面): 35.667900,138.569950 -> 35.667600,138.570200 (延長約40.3m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667750; longitude: 138.570075;">
+      <a-box width="14" height="0.15" depth="40.28" rotation="0 145.9 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 石垣 3/5: 清水曲輪 東縁(南下)→山手御門手前(武家地寄り/既存点を継承): 35.667600,138.570200 -> 35.667350,138.570100 (延長約29.2m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667475; longitude: 138.570150;">
+      <a-box width="0.6" height="2.4" depth="29.23" rotation="0 198.0 0"
+        material="src: #tex-stone-wall" position="0 1.2 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 堀 3/5(堀水面): 35.667600,138.570200 -> 35.667350,138.570100 (延長約29.2m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667475; longitude: 138.570150;">
+      <a-box width="14" height="0.15" depth="29.23" rotation="0 198.0 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 石垣 4/5: 山手御門手前(武家地寄り/既存点を継承)→山手御門手前(既存点を継承): 35.667350,138.570100 -> 35.667280,138.570350 (延長約23.9m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667315; longitude: 138.570225;">
+      <a-box width="0.6" height="2.5" depth="23.89" rotation="0 109.0 0"
+        material="src: #tex-stone-wall" position="0 1.25 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 堀 4/5(堀水面): 35.667350,138.570100 -> 35.667280,138.570350 (延長約23.9m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667315; longitude: 138.570225;">
+      <a-box width="14" height="0.15" depth="23.89" rotation="0 109.0 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 石垣 5/5: 山手御門手前(既存点を継承)→山手御門ゲート至近(既存点を継承): 35.667280,138.570350 -> 35.667240,138.570600 (延長約23.0m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667260; longitude: 138.570475;">
+      <a-box width="0.6" height="2.6" depth="23.02" rotation="0 101.1 0"
+        material="src: #tex-stone-wall" position="0 1.3 0"></a-box>
+    </a-entity>
+    <!-- 清水曲輪チェーン 堀 5/5(堀水面): 35.667280,138.570350 -> 35.667240,138.570600 (延長約23.0m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.667260; longitude: 138.570475;">
+      <a-box width="14" height="0.15" depth="23.02" rotation="0 101.1 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
     </a-entity>
 
     <!--
@@ -924,14 +1055,86 @@
       <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
     </a-entity>
 
-    <!-- 門から遠景(城郭中心部)方向への塀 -->
-    <a-entity gps-projected-entity-place="latitude: 35.667000; longitude: 138.570800;">
-      <a-box width="14" height="2.2" depth="0.5" rotation="0 85 0"
-        material="src: #tex-stone-wall; repeat: 3 1" position="0 1.1 0"></a-box>
+    <!--
+      ============================================
+      山手御門〜稲荷曲輪〜天守台 連続する石垣・堀ライン(v51・北エリア忠実度強化)
+      ============================================
+      【背景】山手御門から稲荷曲輪・稲荷櫓へ向かう区間も、従来は
+      独立した塀の断片のみだった。稲荷櫓・天守台は実座標が確定
+      しているため、それらを終点として連続する石垣・堀ラインで結ぶ。
+
+      【区間の根拠】
+      - 山手御門に近い区間(既存点を継承):確定(高石垣+土塀の連続)。
+      - 稲荷曲輪への接続部分:測量図上の曲輪の形状をもとにした
+        補間で、屈曲点の座標そのものは推定。
+      - 稲荷櫓・天守台:既存の確定座標をそのまま終点に採用。
+
+      高さは、山手御門から離れるほど(=稲荷曲輪の高石垣に近づくほど)
+      徐々に高くする形で、現地写真で確認できる「稲荷曲輪周辺は
+      特に高い石垣」という印象に近づけている(高さの数値自体は推定)。
+
+      【確度:曲輪が堀・石垣で連続して囲まれていたこと=確定/
+      個々の屈曲点の座標・高さの変化=推定】
+    -->
+    <!-- 稲荷曲輪チェーン 石垣 1/6: 山手御門ゲート至近・遠景側(既存点を継承)→遠景方向(既存点を継承): 35.667000,138.570800 -> 35.666800,138.570750 (延長約22.7m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666900; longitude: 138.570775;">
+      <a-box width="0.6" height="2.8" depth="22.69" rotation="0 191.5 0"
+        material="src: #tex-stone-wall" position="0 1.4 0"></a-box>
     </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666800; longitude: 138.570750;">
-      <a-box width="14" height="2" depth="0.4" rotation="0 75 0"
-        material="src: #tex-stone-wall; repeat: 3 1" position="0 1 0"></a-box>
+    <!-- 稲荷曲輪チェーン 堀 1/6(堀水面): 35.667000,138.570800 -> 35.666800,138.570750 (延長約22.7m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666900; longitude: 138.570775;">
+      <a-box width="18" height="0.15" depth="22.69" rotation="0 191.5 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 石垣 2/6: 遠景方向(既存点を継承)→稲荷曲輪への接続(推定): 35.666800,138.570750 -> 35.666500,138.571100 (延長約46.0m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666650; longitude: 138.570925;">
+      <a-box width="0.6" height="3.24" depth="45.96" rotation="0 136.5 0"
+        material="src: #tex-stone-wall" position="0 1.62 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 堀 2/6(堀水面): 35.666800,138.570750 -> 35.666500,138.571100 (延長約46.0m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666650; longitude: 138.570925;">
+      <a-box width="18" height="0.15" depth="45.96" rotation="0 136.5 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 石垣 3/6: 稲荷曲輪への接続(推定)→稲荷曲輪への接続(推定): 35.666500,138.571100 -> 35.666100,138.571500 (延長約57.3m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.571300;">
+      <a-box width="0.6" height="3.68" depth="57.31" rotation="0 140.9 0"
+        material="src: #tex-stone-wall" position="0 1.84 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 堀 3/6(堀水面): 35.666500,138.571100 -> 35.666100,138.571500 (延長約57.3m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.571300;">
+      <a-box width="18" height="0.15" depth="57.31" rotation="0 140.9 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 石垣 4/6: 稲荷曲輪への接続(推定)→稲荷曲輪門付近: 35.666100,138.571500 -> 35.665950,138.571750 (延長約28.1m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666025; longitude: 138.571625;">
+      <a-box width="0.6" height="4.12" depth="28.08" rotation="0 126.4 0"
+        material="src: #tex-stone-wall" position="0 2.06 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 堀 4/6(堀水面): 35.666100,138.571500 -> 35.665950,138.571750 (延長約28.1m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.666025; longitude: 138.571625;">
+      <a-box width="18" height="0.15" depth="28.08" rotation="0 126.4 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 石垣 5/6: 稲荷曲輪門付近→稲荷櫓(確定): 35.665950,138.571750 -> 35.665948,138.572013 (延長約23.8m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.665949; longitude: 138.571882;">
+      <a-box width="0.6" height="4.56" depth="23.76" rotation="0 90.5 0"
+        material="src: #tex-stone-wall" position="0 2.28 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 堀 5/6(堀水面): 35.665950,138.571750 -> 35.665948,138.572013 (延長約23.8m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.665949; longitude: 138.571882;">
+      <a-box width="18" height="0.15" depth="23.76" rotation="0 90.5 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 石垣 6/6: 稲荷櫓(確定)→天守台方向(確定): 35.665948,138.572013 -> 35.665700,138.571700 (延長約39.5m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.665824; longitude: 138.571856;">
+      <a-box width="0.6" height="5.0" depth="39.50" rotation="0 225.7 0"
+        material="src: #tex-stone-wall" position="0 2.5 0"></a-box>
+    </a-entity>
+    <!-- 稲荷曲輪チェーン 堀 6/6(堀水面): 35.665948,138.572013 -> 35.665700,138.571700 (延長約39.5m) -->
+    <a-entity gps-projected-entity-place="latitude: 35.665824; longitude: 138.571856;">
+      <a-box width="18" height="0.15" depth="39.50" rotation="0 225.7 0"
+        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
     </a-entity>
 
     <!--
@@ -1333,28 +1536,13 @@
 
     <!--
       ============================================
-      堀の水面(近景・象徴表示)
+      堀の水面(近景・象徴表示)【v51で撤去】
       ============================================
-      史実:武家地(内郭)は二ノ堀に囲まれていたことが記録されている。
-      正確な堀の位置・幅を示す絵図は今回未特定のため、既存の
-      境界ラインと同じ地点に、水面をイメージした半透明の
-      青緑色の面を象徴的に重ねる。
-
-      【幅について】山手御門前の堀と同様、正確な幅の史料は
-      未確認のため、他城の一般的な規模を参考に約20mに修正
-      (当初の6mは過小だったため)。
-
-      【確度:堀の存在=確定/正確な位置・形状=推定(他城参考の推定値)】
+      このセクションにあった単一の象徴的な水面(1枚板)は、
+      「清水曲輪〜山手御門 連続する石垣・堀ライン」(v51で新設)と
+      同じ区域を表現しており、役割が重複するため撤去した。
+      堀の表現は、新設の連続チェーン側に一本化している。
     -->
-    <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569900;">
-      <a-box
-        width="60" height="0.15" depth="20"
-        rotation="0 30 0"
-        color="#3f7a7a"
-        opacity="0.45"
-        position="0 0.05 0"
-      ></a-box>
-    </a-entity>
 
     <!--
       ============================================
