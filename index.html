@@ -578,15 +578,15 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v54
+    build: v57
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v54]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v57]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v54(北口改札〜山手御門の道中の密度を強化・起点付近に堀端を延長)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v57(堀と建物の重なりを4件修正・本丸/二の丸/帯曲輪/鍛冶曲輪に建物8棟を追加)');
   </script>
 
   <div id="info-panel">
@@ -1369,7 +1369,8 @@
       <a-cone position="0 2.7 0" radius-bottom="2.3" radius-top="0" height="1.1"
         segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
     </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667700; longitude: 138.570150;">
+    <!-- 【Ver.57修正】v51の堀チェーンと重なっていたため位置を調整 -->
+    <a-entity gps-projected-entity-place="latitude: 35.667650; longitude: 138.570330;">
       <a-box position="0 0.25 0" width="2.8" height="0.5" depth="2.4" material="src: #tex-stone-wall"></a-box>
       <a-box position="0 1.3 0" width="2.4" height="1.6" depth="2" material="src: #tex-wood; repeat: 1 0.7"></a-box>
       <a-cone position="0 2.35 0" radius-bottom="1.9" radius-top="0" height="0.9"
@@ -1382,7 +1383,8 @@
         segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
     </a-entity>
     <!-- 井戸(小物・一般的イメージ) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667820; longitude: 138.570050;">
+    <!-- 【Ver.57修正】v51の堀チェーンと重なっていたため位置を調整 -->
+    <a-entity gps-projected-entity-place="latitude: 35.667780; longitude: 138.570230;">
       <a-cylinder position="0 0.35 0" radius="0.5" height="0.7" material="src: #tex-stone-wall"></a-cylinder>
       <a-cone position="0 0.85 0" radius-bottom="0.7" radius-top="0.55" height="0.3"
         segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
@@ -1455,25 +1457,21 @@
       <a-box width="18" height="0.15" depth="28.08" rotation="0 126.4 0"
         color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
     </a-entity>
+    <!--
+      【Ver.57修正】以下2区間(稲荷櫓・天守台への接続部)は、稲荷曲輪・
+      本丸という高台への上り坂にあたる。堀(水面)は通常、高台の
+      裾野までしか達しないため、この区間の水面表現は不自然と判断し
+      撤去した。石垣(高石垣が続いている表現)はそのまま残す。
+    -->
     <!-- 稲荷曲輪チェーン 石垣 5/6: 稲荷曲輪門付近→稲荷櫓(確定): 35.665950,138.571750 -> 35.665948,138.572013 (延長約23.8m) -->
     <a-entity gps-projected-entity-place="latitude: 35.665949; longitude: 138.571882;">
       <a-box width="0.6" height="4.56" depth="23.76" rotation="0 90.5 0"
         material="src: #tex-stone-wall" position="0 2.28 0"></a-box>
     </a-entity>
-    <!-- 稲荷曲輪チェーン 堀 5/6(堀水面): 35.665950,138.571750 -> 35.665948,138.572013 (延長約23.8m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665949; longitude: 138.571882;">
-      <a-box width="18" height="0.15" depth="23.76" rotation="0 90.5 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
     <!-- 稲荷曲輪チェーン 石垣 6/6: 稲荷櫓(確定)→天守台方向(確定): 35.665948,138.572013 -> 35.665700,138.571700 (延長約39.5m) -->
     <a-entity gps-projected-entity-place="latitude: 35.665824; longitude: 138.571856;">
       <a-box width="0.6" height="5.0" depth="39.50" rotation="0 225.7 0"
         material="src: #tex-stone-wall" position="0 2.5 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 堀 6/6(堀水面): 35.665948,138.572013 -> 35.665700,138.571700 (延長約39.5m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665824; longitude: 138.571856;">
-      <a-box width="18" height="0.15" depth="39.50" rotation="0 225.7 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
     </a-entity>
 
     <!--
@@ -1509,8 +1507,14 @@
       <!-- 1階(木部) -->
       <a-box position="0 3.5 0" width="6" height="3" depth="6"
         material="src: #tex-wood; repeat: 1.5 1"></a-box>
+      <!--
+        【Ver.55】稲荷櫓と同様、2階に下見板張りの帯を追加(様式を統一)。
+        【確度:稲荷櫓が同型であること=推定/この帯の再現=推定】
+      -->
+      <a-box position="0 5.35 0" width="5.2" height="0.7" depth="5.2"
+        material="src: #tex-wood; repeat: 1.5 0.4"></a-box>
       <!-- 2階(白漆喰、1階よりひと回り小さい) -->
-      <a-box position="0 6 0" width="5" height="2.5" depth="5"
+      <a-box position="0 6.35 0" width="5" height="1.7" depth="5"
         material="src: #tex-lattice-wall"></a-box>
       <!-- 千鳥破風(2階正面の小さな三角屋根アクセント) -->
       <a-cone
@@ -1528,6 +1532,21 @@
         height="1.7" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 1.5 1.5"
       ></a-cone>
+      <!-- 【Ver.55】軒丸瓦の帯と軒下の垂木(稲荷櫓・山手渡櫓門と統一) -->
+      <a-cylinder position="0 7.45 0" radius="5.05" height="0.15"
+        segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
+      <a-box position="0.0 7.05 5.0" width="0.2" height="0.2" depth="0.8" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.5 7.05 4.33" width="0.2" height="0.2" depth="0.8" rotation="0 30.0 0" color="#3a2418"></a-box>
+      <a-box position="4.33 7.05 2.5" width="0.2" height="0.2" depth="0.8" rotation="0 60.0 0" color="#3a2418"></a-box>
+      <a-box position="5.0 7.05 0.0" width="0.2" height="0.2" depth="0.8" rotation="0 90.0 0" color="#3a2418"></a-box>
+      <a-box position="4.33 7.05 -2.5" width="0.2" height="0.2" depth="0.8" rotation="0 120.0 0" color="#3a2418"></a-box>
+      <a-box position="2.5 7.05 -4.33" width="0.2" height="0.2" depth="0.8" rotation="0 150.0 0" color="#3a2418"></a-box>
+      <a-box position="0.0 7.05 -5.0" width="0.2" height="0.2" depth="0.8" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.5 7.05 -4.33" width="0.2" height="0.2" depth="0.8" rotation="0 210.0 0" color="#3a2418"></a-box>
+      <a-box position="-4.33 7.05 -2.5" width="0.2" height="0.2" depth="0.8" rotation="0 240.0 0" color="#3a2418"></a-box>
+      <a-box position="-5.0 7.05 -0.0" width="0.2" height="0.2" depth="0.8" rotation="0 270.0 0" color="#3a2418"></a-box>
+      <a-box position="-4.33 7.05 2.5" width="0.2" height="0.2" depth="0.8" rotation="0 300.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.5 7.05 4.33" width="0.2" height="0.2" depth="0.8" rotation="0 330.0 0" color="#3a2418"></a-box>
       <a-text
         value="清水櫓(推定復元・戌亥櫓)"
         position="0 10.8 0"
@@ -1598,26 +1617,67 @@
         width="9" height="8" depth="9"
         material="src: #tex-stone-wall; repeat: 2 2"
       ></a-box>
-      <!-- 1階(木部) -->
+      <!-- 1階(木部・下見板張りをイメージした濃い色) -->
       <a-box position="0 9.5 0" width="8" height="3" depth="8"
         material="src: #tex-wood; repeat: 2 1"></a-box>
+      <!--
+        【Ver.55】発案者提供の模型写真(近接カット)により、2階の
+        壁が「上部の白漆喰+下部の濃色の下見板張り」の二層構成で
+        あることを確認したため、単一の格子壁材質から、下見板の帯を
+        追加した二層構成に変更する。
+        【確度:実物が二層の壁であること=確定(模型写真で確認)/
+        正確な色・高さの配分=推定】
+      -->
+      <a-box position="0 11.85 0" width="6.7" height="1" depth="6.7"
+        material="src: #tex-wood; repeat: 2 0.4"></a-box>
       <!-- 2階(白漆喰) -->
-      <a-box position="0 12.3 0" width="6.5" height="2.6" depth="6.5"
+      <a-box position="0 13 0" width="6.5" height="2" depth="6.5"
         material="src: #tex-lattice-wall"></a-box>
       <!-- 大屋根(黒瓦・二段構成で反りを表現/山手渡櫓門と同様の形状にアップグレード) -->
       <a-cone
-        position="0 13.9 0" radius-bottom="6.6" radius-top="5.4"
+        position="0 14.9 0" radius-bottom="6.6" radius-top="5.4"
         height="0.6" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
       <a-cone
-        position="0 15.3 0" radius-bottom="5.4" radius-top="0"
+        position="0 16.3 0" radius-bottom="5.4" radius-top="0"
         height="2.2" segments-radial="4" rotation="0 45 0"
         material="src: #tex-roof-tile; repeat: 2 2"
       ></a-cone>
+      <!--
+        【Ver.55】模型写真で、正面に「千鳥破風」(三角形の小さな
+        切妻屋根が主屋根から突き出す装飾)が確認できたため追加する。
+        稲荷櫓は史実に基づき実物大で復元済みの建物であり、
+        この特徴は史実側の資料でも広く知られているため確度は高い。
+        【確度:千鳥破風の実在=確定/簡略化した形状表現=近似】
+      -->
+      <a-box position="0 14.6 4.6" width="3.2" height="1.6" depth="0.15" color="#f5f2e9"></a-box>
+      <a-cone position="0 15.55 4.6" radius-bottom="2.4" radius-top="0" height="1.1"
+        segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1 1"></a-cone>
+      <!--
+        【Ver.55】軒丸瓦の帯と軒下の垂木を追加(山手渡櫓門と同様の手法)。
+      -->
+      <a-cylinder position="0 14.65 0" radius="6.7" height="0.2"
+        segments-radial="24" material="src: #tex-roof-tile; repeat: 5 1"></a-cylinder>
+      <a-box position="0.0 13.75 6.6" width="0.25" height="0.25" depth="1.1" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.53 13.75 6.1" width="0.25" height="0.25" depth="1.1" rotation="0 22.5 0" color="#3a2418"></a-box>
+      <a-box position="4.67 13.75 4.67" width="0.25" height="0.25" depth="1.1" rotation="0 45.0 0" color="#3a2418"></a-box>
+      <a-box position="6.1 13.75 2.53" width="0.25" height="0.25" depth="1.1" rotation="0 67.5 0" color="#3a2418"></a-box>
+      <a-box position="6.6 13.75 0.0" width="0.25" height="0.25" depth="1.1" rotation="0 90.0 0" color="#3a2418"></a-box>
+      <a-box position="6.1 13.75 -2.53" width="0.25" height="0.25" depth="1.1" rotation="0 112.5 0" color="#3a2418"></a-box>
+      <a-box position="4.67 13.75 -4.67" width="0.25" height="0.25" depth="1.1" rotation="0 135.0 0" color="#3a2418"></a-box>
+      <a-box position="2.53 13.75 -6.1" width="0.25" height="0.25" depth="1.1" rotation="0 157.5 0" color="#3a2418"></a-box>
+      <a-box position="0.0 13.75 -6.6" width="0.25" height="0.25" depth="1.1" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.53 13.75 -6.1" width="0.25" height="0.25" depth="1.1" rotation="0 202.5 0" color="#3a2418"></a-box>
+      <a-box position="-4.67 13.75 -4.67" width="0.25" height="0.25" depth="1.1" rotation="0 225.0 0" color="#3a2418"></a-box>
+      <a-box position="-6.1 13.75 -2.53" width="0.25" height="0.25" depth="1.1" rotation="0 247.5 0" color="#3a2418"></a-box>
+      <a-box position="-6.6 13.75 -0.0" width="0.25" height="0.25" depth="1.1" rotation="0 270.0 0" color="#3a2418"></a-box>
+      <a-box position="-6.1 13.75 2.53" width="0.25" height="0.25" depth="1.1" rotation="0 292.5 0" color="#3a2418"></a-box>
+      <a-box position="-4.67 13.75 4.67" width="0.25" height="0.25" depth="1.1" rotation="0 315.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.53 13.75 6.1" width="0.25" height="0.25" depth="1.1" rotation="0 337.5 0" color="#3a2418"></a-box>
       <a-text
         value="稲荷櫓(実在・復元済み/遠景)"
-        position="0 17 0"
+        position="0 18.5 0"
         align="center"
         color="#a8e6a1"
         width="14"
@@ -1823,9 +1883,12 @@
     </a-entity>
 
     <a-entity
-      gps-projected-entity-place="latitude: 35.668000; longitude: 138.569900;"
+      gps-projected-entity-place="latitude: 35.667920; longitude: 138.570180;"
       id="kura-1-placeholder"
     >
+      <!-- 【Ver.57修正】v51で追加した堀の中心線上(35.668000,138.569900)に
+           あったことが判明(発案者指摘の「堀の中に蔵」に該当)。
+           曲輪内部の妥当な位置へ移動した。 -->
       <a-box position="0 0.3 0" width="4" height="0.6" depth="3.5"
         material="src: #tex-stone-wall"></a-box>
       <a-box position="0 2 0" width="3.5" height="3.4" depth="3"
@@ -1924,14 +1987,36 @@
       記述をもとに、天守台・稲荷櫓を基準とした象徴配置)】
       各建物の詳細な形状(層数以外)は、稲荷櫓と同型の外観を
       流用した推定復元である。
+
+      【Ver.56】稲荷櫓・清水櫓(v55)で追加した「下見板の帯+
+      軒丸瓦+垂木」の様式を、この4棟にも統一して適用した。
+      これにより、遠景に見える全ての実在確定の櫓が、同じ
+      質感レベル・同じ建築様式(白漆喰+下見板+軒丸瓦)で
+      揃うようになった。
     -->
     <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.571900;">
       <a-box position="0 3 0" width="7" height="6" depth="7" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
       <a-box position="0 7 0" width="6" height="2.4" depth="6" material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <a-box position="0 9 0" width="5" height="2" depth="5" material="src: #tex-lattice-wall"></a-box>
+      <!-- 【Ver.56】稲荷櫓と様式を統一するため下見板の帯を追加 -->
+      <a-box position="0 8.4 0" width="5.3" height="0.6" depth="5.3" material="src: #tex-wood; repeat: 1.5 0.4"></a-box>
+      <a-box position="0 9.2 0" width="5" height="1.6" depth="5" material="src: #tex-lattice-wall"></a-box>
       <a-cone position="0 10.2 0" radius-bottom="5" radius-top="4.1" height="0.5" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
       <a-cone position="0.0 10.68 0.0" radius-bottom="4.1" radius-top="3.36" height="0.35" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
       <a-cone position="0.0 11.54 0.0" radius-bottom="3.36" radius-top="0" height="1.36" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <!-- 【Ver.56】軒丸瓦・垂木(稲荷櫓・山手渡櫓門と統一) -->
+      <a-cylinder position="0 9.95 0" radius="5.05" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
+      <a-box position="0.0 9.95 5.05" width="0.18" height="0.18" depth="0.9" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.52 9.95 4.37" width="0.18" height="0.18" depth="0.9" rotation="0 30.0 0" color="#3a2418"></a-box>
+      <a-box position="4.37 9.95 2.53" width="0.18" height="0.18" depth="0.9" rotation="0 60.0 0" color="#3a2418"></a-box>
+      <a-box position="5.05 9.95 0.0" width="0.18" height="0.18" depth="0.9" rotation="0 90.0 0" color="#3a2418"></a-box>
+      <a-box position="4.37 9.95 -2.52" width="0.18" height="0.18" depth="0.9" rotation="0 120.0 0" color="#3a2418"></a-box>
+      <a-box position="2.52 9.95 -4.37" width="0.18" height="0.18" depth="0.9" rotation="0 150.0 0" color="#3a2418"></a-box>
+      <a-box position="0.0 9.95 -5.05" width="0.18" height="0.18" depth="0.9" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.53 9.95 -4.37" width="0.18" height="0.18" depth="0.9" rotation="0 210.0 0" color="#3a2418"></a-box>
+      <a-box position="-4.37 9.95 -2.53" width="0.18" height="0.18" depth="0.9" rotation="0 240.0 0" color="#3a2418"></a-box>
+      <a-box position="-5.05 9.95 -0.0" width="0.18" height="0.18" depth="0.9" rotation="0 270.0 0" color="#3a2418"></a-box>
+      <a-box position="-4.37 9.95 2.53" width="0.18" height="0.18" depth="0.9" rotation="0 300.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.53 9.95 4.37" width="0.18" height="0.18" depth="0.9" rotation="0 330.0 0" color="#3a2418"></a-box>
       <a-text value="本丸櫓(実在・二重櫓)" position="0 13.2 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
     </a-entity>
 
@@ -1939,10 +2024,28 @@
       <a-box position="0 3 0" width="8" height="6" depth="8" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
       <a-box position="0 7.2 0" width="7" height="2.4" depth="7" material="src: #tex-wood; repeat: 1.5 1"></a-box>
       <a-box position="0 9.4 0" width="6" height="2.2" depth="6" material="src: #tex-lattice-wall"></a-box>
-      <a-box position="0 11.3 0" width="5" height="2" depth="5" material="src: #tex-wood; repeat: 1 1"></a-box>
+      <!-- 【Ver.56】3階部分と大屋根の間にも下見板の帯を追加 -->
+      <a-box position="0 10.9 0" width="5.3" height="0.6" depth="5.3" material="src: #tex-wood; repeat: 1.2 0.4"></a-box>
+      <a-box position="0 11.6 0" width="5" height="1.5" depth="5" material="src: #tex-wood; repeat: 1 1"></a-box>
       <a-cone position="0 12.7 0" radius-bottom="4.6" radius-top="3.8" height="0.5" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
       <a-cone position="0.0 13.2 0.0" radius-bottom="3.8" radius-top="3.12" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
       <a-cone position="0.0 14.16 0.0" radius-bottom="3.12" radius-top="0" height="1.53" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <!-- 【Ver.56】軒丸瓦・垂木 -->
+      <a-cylinder position="0 12.45 0" radius="4.65" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
+      <a-box position="0.0 12.45 4.65" width="0.18" height="0.18" depth="0.85" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.02 12.45 4.19" width="0.18" height="0.18" depth="0.85" rotation="0 25.7 0" color="#3a2418"></a-box>
+      <a-box position="3.64 12.45 2.9" width="0.18" height="0.18" depth="0.85" rotation="0 51.4 0" color="#3a2418"></a-box>
+      <a-box position="4.53 12.45 1.03" width="0.18" height="0.18" depth="0.85" rotation="0 77.1 0" color="#3a2418"></a-box>
+      <a-box position="4.53 12.45 -1.03" width="0.18" height="0.18" depth="0.85" rotation="0 102.9 0" color="#3a2418"></a-box>
+      <a-box position="3.64 12.45 -2.9" width="0.18" height="0.18" depth="0.85" rotation="0 128.6 0" color="#3a2418"></a-box>
+      <a-box position="2.02 12.45 -4.19" width="0.18" height="0.18" depth="0.85" rotation="0 154.3 0" color="#3a2418"></a-box>
+      <a-box position="0.0 12.45 -4.65" width="0.18" height="0.18" depth="0.85" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.02 12.45 -4.19" width="0.18" height="0.18" depth="0.85" rotation="0 205.7 0" color="#3a2418"></a-box>
+      <a-box position="-3.64 12.45 -2.9" width="0.18" height="0.18" depth="0.85" rotation="0 231.4 0" color="#3a2418"></a-box>
+      <a-box position="-4.53 12.45 -1.03" width="0.18" height="0.18" depth="0.85" rotation="0 257.1 0" color="#3a2418"></a-box>
+      <a-box position="-4.53 12.45 1.03" width="0.18" height="0.18" depth="0.85" rotation="0 282.9 0" color="#3a2418"></a-box>
+      <a-box position="-3.64 12.45 2.9" width="0.18" height="0.18" depth="0.85" rotation="0 308.6 0" color="#3a2418"></a-box>
+      <a-box position="-2.02 12.45 4.19" width="0.18" height="0.18" depth="0.85" rotation="0 334.3 0" color="#3a2418"></a-box>
       <a-text value="月見櫓(実在・三重櫓)" position="0 16 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
     </a-entity>
 
@@ -1960,18 +2063,46 @@
     <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.572400;">
       <a-box position="0 2.5 0" width="6" height="5" depth="6" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
       <a-box position="0 6 0" width="5" height="2" depth="5" material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <a-box position="0 7.8 0" width="4.2" height="1.8" depth="4.2" material="src: #tex-lattice-wall"></a-box>
+      <!-- 【Ver.56】下見板の帯を追加(様式統一) -->
+      <a-box position="0 7.35 0" width="4.4" height="0.5" depth="4.4" material="src: #tex-wood; repeat: 1.2 0.4"></a-box>
+      <a-box position="0 8 0" width="4.2" height="1.3" depth="4.2" material="src: #tex-lattice-wall"></a-box>
       <a-cone position="0.0 8.5 0.0" radius-bottom="3.8" radius-top="3.12" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
       <a-cone position="0.0 9.46 0.0" radius-bottom="3.12" radius-top="0" height="1.53" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
+      <!-- 【Ver.56】軒丸瓦・垂木 -->
+      <a-cylinder position="0 8.3 0" radius="3.85" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
+      <a-box position="0.0 8.3 3.85" width="0.18" height="0.18" depth="0.7" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.26 8.3 3.11" width="0.18" height="0.18" depth="0.7" rotation="0 36.0 0" color="#3a2418"></a-box>
+      <a-box position="3.66 8.3 1.19" width="0.18" height="0.18" depth="0.7" rotation="0 72.0 0" color="#3a2418"></a-box>
+      <a-box position="3.66 8.3 -1.19" width="0.18" height="0.18" depth="0.7" rotation="0 108.0 0" color="#3a2418"></a-box>
+      <a-box position="2.26 8.3 -3.11" width="0.18" height="0.18" depth="0.7" rotation="0 144.0 0" color="#3a2418"></a-box>
+      <a-box position="0.0 8.3 -3.85" width="0.18" height="0.18" depth="0.7" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.26 8.3 -3.11" width="0.18" height="0.18" depth="0.7" rotation="0 216.0 0" color="#3a2418"></a-box>
+      <a-box position="-3.66 8.3 -1.19" width="0.18" height="0.18" depth="0.7" rotation="0 252.0 0" color="#3a2418"></a-box>
+      <a-box position="-3.66 8.3 1.19" width="0.18" height="0.18" depth="0.7" rotation="0 288.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.26 8.3 3.11" width="0.18" height="0.18" depth="0.7" rotation="0 324.0 0" color="#3a2418"></a-box>
       <a-text value="数寄屋櫓(実在・辰巳櫓/縮尺付き測量図で位置を再訂正)" position="0 11 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
     </a-entity>
 
     <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.570900;">
       <a-box position="0 2 0" width="5" height="4" depth="5" material="src: #tex-stone-wall; repeat: 1.2 1.2"></a-box>
-      <a-box position="0 4.8 0" width="4.2" height="1.8" depth="4.2" material="src: #tex-wood; repeat: 1.2 1"></a-box>
+      <!-- 【Ver.56】下見板の帯を追加(様式統一) -->
+      <a-box position="0 4.25 0" width="4.5" height="0.5" depth="4.5" material="src: #tex-wood; repeat: 1 0.4"></a-box>
+      <a-box position="0 4.9 0" width="4.2" height="1.6" depth="4.2" material="src: #tex-wood; repeat: 1.2 1"></a-box>
       <a-cone position="0 5.9 0" radius-bottom="3.5" radius-top="2.9" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
       <a-cone position="0.0 6.19 0.0" radius-bottom="2.9" radius-top="2.38" height="0.29" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
       <a-cone position="0.0 6.88 0.0" radius-bottom="2.38" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
+      <!-- 【Ver.56】軒丸瓦・垂木 -->
+      <a-cylinder position="0 5.7 0" radius="3.55" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
+      <a-box position="0.0 5.7 3.55" width="0.18" height="0.18" depth="0.65" rotation="0 0.0 0" color="#3a2418"></a-box>
+      <a-box position="2.09 5.7 2.87" width="0.18" height="0.18" depth="0.65" rotation="0 36.0 0" color="#3a2418"></a-box>
+      <a-box position="3.38 5.7 1.1" width="0.18" height="0.18" depth="0.65" rotation="0 72.0 0" color="#3a2418"></a-box>
+      <a-box position="3.38 5.7 -1.1" width="0.18" height="0.18" depth="0.65" rotation="0 108.0 0" color="#3a2418"></a-box>
+      <a-box position="2.09 5.7 -2.87" width="0.18" height="0.18" depth="0.65" rotation="0 144.0 0" color="#3a2418"></a-box>
+      <a-box position="0.0 5.7 -3.55" width="0.18" height="0.18" depth="0.65" rotation="0 180.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.09 5.7 -2.87" width="0.18" height="0.18" depth="0.65" rotation="0 216.0 0" color="#3a2418"></a-box>
+      <a-box position="-3.38 5.7 -1.1" width="0.18" height="0.18" depth="0.65" rotation="0 252.0 0" color="#3a2418"></a-box>
+      <a-box position="-3.38 5.7 1.1" width="0.18" height="0.18" depth="0.65" rotation="0 288.0 0" color="#3a2418"></a-box>
+      <a-box position="-2.09 5.7 2.87" width="0.18" height="0.18" depth="0.65" rotation="0 324.0 0" color="#3a2418"></a-box>
       <a-text value="太鼓櫓(実在・柳門内)" position="0 8.4 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
     </a-entity>
 
@@ -2072,7 +2203,8 @@
       <a-cone position="0.0 1.95 0.0" radius-bottom="1.9" radius-top="1.56" height="0.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
       <a-cone position="0.0 2.43 0.0" radius-bottom="1.56" radius-top="0" height="0.77" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
     </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668130; longitude: 138.569780;">
+    <!-- 【Ver.57修正】v51の堀チェーンと重なっていたため位置を調整 -->
+    <a-entity gps-projected-entity-place="latitude: 35.668080; longitude: 138.569950;">
       <a-box position="0 0.25 0" width="3.4" height="0.5" depth="3" material="src: #tex-stone-wall"></a-box>
       <a-box position="0 1.5 0" width="3" height="2" depth="2.5" material="src: #tex-wood; repeat: 1 0.7"></a-box>
       <a-cone position="0.0 2.37 0.0" radius-bottom="2.3" radius-top="1.89" height="0.24" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
@@ -2362,6 +2494,71 @@
       <a-cone position="0.0 2.71 0.0" radius-bottom="2.6" radius-top="2.13" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
       <a-cone position="0.0 3.24 0.0" radius-bottom="2.13" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
       <a-text value="二の丸内の建物(公式復元模型に基づく推定配置)" position="0 4 0" align="center" color="#ffd166" width="10" side="double"></a-text>
+    </a-entity>
+
+    <!--
+      ============================================
+      本丸・二の丸・帯曲輪・鍛冶曲輪 内部の密度アップ(v57)
+      ============================================
+      模型では、本丸・二の丸内部が複数棟の建物で隙間なく
+      埋まっていたのに対し、これまでのARはそれぞれ1棟の
+      建物のみだった。曲輪ごとに2〜3棟を追加し、密度を
+      引き上げる。
+
+      個々の建物の正確な形状・用途は特定できないため、
+      「この曲輪の内部が建物で埋まっていたこと」を伝える
+      象徴的な配置とする。
+
+      【確度:各曲輪内部が建物で埋まっていたこと=確定(模型より)/
+      個々の建物の正確な形状・用途・位置=創作補完(象徴配置)】
+    -->
+    <a-entity gps-projected-entity-place="latitude: 35.665870; longitude: 138.571950;">
+      <a-box position="0 0.18 0" width="4.0" height="0.36" depth="3.4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 1.07 0" width="3.6" height="1.43" depth="3.0" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.99 0" radius-bottom="3.24" radius-top="2.66" height="0.3" segments-radial="4" rotation="0 本丸内の建物2(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 2.29 0" radius-bottom="2.66" radius-top="0" height="1.33" segments-radial="4" rotation="0 本丸内の建物2(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.571780;">
+      <a-box position="0 0.17 0" width="3.6" height="0.33" depth="3.1999999999999997" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.94 0" width="3.2" height="1.21" depth="2.8" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.74 0" radius-bottom="2.88" radius-top="2.36" height="0.3" segments-radial="4" rotation="0 本丸内の建物3(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 2.04 0" radius-bottom="2.36" radius-top="0" height="1.18" segments-radial="4" rotation="0 本丸内の建物3(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665680; longitude: 138.571980;">
+      <a-box position="0 0.21 0" width="3.1999999999999997" height="0.43" depth="2.8" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.98 0" width="2.8" height="1.1" depth="2.4" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.73 0" radius-bottom="2.52" radius-top="2.07" height="0.3" segments-radial="4" rotation="0 None 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 2.03 0" radius-bottom="2.07" radius-top="0" height="1.03" segments-radial="4" rotation="0 None 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.571650;">
+      <a-box position="0 0.15 0" width="3.4" height="0.31" depth="3.0" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.89 0" width="3.0" height="1.16" depth="2.6" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.67 0" radius-bottom="2.7" radius-top="2.21" height="0.3" segments-radial="4" rotation="0 二の丸内の建物2(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.97 0" radius-bottom="2.21" radius-top="0" height="1.10" segments-radial="4" rotation="0 二の丸内の建物2(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665450; longitude: 138.571900;">
+      <a-box position="0 0.20 0" width="3.0" height="0.41" depth="2.6999999999999997" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.93 0" width="2.6" height="1.04" depth="2.3" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.65 0" radius-bottom="2.34" radius-top="1.92" height="0.3" segments-radial="4" rotation="0 None 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.95 0" radius-bottom="1.92" radius-top="0" height="0.96" segments-radial="4" rotation="0 None 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665650; longitude: 138.571550;">
+      <a-box position="0 0.18 0" width="2.8" height="0.37" depth="2.4" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.84 0" width="2.4" height="0.94" depth="2.0" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.51 0" radius-bottom="2.16" radius-top="1.77" height="0.3" segments-radial="4" rotation="0 帯曲輪内の建物(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.81 0" radius-bottom="1.77" radius-top="0" height="0.89" segments-radial="4" rotation="0 帯曲輪内の建物(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665550; longitude: 138.572000;">
+      <a-box position="0 0.15 0" width="3.8" height="0.31" depth="3.3" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.94 0" width="3.4" height="1.26" depth="2.9" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.77 0" radius-bottom="3.06" radius-top="2.51" height="0.3" segments-radial="4" rotation="0 鍛冶曲輪内の建物(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 2.07 0" radius-bottom="2.51" radius-top="0" height="1.25" segments-radial="4" rotation="0 鍛冶曲輪内の建物(推定配置) 0" material="src: #tex-roof-tile"></a-cone>
+    </a-entity>
+    <a-entity gps-projected-entity-place="latitude: 35.665300; longitude: 138.572050;">
+      <a-box position="0 0.20 0" width="3.0" height="0.4" depth="2.6" material="src: #tex-stone-wall"></a-box>
+      <a-box position="0 0.90 0" width="2.6" height="0.99" depth="2.2" material="src: #tex-wood; repeat: 1 0.8"></a-box>
+      <a-cone position="0 1.59 0" radius-bottom="2.34" radius-top="1.92" height="0.3" segments-radial="4" rotation="0 None 0" material="src: #tex-roof-tile"></a-cone>
+      <a-cone position="0 1.89 0" radius-bottom="1.92" radius-top="0" height="0.96" segments-radial="4" rotation="0 None 0" material="src: #tex-roof-tile"></a-cone>
     </a-entity>
 
     <!--
