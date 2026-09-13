@@ -569,9 +569,9 @@
 
   <div id="fidelity-modal">
     <div class="card">
-      <h2>v64の復元方針</h2>
+      <h2>v65の復元方針</h2>
       <p>
-        v64は、v62を技術的な土台として、甲府城復元模型と測量図を
+        v65は、v62を技術的な土台として、甲府城復元模型と測量図を
         「全体配置のマスター」として再設計した現地調査用ビルドです。
       </p>
       <table>
@@ -599,21 +599,21 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v64
+    build: v65
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v64]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v65]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v64(構造再設計・単一GPSアンカー・模型準拠の基準座標系)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v65(山手御門構造分離・単一GPSアンカー・模型準拠の基準座標系)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR v64・構造再設計版</strong><br>
+    <strong>甲府城AR v65・構造再設計版</strong><br>
     模型・測量図を基準に、城郭全体を1つのローカル座標系で構成しています。<br>
-    明日の現地調査では、山手御門・稲荷櫓・天守台・追手口・楽屋曲輪の「位置／向き／規模」を確認してください。
+    明日の現地調査では、山手御門を基準に、稲荷櫓・天守台・追手口・楽屋曲輪の「位置／向き／規模」を確認してください。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -678,7 +678,7 @@
     使用しない方針とする。
   -->
   <!-- =========================================================
-       v64 SCENE
+       v65 SCENE
        1つのGPSアンカー + 城郭ローカル座標系
        +X=東 / +Z=南 / -Z=北
        ========================================================= -->
@@ -700,7 +700,7 @@
 
     <!--
       GPSアンカー：山手御門の既存・現地確認済み位置を基準にする。
-      v64では、ここだけがgps-projected-entity-placeを持つ。
+      v65では、ここだけがgps-projected-entity-placeを持つ。
       子要素はすべてローカルメートル座標で配置する。
     -->
     <a-entity id="castle-anchor" gps-projected-entity-place="latitude: 35.667180; longitude: 138.570780;">
@@ -715,28 +715,47 @@
           <a-text value="西 (-X)" position="-12 1 0" align="center" color="#ffffff" width="5" rotation="0 90 0"></a-text>
         </a-entity>
 
-        <!-- 山手御門：位置は現地確認済み。形状・向きはv64で再設計中。 -->
+        <!-- 山手御門：GPS位置・全体方位は現地確認済み。v65では門の構造を分離して表示。 -->
         <a-entity id="yamate-complex" position="0 0 0">
-          <!-- 土橋・石垣の基部：現地形状を観察するための低い基準形 -->
-          <a-box position="0 0.45 0" width="10" height="0.9" depth="7" material="src:#tex-stone-wall; repeat:2 1"></a-box>
+          <!-- 土橋・虎口の基部。これは建物ではなく、門の周辺地形を示す基準形。 -->
+          <a-box id="yamate-base-platform" position="0 0.45 0" width="10" height="0.9" depth="7" material="src:#tex-stone-wall; repeat:2 1"></a-box>
 
-          <!-- 高麗門：模型の「門＋切妻屋根」のシルエットを優先 -->
-          <a-entity id="yamate-mon-placeholder" position="0 0 0" rotation="0 0 0">
-            <a-box position="0 2.4 0" width="4.6" height="4.8" depth="1.4" material="src:#tex-wood; repeat:1 2"></a-box>
-            <a-box position="-2.7 2.7 0" width="0.55" height="5.4" depth="1.6" material="src:#tex-wood"></a-box>
-            <a-box position="2.7 2.7 0" width="0.55" height="5.4" depth="1.6" material="src:#tex-wood"></a-box>
-            <a-box position="0 5.15 0" width="6.6" height="0.55" depth="2.6" material="src:#tex-roof-tile"></a-box>
-            <a-box position="0 5.65 0" width="5.8" height="0.45" depth="2.2" rotation="0 0 0" material="src:#tex-roof-tile"></a-box>
-            <a-text value="山手門\n位置：現地確認済み\n向き：要確認" position="0 7.1 0" align="center" color="#ffffff" width="8" side="double"></a-text>
+          <!--
+            山手門（高麗門）
+            v64の大きな茶色い箱を廃止し、門柱・冠木・扉・切妻屋根に分解。
+            正確な相対位置は今後の模型／現地確認で調整するため、調査用仮配置。
+          -->
+          <a-entity id="yamate-mon" position="2.2 0 -1.8" rotation="0 56.64 0">
+            <a-box id="yamate-mon-left-post" position="-2.7 2.0 0" width="0.55" height="4.0" depth="0.65" material="src:#tex-wood"></a-box>
+            <a-box id="yamate-mon-right-post" position="2.7 2.0 0" width="0.55" height="4.0" depth="0.65" material="src:#tex-wood"></a-box>
+            <a-box id="yamate-mon-door-left" position="-1.15 1.8 0" width="2.1" height="3.5" depth="0.18" material="src:#tex-wood"></a-box>
+            <a-box id="yamate-mon-door-right" position="1.15 1.8 0" width="2.1" height="3.5" depth="0.18" material="src:#tex-wood"></a-box>
+            <a-box id="yamate-mon-crown-beam" position="0 4.15 0" width="6.4" height="0.55" depth="0.8" material="src:#tex-wood"></a-box>
+            <a-box id="yamate-mon-roof" position="0 4.75 0" width="7.2" height="0.55" depth="2.4" material="src:#tex-roof-tile"></a-box>
+            <a-box id="yamate-mon-roof-ridge" position="0 5.12 0" width="5.8" height="0.28" depth="0.55" material="src:#tex-roof-tile"></a-box>
+            <a-text value="山手門\n構造分離・仮配置" position="0 6.3 0" align="center" color="#ffd166" width="7" side="double"></a-text>
           </a-entity>
 
-          <!-- 山手渡櫓門：山手門との相対関係を示す基準モデル -->
-          <a-entity id="yamate-watariyagura-mon-placeholder" position="7.78 0 -5.12" rotation="0 56.64 0">
-            <a-box position="0 1.1 0" width="14" height="2.2" depth="6" material="src:#tex-stone-wall; repeat:3 1"></a-box>
-            <a-box position="0 5.2 0" width="12" height="6.2" depth="3.8" material="src:#tex-lattice-wall; repeat:2 2"></a-box>
-            <a-box position="0 8.55 0" width="15" height="0.6" depth="5.4" material="src:#tex-roof-tile; repeat:3 1"></a-box>
-            <a-box position="0 9.0 0" width="12.8" height="0.45" depth="4.8" material="src:#tex-roof-tile"></a-box>
-            <a-text value="山手渡櫓門\n位置：既存GPSから移設\n向き：暫定" position="0 10.4 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+          <!--
+            山手渡櫓門
+            白壁部分を左右に分け、中央に木造の門扉・通路を設ける。
+            これにより「石垣と白壁の間の木造門部分」を視認できるようにする。
+          -->
+          <a-entity id="yamate-watariyagura-mon" position="7.78 0 -5.12" rotation="0 56.64 0">
+            <!-- 左右の石垣 -->
+            <a-box id="watari-stone-left" position="-5.0 1.1 0" width="4.0" height="2.2" depth="6" material="src:#tex-stone-wall; repeat:2 1"></a-box>
+            <a-box id="watari-stone-right" position="5.0 1.1 0" width="4.0" height="2.2" depth="6" material="src:#tex-stone-wall; repeat:2 1"></a-box>
+            <!-- 中央の木造門・通路 -->
+            <a-box id="watari-wood-left" position="-2.25 2.6 0" width="0.45" height="5.2" depth="2.0" material="src:#tex-wood"></a-box>
+            <a-box id="watari-wood-right" position="2.25 2.6 0" width="0.45" height="5.2" depth="2.0" material="src:#tex-wood"></a-box>
+            <a-box id="watari-door-left" position="-1.05 2.35 0" width="1.9" height="4.5" depth="0.22" material="src:#tex-wood"></a-box>
+            <a-box id="watari-door-right" position="1.05 2.35 0" width="1.9" height="4.5" depth="0.22" material="src:#tex-wood"></a-box>
+            <!-- 白壁の渡櫓部分 -->
+            <a-box id="watari-white-left" position="-4.0 5.25 0" width="3.2" height="6.1" depth="3.8" material="src:#tex-lattice-wall; repeat:1 2"></a-box>
+            <a-box id="watari-white-right" position="4.0 5.25 0" width="3.2" height="6.1" depth="3.8" material="src:#tex-lattice-wall; repeat:1 2"></a-box>
+            <a-box id="watari-roof" position="0 8.55 0" width="15" height="0.6" depth="5.4" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+            <a-box id="watari-roof-upper" position="0 9.0 0" width="12.8" height="0.45" depth="4.8" material="src:#tex-roof-tile"></a-box>
+            <a-text value="山手渡櫓門\n門扉・木造通路を表示" position="0 10.4 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
           </a-entity>
         </a-entity>
 
@@ -812,10 +831,10 @@
 
   <script>
     // =========================================================
-    // v64 runtime: 方位補正・調査モード・距離表示・診断
+    // v65 runtime: 方位補正・調査モード・距離表示・診断
     // =========================================================
-    const V64_ANCHOR = { lat: 35.667180, lon: 138.570780 };
-    const V64_FEATURES = {
+    const V65_ANCHOR = { lat: 35.667180, lon: 138.570780 };
+    const V65_FEATURES = {
       yamate: { id: 'yamate-complex', label: '山手御門', lat: 35.667180, lon: 138.570780, status: '現地確認済み' },
       inari: { id: 'inari-yagura-placeholder', label: '稲荷櫓', lat: 35.665700, lon: 138.571700, status: '仮' },
       tenshu: { id: 'tenshudai-placeholder', label: '天守台', lat: 35.665950, lon: 138.572050, status: '模型関係からの仮置き' },
@@ -824,15 +843,15 @@
     };
 
     function latLonToLocal(lat, lon) {
-      const latRad = V64_ANCHOR.lat * Math.PI / 180;
+      const latRad = V65_ANCHOR.lat * Math.PI / 180;
       return {
-        x: (lon - V64_ANCHOR.lon) * 111320 * Math.cos(latRad),
-        z: -(lat - V64_ANCHOR.lat) * 111320
+        x: (lon - V65_ANCHOR.lon) * 111320 * Math.cos(latRad),
+        z: -(lat - V65_ANCHOR.lat) * 111320
       };
     }
 
     function applyFeatureCoordinates() {
-      Object.values(V64_FEATURES).forEach((f) => {
+      Object.values(V65_FEATURES).forEach((f) => {
         const el = document.getElementById(f.id);
         if (!el) return;
         const p = latLonToLocal(f.lat, f.lon);
@@ -853,7 +872,7 @@
 
     const params64 = new URLSearchParams(window.location.search);
     let headingOffset = parseFloat(params64.get('heading'));
-    if (!Number.isFinite(headingOffset)) headingOffset = Number(localStorage.getItem('kofuV64Heading') || 0);
+    if (!Number.isFinite(headingOffset)) headingOffset = Number(localStorage.getItem('kofuV65Heading') || 0);
     if (!Number.isFinite(headingOffset)) headingOffset = 0;
 
     function applyHeadingOffset() {
@@ -866,14 +885,14 @@
 
     function changeHeading(delta) {
       headingOffset = ((headingOffset + delta + 180) % 360) - 180;
-      localStorage.setItem('kofuV64Heading', String(headingOffset));
+      localStorage.setItem('kofuV65Heading', String(headingOffset));
       applyHeadingOffset();
-      window.__diagPush(`v64方位補正を ${headingOffset.toFixed(1)}° に変更`);
+      window.__diagPush(`v65方位補正を ${headingOffset.toFixed(1)}° に変更`);
     }
 
     function resetHeading() {
       headingOffset = 0;
-      localStorage.setItem('kofuV64Heading', '0');
+      localStorage.setItem('kofuV65Heading', '0');
       applyHeadingOffset();
     }
 
@@ -918,7 +937,7 @@
       if (!cam || !cam.object3D || !el) return;
       const cp = cam.object3D.getWorldPosition(new THREE.Vector3());
       const lines = [];
-      Object.values(V64_FEATURES).forEach((f) => {
+      Object.values(V65_FEATURES).forEach((f) => {
         const target = document.getElementById(f.id);
         if (!target || !target.object3D) return;
         const tp = target.object3D.getWorldPosition(new THREE.Vector3());
@@ -965,16 +984,16 @@
 
     function refreshDiag() {
       const parts = [];
-      parts.push('=== 甲府城AR v64 診断 ===');
+      parts.push('=== 甲府城AR v65 診断 ===');
       parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? AFRAME.version : '❌なし'}`);
       parts.push(`gps-projected-camera: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-camera'] ? 'あり' : '❌'}`);
       parts.push(`gps-projected-entity-place: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-entity-place'] ? 'あり' : '❌'}`);
       parts.push(`テストモード: ${window.__AR_TEST_MODE__ ? 'ON' : 'OFF'}`);
-      parts.push(`基準GPS: ${V64_ANCHOR.lat}, ${V64_ANCHOR.lon}`);
+      parts.push(`基準GPS: ${V65_ANCHOR.lat}, ${V65_ANCHOR.lon}`);
       parts.push(`一括方位補正: ${headingOffset.toFixed(1)}°`);
       parts.push('');
       parts.push('=== 基準点 ===');
-      Object.values(V64_FEATURES).forEach(f => {
+      Object.values(V65_FEATURES).forEach(f => {
         const p = latLonToLocal(f.lat, f.lon);
         parts.push(`${f.label}: lat=${f.lat}, lon=${f.lon}, local=(${p.x.toFixed(2)}, ${p.z.toFixed(2)}) / ${f.status}`);
       });
@@ -1019,7 +1038,7 @@
         document.getElementById('survey-controls').style.display = 'flex';
       }
       if (window.__AR_TEST_MODE__) document.getElementById('test-mode-banner').style.display = 'block';
-      window.__diagPush('v64: 単一GPSアンカー＋ローカル座標系を初期化');
+      window.__diagPush('v65: 単一GPSアンカー＋ローカル座標系を初期化');
     });
   </script>
 
