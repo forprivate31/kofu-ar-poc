@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型マスター事前調査版 v72</title>
+  <title>甲府城AR PoC - 模型座標化準備 v73</title>
 
   <script>
     // ============================================
@@ -935,7 +935,7 @@
 
   <script>
     // =========================================================
-    // v72 runtime: 模型マスター事前調査・方位補正・調査モード・距離表示・診断
+    // v73 runtime: 模型マスター事前調査・方位補正・調査モード・距離表示・診断
     // =========================================================
     const V72_ANCHOR = { lat: 35.667180, lon: 138.570780 };
     const V72_FEATURES = {
@@ -1114,7 +1114,7 @@
       headingOffset = ((headingOffset + delta + 180) % 360) - 180;
       localStorage.setItem('kofuV72Heading', String(headingOffset));
       applyHeadingOffset();
-      window.__diagPush(`v72方位補正を ${headingOffset.toFixed(1)}° に変更`);
+      window.__diagPush(`v73方位補正を ${headingOffset.toFixed(1)}° に変更`);
     }
 
     function resetHeading() {
@@ -1211,8 +1211,8 @@
 
     function refreshDiag() {
       const parts = [];
-      parts.push('=== 甲府城AR v72 診断 ===');
-      parts.push('v72模型マスター版：公式復元模型を最上位基準。?model=1 で模型照合モード、?research=all で研究対象を表示');
+      parts.push('=== 甲府城AR v73 診断 ===');
+      parts.push('v73模型マスター版：公式復元模型を最上位基準。?model=1 で模型照合モード、?research=all で研究対象を表示');
       parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? AFRAME.version : '❌なし'}`);
       parts.push(`gps-projected-camera: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-camera'] ? 'あり' : '❌'}`);
       parts.push(`gps-projected-entity-place: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-entity-place'] ? 'あり' : '❌'}`);
@@ -1309,7 +1309,7 @@
         document.getElementById('survey-controls').style.display = 'flex';
       }
       if (window.__AR_TEST_MODE__) document.getElementById('test-mode-banner').style.display = 'block';
-      window.__diagPush('v72: 模型マスター基盤版を初期化');
+      window.__diagPush('v73: 模型マスター基盤版を初期化');
     });
   </script>
 
