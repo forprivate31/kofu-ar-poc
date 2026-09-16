@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型検証用景観 v65</title>
+  <title>甲府城AR PoC - Web資料精度向上 v71</title>
 
   <script>
     // ============================================
@@ -535,6 +535,30 @@
       border: none;
       border-radius: 8px;
     }
+
+    #survey-controls {
+      position: fixed;
+      top: 42px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1004;
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 7px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.68);
+      color: #fff;
+      font: 11px monospace;
+    }
+    #survey-controls button {
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 5px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      padding: 4px 7px;
+    }
+    #survey-controls strong { min-width: 42px; text-align:center; }
   </style>
 </head>
 <body>
@@ -545,62 +569,51 @@
 
   <div id="fidelity-modal">
     <div class="card">
-      <h2>この復元について(忠実度の方針)</h2>
+      <h2>v69の復元方針</h2>
       <p>
-        本ARは、柳沢吉保時代(1700年頃)の甲府城・城下町を、
-        史料に基づいて再現を試みたものです。ただし、すべてが
-        同じ確からしさで再現されているわけではありません。
-        表示される各オブジェクトは、以下の3段階の確度に
-        分類されています。
+        v69は、v62を技術的な土台として、甲府城復元模型と測量図を
+        「全体配置のマスター」として再設計した現地調査用ビルドです。
       </p>
       <table>
-        <tr><th>確度</th><th>意味</th></tr>
-        <tr><td><strong>確定</strong></td><td>発掘調査・現存する建造物・複数の史料が一致する箇所</td></tr>
-        <tr><td><strong>推定</strong></td><td>史料はあるが確証が薄い、または類似建造物・他城の
-          事例から類推した箇所(例:堀の幅、建物の一部の座標)</td></tr>
-        <tr><td><strong>創作補完</strong></td><td>史料が乏しく、視覚的な一体感を出すために最小限
-          補った箇所(例:一般的な武家屋敷・町家のイメージ、
-          当時の人々のシルエット)</td></tr>
+        <tr><th>扱い</th><th>意味</th></tr>
+        <tr><td><strong>確定</strong></td><td>現地確認済み、公式資料、または模型で明確に確認できる要素。</td></tr>
+        <tr><td><strong>模型準拠</strong></td><td>公式復元模型・測量図から配置や形状を読み取った要素。</td></tr>
+        <tr><td><strong>仮</strong></td><td>座標・寸法・向きに未確認部分があり、明日の現地調査で確認する要素。</td></tr>
       </table>
       <p>
-        各オブジェクトのラベルには、できる限りこの確度を
-        明記しています。本ARは学術的な完全性よりも、史実に
-        反しない範囲での体験の分かりやすさを優先しています。
-        内容は今後の調査により随時更新されます。
+        重要な変更：建物ごとに個別のGPS座標を持たせる方式をやめ、
+        山手御門付近を1つのGPSアンカーとし、城内の建物を相対座標で
+        まとめています。これにより、建物同士の相対位置と向きを一つの
+        座標系で管理できます。
       </p>
       <p>
-        【Ver.60】方針の一貫性を保つため、根拠のない創作補完
-        オブジェクトは原則として撤去し、甲府市公式復元模型・
-        測量図・現地写真のいずれかで裏付けが取れる要素を
-        優先する運用に切り替えました。
+        基準軸は <strong>+X=東、+Z=南</strong>。方位補正は一括で変更でき、
+        明日の現地確認では「位置」「向き」「規模」を分けて記録できるようにしています。
       </p>
       <p>
-        主な情報源:山梨県「甲府城研究室」、発掘調査報告書、
-        現地案内板、および甲府市が公式に展示する
-        「甲府城復元模型」(縮尺1:300)など。
+        楽屋曲輪・追手口の座標はv63の目算推定値をそのまま確定値として扱わず、
+        「仮」として再登録しています。
       </p>
       <button id="fidelity-close">閉じる</button>
     </div>
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v65
+    build: v69
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v65]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v69]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v65(模型検証用景観レイヤーを追加・v62を基盤に再構成)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v69(公式復元形状・門構造追加・模型準拠の基準座標系)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR PoC(近景・遠景・導線 統合版)</strong><br>
-    近景:清水櫓+武家地の建物群・人々(推定・一般的イメージ)/ 境界ライン・堀(象徴表示)<br>
-    遠景:稲荷櫓・本丸櫓・月見櫓・数寄屋櫓・太鼓櫓(実在・確定)/ 天守台(石垣のみ現存)/ 焔硝蔵(発掘調査+文献で確認)<br>
-    導線:山手御門(実物への案内)<br>
-    柳沢吉保時代(1700年頃)を想定。距離表示・仮モデルでの精度確認テストです。<br>【v65】模型写真から読み取れる曲輪・建物群を検証用の粗形状として追加。位置・寸法未確認のものは推定表示です。
+    <strong>甲府城AR v69・Web資料精度向上版</strong><br>
+    公式復元資料・復元模型・現地確認を優先し、城郭全体を1つのローカル座標系で構成しています。<br>
+    v69では、Web上で確認できる復元図・ペーパークラフト・現存復元建築写真を反映しました。未確認の位置・寸法は「仮」のまま残しています。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -642,6 +655,16 @@
     <div id="distance-indicator"></div>
   </div>
 
+  <div id="survey-controls">
+    <span>方位補正</span>
+    <button id="heading-minus5">−5°</button>
+    <button id="heading-minus1">−1°</button>
+    <strong id="heading-value">0.0°</strong>
+    <button id="heading-plus1">＋1°</button>
+    <button id="heading-plus5">＋5°</button>
+    <button id="heading-reset">0°</button>
+  </div>
+
   <!--
     【確定】videoTexture: true は使用しない。
 
@@ -654,6 +677,11 @@
     200m以内のため、そもそも不要な設定だった。今後もこの設定は
     使用しない方針とする。
   -->
+  <!-- =========================================================
+       v69 SCENE
+       1つのGPSアンカー + 城郭ローカル座標系
+       +X=東 / +Z=南 / -Z=北
+       ========================================================= -->
   <a-scene
     vr-mode-ui="enabled: false"
     embedded
@@ -662,2357 +690,593 @@
     style="display:none;"
     id="ar-scene"
   >
-    <!-- 明示的な照明。標準マテリアル(color指定)は光源がないと真っ黒になり
-         見えなくなる可能性があるため、念のため明示的に追加する -->
-    <a-entity light="type: ambient; intensity: 0.8; color: #fff"></a-entity>
-    <a-entity light="type: directional; intensity: 0.6; color: #fff" position="1 3 1"></a-entity>
+    <a-entity light="type: ambient; intensity: 0.9; color: #fff"></a-entity>
+    <a-entity light="type: directional; intensity: 0.55; color: #fff" position="10 20 5"></a-entity>
 
     <a-camera id="ar-camera" gps-projected-camera="gpsMinDistance: 0" rotation-reader>
-      <!--
-        サニティチェック用オブジェクト(GPS・コンパスと完全に無関係)
-        カメラの子要素として配置しているため、常にカメラの真正面
-        5m先に固定表示される。これが見えれば「3D描画の仕組み自体は
-        正常」と判断でき、問題はGPS/コンパスの計算側に絞り込める。
-
-        通常は非表示。今後同様の切り分けが必要になった場合のために
-        残してあり、URLに ?debug を付けた時のみ表示する
-        (表示切り替えはJS側で行う)。
-      -->
-      <a-box
-        position="0 0 -5"
-        width="1" height="1" depth="1"
-        color="red"
-        id="sanity-check-box"
-        visible="false"
-      ></a-box>
-      <a-text
-        value="テスト用の赤い箱(常に正面に表示)"
-        position="0 0.8 -5"
-        align="center"
-        color="#ffffff"
-        width="4"
-        id="sanity-check-label"
-        visible="false"
-      ></a-text>
+      <a-box position="0 0 -5" width="1" height="1" depth="1" color="red" id="sanity-check-box" visible="false"></a-box>
+      <a-text value="sanity check" position="0 0.8 -5" align="center" color="#ffffff" width="4" id="sanity-check-label" visible="false"></a-text>
     </a-camera>
 
     <!--
-      ============================================
-      v65 模型検証用・追加景観レイヤー
-      ============================================
-      追加した形状は、提供された復元模型写真から読み取れる
-      「曲輪の面」「長屋状建物」「屋敷群」「石垣ライン」を、
-      現地未確認の検証用粗形状として表現したもの。
-      正確な緯度経度・寸法・高さを確定したものではない。
-      既存オブジェクトとの重なりがあり得るため、現地では
-      配置の比較用レイヤーとして扱う。
+      v69 基準座標系
+      山手御門の現地確認済みGPSを唯一のGPSアンカーとする。
+      +X=東 / +Z=南 / -Z=北。
+      城内の建物・石垣・曲輪はすべてこのローカル座標系で管理する。
+      座標の「確定」と建物形状の「確定」を混同しない。
     -->
-    <a-entity id="model-verification-layer">
-      <!-- 清水曲輪北側：模型で確認できる長屋状の建物列 -->
-      <a-entity gps-projected-entity-place="latitude: 35.667760; longitude: 138.570020;">
-        <a-box position="0 0.22 0" width="3.2" height="0.44" depth="18" material="src: #tex-stone-wall; repeat: 1 4"></a-box>
-        <a-box position="0 1.35 0" width="2.8" height="2.1" depth="17.2" material="src: #tex-wood; repeat: 1 5"></a-box>
-        <a-box position="0 2.48 0" width="3.25" height="0.28" depth="18.2" material="src: #tex-roof-tile; repeat: 1 5"></a-box>
-        <a-text value="清水曲輪・長屋列（模型基準／推定）" position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+    <a-entity id="castle-anchor" gps-projected-entity-place="latitude: 35.667180; longitude: 138.570780;">
+      <a-entity id="castle-world">
+        <a-entity id="survey-axis" visible="false">
+          <a-cylinder position="0 0.03 25" radius="0.06" height="50" color="#ff4444" rotation="90 0 0"></a-cylinder>
+          <a-cylinder position="25 0.03 0" radius="0.06" height="50" color="#44aaff" rotation="0 0 90"></a-cylinder>
+          <a-text value="北 (-Z)" position="0 1 -12" align="center" color="#ffffff" width="5"></a-text>
+          <a-text value="南 (+Z)" position="0 1 12" align="center" color="#ffffff" width="5"></a-text>
+          <a-text value="東 (+X)" position="12 1 0" align="center" color="#ffffff" width="5" rotation="0 -90 0"></a-text>
+          <a-text value="西 (-X)" position="-12 1 0" align="center" color="#ffffff" width="5" rotation="0 90 0"></a-text>
+        </a-entity>
+
+        <!-- =====================================================
+             A. 山手御門：最優先・現地確認済みアンカー
+             公式調査報告の数値を優先。
+             山手門：門桁行14.4尺、控桁行9.5尺、開き間10尺2寸。
+             1間=1.970m。山手渡櫓門：1階5間×2間、2階7間×3間。
+             ===================================================== -->
+        <a-entity id="yamate-complex" position="0 0 0">
+          <!-- 枡形の石垣・土塀。現地確認時に位置を再調整するため、構造を分離。 -->
+          <a-box id="yamate-wall-west" position="-5.7 1.55 0.5" width="1.4" height="3.1" depth="10.0" material="src:#tex-stone-wall; repeat:2 2"></a-box>
+          <a-box id="yamate-wall-east" position="5.7 1.55 0.5" width="1.4" height="3.1" depth="10.0" material="src:#tex-stone-wall; repeat:2 2"></a-box>
+          <a-box id="yamate-wall-south" position="0 1.45 5.1" width="12.8" height="2.9" depth="1.3" material="src:#tex-stone-wall; repeat:3 1"></a-box>
+
+          <!-- 山手門：古式高麗門。開き間約3.09m、門桁行約4.43m。 -->
+          <a-entity id="yamate-mon" position="0 0 -4.2" rotation="0 56.64 0">
+            <a-box position="-1.72 2.05 0" width="0.42" height="4.10" depth="0.42" material="src:#tex-wood"></a-box>
+            <a-box position="1.72 2.05 0" width="0.42" height="4.10" depth="0.42" material="src:#tex-wood"></a-box>
+            <a-box position="-1.45 1.82 0.82" width="0.34" height="3.64" depth="0.34" material="src:#tex-wood"></a-box>
+            <a-box position="1.45 1.82 0.82" width="0.34" height="3.64" depth="0.34" material="src:#tex-wood"></a-box>
+            <a-box position="0 4.10 0" width="4.43" height="0.36" depth="0.52" material="src:#tex-wood"></a-box>
+            <a-box position="-0.78 1.62 -0.03" width="1.47" height="3.05" depth="0.14" material="src:#tex-wood"></a-box>
+            <a-box position="0.78 1.62 -0.03" width="1.47" height="3.05" depth="0.14" material="src:#tex-wood"></a-box>
+            <!-- 切妻屋根：左右2枚で勾配を表現 -->
+            <a-box position="0 4.63 -0.55" width="5.15" height="0.22" depth="1.55" rotation="-28 0 0" material="src:#tex-roof-tile"></a-box>
+            <a-box position="0 4.63 0.55" width="5.15" height="0.22" depth="1.55" rotation="28 0 0" material="src:#tex-roof-tile"></a-box>
+            <a-box position="0 5.02 0" width="4.65" height="0.20" depth="0.28" material="src:#tex-roof-tile"></a-box>
+            <a-text value="山手門\n高麗門・現地位置/全体方向確認済み" position="0 6.0 0" align="center" color="#ffd166" width="7" side="double"></a-text>
+          </a-entity>
+
+          <!-- 山手渡櫓門：2階7間×3間、1階5間×2間。 -->
+          <a-entity id="yamate-watariyagura-mon" position="7.0 0 1.0" rotation="0 56.64 0">
+            <!-- 1階：門通路＋木造部 -->
+            <a-box id="watari-ground" position="0 0.25 0" width="9.85" height="0.5" depth="3.94" material="src:#tex-stone-wall"></a-box>
+            <a-box id="watari-wood-left" position="-2.35 2.25 0" width="0.34" height="4.5" depth="3.15" material="src:#tex-wood"></a-box>
+            <a-box id="watari-wood-right" position="2.35 2.25 0" width="0.34" height="4.5" depth="3.15" material="src:#tex-wood"></a-box>
+            <a-box id="watari-door-left" position="-0.76 2.05 -1.62" width="1.48" height="4.0" depth="0.18" material="src:#tex-wood"></a-box>
+            <a-box id="watari-door-right" position="0.76 2.05 -1.62" width="1.48" height="4.0" depth="0.18" material="src:#tex-wood"></a-box>
+            <a-box position="0 4.55 0" width="9.85" height="0.30" depth="3.94" material="src:#tex-wood"></a-box>
+            <!-- 2階：7間×3間＝約13.79m×5.91m -->
+            <a-box id="watari-white" position="0 6.75 0" width="13.79" height="4.15" depth="5.91" material="src:#tex-lattice-wall; repeat:3 2"></a-box>
+            <!-- 開口を読み取れるよう正面側の白壁を一部後退させる木造帯 -->
+            <a-box position="0 4.95 -2.90" width="13.79" height="0.35" depth="0.22" material="src:#tex-wood"></a-box>
+            <!-- 入母屋を簡略化した段付き屋根 -->
+            <a-box position="0 8.82 -1.0" width="14.45" height="0.28" depth="3.35" rotation="-22 0 0" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+            <a-box position="0 8.82 1.0" width="14.45" height="0.28" depth="3.35" rotation="22 0 0" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+            <a-box position="0 9.55 0" width="12.6" height="0.24" depth="0.42" material="src:#tex-roof-tile"></a-box>
+            <a-text value="山手渡櫓門\n2階7間×3間／1階5間×2間" position="0 10.75 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+          </a-entity>
+        </a-entity>
+
+        <!-- =====================================================
+             B. 稲荷櫓：公式寸法・構造を反映
+             南北5間=約9.85m、東西6間=約11.82m、総高約10.865m。
+             北東隅、東側1階に切妻張出、北側1階に入母屋張出。
+             ===================================================== -->
+        <a-entity id="inari-yagura-placeholder" position="83.20 0 164.75" rotation="0 0 0">
+          <a-box id="inari-stone-base" position="0 1.75 0" width="12.2" height="3.5" depth="10.2" material="src:#tex-stone-wall; repeat:4 3"></a-box>
+          <a-box id="inari-white-lower" position="0 4.45 0" width="11.82" height="2.25" depth="9.85" material="src:#tex-lattice-wall; repeat:3 2"></a-box>
+          <a-box id="inari-white-upper" position="0 6.55 0" width="7.88" height="2.0" depth="5.91" material="src:#tex-lattice-wall; repeat:2 2"></a-box>
+          <!-- 東側1階の切妻張出 -->
+          <a-box position="6.0 4.45 0" width="1.45" height="2.25" depth="4.0" material="src:#tex-lattice-wall"></a-box>
+          <a-box position="0 4.45 -5.25" width="4.0" height="2.25" depth="1.15" material="src:#tex-lattice-wall"></a-box>
+          <!-- 屋根2段 -->
+          <a-box position="0 7.70 -1.05" width="12.55" height="0.28" depth="4.0" rotation="-25 0 0" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+          <a-box position="0 7.70 1.05" width="12.55" height="0.28" depth="4.0" rotation="25 0 0" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+          <a-box position="0 8.48 -0.65" width="8.55" height="0.26" depth="2.35" rotation="-25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 8.48 0.65" width="8.55" height="0.26" depth="2.35" rotation="25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 9.12 0" width="7.8" height="0.22" depth="0.38" material="src:#tex-roof-tile"></a-box>
+          <a-text value="稲荷櫓\n公式規模：約12m×10m／総高約10.865m\n北東隅・東/北側張出あり" position="0 10.35 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+        </a-entity>
+
+        <!-- =====================================================
+             C. 本丸・天守台：建物を捏造しない
+             ===================================================== -->
+        <a-entity id="honmaru-reference" position="105.80 0 159.20">
+          <a-box position="0 0.08 0" width="60" height="0.16" depth="50" opacity="0.10" color="#d7b77a"></a-box>
+          <a-text value="本丸（公式：約60m×50m）" position="0 1.7 0" align="center" color="#ffffff" width="8" side="double"></a-text>
+        </a-entity>
+        <a-entity id="tenshudai-placeholder" position="114.90 0 136.90" rotation="0 0 0">
+          <a-box position="0 1.2 0" width="17" height="2.4" depth="13" material="src:#tex-stone-wall; repeat:4 3"></a-box>
+          <a-box position="0 2.6 0" width="15.2" height="0.6" depth="11.2" material="src:#tex-stone-wall; repeat:3 2"></a-box>
+          <a-box position="0 3.0 0" width="13.8" height="0.20" depth="9.8" color="#8c7451"></a-box>
+          <a-text value="天守台\n現存石垣・天守建物は非表示" position="0 4.6 0" align="center" color="#ffd166" width="8" side="double"></a-text>
+        </a-entity>
+
+        <!-- =====================================================
+             D. 主要復元門
+             ===================================================== -->
+        <!-- 鉄門：三間一戸潜戸付渡櫓門、1階3間×2間、2階7間×3間、総高9.653m。 -->
+        <a-entity id="kurogane-mon" position="105 0 191" rotation="0 0 0">
+          <a-box position="0 1.35 0" width="14.0" height="2.7" depth="5.0" material="src:#tex-stone-wall; repeat:4 2"></a-box>
+          <a-box position="0 3.85 0" width="5.91" height="2.0" depth="3.94" material="src:#tex-wood"></a-box>
+          <a-box position="0 6.20 0" width="13.79" height="3.0" depth="5.91" material="src:#tex-lattice-wall; repeat:3 2"></a-box>
+          <a-box position="-1.45 2.0 -2.0" width="1.25" height="3.4" depth="0.20" material="src:#tex-wood"></a-box>
+          <a-box position="1.45 2.0 -2.0" width="1.25" height="3.4" depth="0.20" material="src:#tex-wood"></a-box>
+          <a-box position="0 8.0 -1.0" width="14.3" height="0.25" depth="3.5" rotation="-23 0 0" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+          <a-box position="0 8.0 1.0" width="14.3" height="0.25" depth="3.5" rotation="23 0 0" material="src:#tex-roof-tile; repeat:3 1"></a-box>
+          <a-box position="0 8.65 0" width="12.8" height="0.22" depth="0.40" material="src:#tex-roof-tile"></a-box>
+          <a-text value="鉄門\n3間一戸潜戸付渡櫓門／2階7間×3間" position="0 10.0 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
+        </a-entity>
+
+        <!-- 鍛冶曲輪門：薬医門。 -->
+        <a-entity id="kaji-kuruwa-mon" position="18 0 183" rotation="0 0 0">
+          <a-box position="-1.55 1.75 0" width="0.42" height="3.5" depth="0.42" material="src:#tex-wood"></a-box>
+          <a-box position="1.55 1.75 0" width="0.42" height="3.5" depth="0.42" material="src:#tex-wood"></a-box>
+          <a-box position="-1.30 1.48 0.72" width="0.34" height="2.96" depth="0.34" material="src:#tex-wood"></a-box>
+          <a-box position="1.30 1.48 0.72" width="0.34" height="2.96" depth="0.34" material="src:#tex-wood"></a-box>
+          <a-box position="0 3.55 0" width="4.0" height="0.30" depth="0.45" material="src:#tex-wood"></a-box>
+          <a-box position="0 4.02 -0.55" width="4.75" height="0.22" depth="1.55" rotation="-25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 4.02 0.55" width="4.75" height="0.22" depth="1.55" rotation="25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 1.55 -0.05" width="2.45" height="2.75" depth="0.12" material="src:#tex-wood"></a-box>
+          <a-text value="鍛冶曲輪門\n薬医門・潜り戸あり" position="0 5.05 0" align="center" color="#a8e6a1" width="7" side="double"></a-text>
+        </a-entity>
+
+        <!-- 内松陰門：高麗門。 -->
+        <a-entity id="uchimatsukage-mon" position="-2 0 151" rotation="0 90 0">
+          <a-box position="-1.45 1.75 0" width="0.44" height="3.5" depth="0.44" material="src:#tex-wood"></a-box>
+          <a-box position="1.45 1.75 0" width="0.44" height="3.5" depth="0.44" material="src:#tex-wood"></a-box>
+          <a-box position="-1.18 1.50 0.68" width="0.34" height="3.0" depth="0.34" material="src:#tex-wood"></a-box>
+          <a-box position="1.18 1.50 0.68" width="0.34" height="3.0" depth="0.34" material="src:#tex-wood"></a-box>
+          <a-box position="0 3.55 0" width="3.7" height="0.30" depth="0.45" material="src:#tex-wood"></a-box>
+          <a-box position="0 4.02 -0.55" width="4.55" height="0.22" depth="1.55" rotation="-25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 4.02 0.55" width="4.55" height="0.22" depth="1.55" rotation="25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 1.50 -0.05" width="2.35" height="2.70" depth="0.12" material="src:#tex-wood"></a-box>
+          <a-text value="内松陰門\n高麗門・袖塀/小屋根を簡略表現" position="0 5.05 0" align="center" color="#a8e6a1" width="7" side="double"></a-text>
+        </a-entity>
+
+        <!-- 稲荷曲輪門：高麗門。位置は模型・現地配置からの仮。 -->
+        <a-entity id="inari-kuruwa-mon" position="75 0 174" rotation="0 0 0">
+          <a-box position="-1.45 1.75 0" width="0.44" height="3.5" depth="0.44" material="src:#tex-wood"></a-box>
+          <a-box position="1.45 1.75 0" width="0.44" height="3.5" depth="0.44" material="src:#tex-wood"></a-box>
+          <a-box position="-1.18 1.50 0.68" width="0.34" height="3.0" depth="0.34" material="src:#tex-wood"></a-box>
+          <a-box position="1.18 1.50 0.68" width="0.34" height="3.0" depth="0.34" material="src:#tex-wood"></a-box>
+          <a-box position="0 3.55 0" width="3.7" height="0.30" depth="0.45" material="src:#tex-wood"></a-box>
+          <a-box position="0 4.02 -0.55" width="4.55" height="0.22" depth="1.55" rotation="-25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 4.02 0.55" width="4.55" height="0.22" depth="1.55" rotation="25 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 1.50 -0.05" width="2.35" height="2.70" depth="0.12" material="src:#tex-wood"></a-box>
+          <a-text value="稲荷曲輪門\n高麗門" position="0 5.05 0" align="center" color="#a8e6a1" width="7" side="double"></a-text>
+        </a-entity>
+
+        <!-- =====================================================
+             E. 曲輪・建物群：模型から読めるが寸法未確定のもの
+             「存在を示す」ことを優先し、建築物を過度に創作しない。
+             ===================================================== -->
+        <a-entity id="gakuya-kuruwa-placeholder" visible="false" position="-7.24 0 187.02" rotation="0 0 0">
+          <a-box position="0 0.12 0" width="34" height="0.24" depth="30" color="#8c7451" opacity="0.22"></a-box>
+          <a-box position="0 1.7 -2" width="20" height="3.4" depth="6.2" material="src:#tex-wood; repeat:3 1"></a-box>
+          <a-box position="-11.5 1.5 2.0" width="7.5" height="3.0" depth="7.0" material="src:#tex-wood"></a-box>
+          <a-box position="10.5 1.55 -2.0" width="8.0" height="3.1" depth="7.0" material="src:#tex-wood"></a-box>
+          <a-box position="-1.0 1.75 4.8" width="9.5" height="3.5" depth="4.4" material="src:#tex-wood"></a-box>
+          <a-box position="0 3.62 -2" width="22" height="0.24" depth="8" material="src:#tex-roof-tile"></a-box>
+          <a-box position="-11.5 3.22 2" width="8.2" height="0.24" depth="7.7" material="src:#tex-roof-tile"></a-box>
+          <a-box position="10.5 3.27 -2" width="8.7" height="0.24" depth="7.7" material="src:#tex-roof-tile"></a-box>
+          <a-box position="-1 3.67 4.8" width="10" height="0.24" depth="4.8" material="src:#tex-roof-tile"></a-box>
+          <a-text value="楽屋曲輪\n模型由来の連棟景観・座標/寸法は仮" position="0 5.8 0" align="center" color="#ffd166" width="9" side="double"></a-text>
+        </a-entity>
+
+        <!-- 追手口：模型で特徴的な朱色橋＋石垣。位置/向きは仮。 -->
+        <a-entity id="otemon-placeholder" visible="false" position="10.85 0 209.28" rotation="0 0 0">
+          <a-box position="-3.5 1.35 0" width="2.6" height="2.7" depth="6.0" material="src:#tex-stone-wall; repeat:2 1"></a-box>
+          <a-box position="3.5 1.35 0" width="2.6" height="2.7" depth="6.0" material="src:#tex-stone-wall; repeat:2 1"></a-box>
+          <a-box position="0 0.75 0" width="4.6" height="0.55" depth="18" color="#b53a2e"></a-box>
+          <a-box position="-2.05 1.25 0" width="0.20" height="1.0" depth="18" color="#b53a2e"></a-box>
+          <a-box position="2.05 1.25 0" width="0.20" height="1.0" depth="18" color="#b53a2e"></a-box>
+          <a-text value="追手口\n朱色橋＋石垣／位置は仮" position="0 4.5 0" align="center" color="#ffd166" width="8" side="double"></a-text>
+        </a-entity>
+
+        <!-- 模型から存在を読み取れる櫓・建物は、現時点では「輪郭確認用」の簡略表示。 -->
+        <a-entity id="honmaru-yagura-model" visible="false" position="84 0 146" rotation="0 0 0">
+          <a-box position="0 1.5 0" width="7.5" height="3" depth="6" material="src:#tex-stone-wall"></a-box>
+          <a-box position="0 4.0 0" width="6.2" height="3.2" depth="4.8" material="src:#tex-lattice-wall"></a-box>
+          <a-box position="0 5.85 -0.75" width="7.0" height="0.22" depth="2.5" rotation="-24 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 5.85 0.75" width="7.0" height="0.22" depth="2.5" rotation="24 0 0" material="src:#tex-roof-tile"></a-box>
+        </a-entity>
+        <a-entity id="tsukimi-yagura-model" visible="false" position="48 0 176" rotation="0 0 0">
+          <a-box position="0 1.2 0" width="6.5" height="2.4" depth="5.5" material="src:#tex-stone-wall"></a-box>
+          <a-box position="0 3.6 0" width="5.4" height="3.0" depth="4.5" material="src:#tex-lattice-wall"></a-box>
+          <a-box position="0 5.5 -0.7" width="6.2" height="0.20" depth="2.3" rotation="-24 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 5.5 0.7" width="6.2" height="0.20" depth="2.3" rotation="24 0 0" material="src:#tex-roof-tile"></a-box>
+        </a-entity>
+        <a-entity id="sukiya-yagura-model" visible="false" position="88 0 204" rotation="0 0 0">
+          <a-box position="0 1.4 0" width="8" height="2.8" depth="7" material="src:#tex-stone-wall"></a-box>
+          <a-box position="0 4.0 0" width="6.8" height="3.0" depth="5.5" material="src:#tex-lattice-wall"></a-box>
+          <a-box position="0 5.8 -0.8" width="7.6" height="0.22" depth="2.7" rotation="-24 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 5.8 0.8" width="7.6" height="0.22" depth="2.7" rotation="24 0 0" material="src:#tex-roof-tile"></a-box>
+        </a-entity>
+        <a-entity id="taiko-yagura-model" visible="false" position="-1 0 126" rotation="0 0 0">
+          <a-box position="0 1.3 0" width="6.5" height="2.6" depth="5.5" material="src:#tex-stone-wall"></a-box>
+          <a-box position="0 3.7 0" width="5.4" height="3.0" depth="4.5" material="src:#tex-lattice-wall"></a-box>
+          <a-box position="0 5.55 -0.7" width="6.2" height="0.20" depth="2.3" rotation="-24 0 0" material="src:#tex-roof-tile"></a-box>
+          <a-box position="0 5.55 0.7" width="6.2" height="0.20" depth="2.3" rotation="24 0 0" material="src:#tex-roof-tile"></a-box>
+        </a-entity>
+
+        <!-- 水堀は現状残存する南側を優先。その他は地形確認後に追加する。 -->
+        <a-entity id="moat-reference" visible="false">
+          <a-box position="55 0.02 214" width="115" height="0.08" depth="5" color="#385f7a" opacity="0.45"></a-box>
+        </a-entity>
+
+        <!-- 調査用基準点 -->
+        <a-entity id="survey-points" visible="false">
+          <a-sphere position="0 1 0" radius="0.5" color="#ff4444"></a-sphere>
+          <a-sphere position="83.2 1 164.75" radius="0.5" color="#44ff88"></a-sphere>
+          <a-sphere position="114.9 1 136.9" radius="0.5" color="#44aaff"></a-sphere>
+          <a-sphere position="-7.24 1 187.02" radius="0.5" color="#ffd166"></a-sphere>
+          <a-sphere position="10.85 1 209.28" radius="0.5" color="#ff66cc"></a-sphere>
+        </a-entity>
+
+        <!-- 従来の直線壁は通常表示しない。模型・測量図との照合後に確定する。 -->
+        <a-entity id="castle-wall-reference" visible="false">
+          <a-box position="58 2 148" width="90" height="4" depth="1.5" rotation="0 8 0" material="src:#tex-stone-wall; repeat:15 2"></a-box>
+          <a-box position="103 2 181" width="70" height="4" depth="1.5" rotation="0 105 0" material="src:#tex-stone-wall; repeat:12 2"></a-box>
+          <a-box position="53 2 205" width="95" height="4" depth="1.5" rotation="0 82 0" material="src:#tex-stone-wall; repeat:16 2"></a-box>
+          <a-box position="-2 2 188" width="55" height="4" depth="1.5" rotation="0 90 0" material="src:#tex-stone-wall; repeat:9 2"></a-box>
+        </a-entity>
       </a-entity>
-
-      <!-- 清水曲輪南側：横長の建物列 -->
-      <a-entity gps-projected-entity-place="latitude: 35.667330; longitude: 138.570430;">
-        <a-box position="0 0.22 0" width="2.8" height="0.44" depth="15" material="src: #tex-stone-wall; repeat: 1 4"></a-box>
-        <a-box position="0 1.25 0" width="2.4" height="1.9" depth="14.2" material="src: #tex-wood; repeat: 1 5"></a-box>
-        <a-box position="0 2.28 0" width="2.9" height="0.25" depth="15.2" material="src: #tex-roof-tile; repeat: 1 5"></a-box>
-      </a-entity>
-
-      <!-- 屋形曲輪：模型で確認できる複数棟の屋敷群を粗形状化 -->
-      <a-entity gps-projected-entity-place="latitude: 35.665820; longitude: 138.570980;">
-        <a-box position="0 0.25 0" width="11" height="0.5" depth="8" material="src: #tex-stone-wall; repeat: 3 2"></a-box>
-        <a-box position="-2.5 1.6 0" width="5.2" height="2.2" depth="5.6" material="src: #tex-wood; repeat: 2 2"></a-box>
-        <a-box position="2.7 1.45 0" width="4.6" height="1.9" depth="4.8" material="src: #tex-wood; repeat: 2 2"></a-box>
-        <a-box position="0 2.75 0" width="11.5" height="0.3" depth="8.5" material="src: #tex-roof-tile; repeat: 3 2"></a-box>
-        <a-text value="屋形曲輪・屋敷群（模型基準／推定）" position="0 4.1 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-      </a-entity>
-
-      <!-- 本丸周辺：本丸御殿・付属建物の密度確認用 -->
-      <a-entity gps-projected-entity-place="latitude: 35.665980; longitude: 138.571610;">
-        <a-box position="0 0.25 0" width="10" height="0.5" depth="7" material="src: #tex-stone-wall; repeat: 3 2"></a-box>
-        <a-box position="0 1.55 0" width="8.8" height="2.1" depth="5.8" material="src: #tex-wood; repeat: 3 2"></a-box>
-        <a-box position="0 2.72 0" width="10.2" height="0.3" depth="7.2" material="src: #tex-roof-tile; repeat: 3 2"></a-box>
-        <a-text value="本丸周辺・建物群（模型基準／推定）" position="0 4.0 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-      </a-entity>
-
-      <!-- 天守曲輪：天守台周辺の付属建物群 -->
-      <a-entity gps-projected-entity-place="latitude: 35.665720; longitude: 138.571900;">
-        <a-box position="0 0.25 0" width="8" height="0.5" depth="5.5" material="src: #tex-stone-wall; repeat: 2 2"></a-box>
-        <a-box position="0 1.4 0" width="6.8" height="1.8" depth="4.5" material="src: #tex-wood; repeat: 2 2"></a-box>
-        <a-box position="0 2.42 0" width="8.2" height="0.28" depth="5.8" material="src: #tex-roof-tile; repeat: 2 2"></a-box>
-        <a-text value="天守曲輪・付属建物（模型基準／推定）" position="0 3.55 0" align="center" color="#ffd166" width="8" side="double"></a-text>
-      </a-entity>
-
-      <!-- 鍛冶曲輪：南東側の長屋状建物 -->
-      <a-entity gps-projected-entity-place="latitude: 35.665180; longitude: 138.572150;">
-        <a-box position="0 0.2 0" width="2.8" height="0.4" depth="13" material="src: #tex-stone-wall; repeat: 1 4"></a-box>
-        <a-box position="0 1.25 0" width="2.4" height="1.9" depth="12.2" material="src: #tex-wood; repeat: 1 4"></a-box>
-        <a-box position="0 2.3 0" width="2.9" height="0.26" depth="13.2" material="src: #tex-roof-tile; repeat: 1 4"></a-box>
-        <a-text value="鍛冶曲輪・長屋状建物（模型基準／推定）" position="0 3.4 0" align="center" color="#ffd166" width="8" side="double"></a-text>
-      </a-entity>
-
-      <!-- 追手口：橋と両脇の出入口を一体表示 -->
-      <a-entity gps-projected-entity-place="latitude: 35.665300; longitude: 138.570900;">
-        <a-box position="0 0.18 0" width="3.2" height="0.36" depth="7" color="#c94b32"></a-box>
-        <a-box position="-3.1 1.4 0" width="2.2" height="2.8" depth="4.2" material="src: #tex-stone-wall; repeat: 1 1"></a-box>
-        <a-box position="3.1 1.4 0" width="2.2" height="2.8" depth="4.2" material="src: #tex-stone-wall; repeat: 1 1"></a-box>
-        <a-box position="0 0.55 -3.2" width="4.4" height="0.8" depth="0.5" material="src: #tex-wood"></a-box>
-        <a-text value="追手口・朱色の橋と出入口（模型基準／座標推定）" position="0 4.0 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-      </a-entity>
-    </a-entity>
-
-    <!--
-      ============================================
-      地面(v53・北エリア忠実度強化)
-      ============================================
-      【背景】これまでARには「地面」が一切存在せず、建物・石垣が
-      宙に浮いたような見え方になっていた。模型では、乾いた土・砂利の
-      明るい色の地面が曲輪全体を隙間なく覆っており、これが模型の
-      落ち着いた雰囲気の大きな要素になっている。
-
-      優先エリア(清水曲輪〜山手御門〜稲荷曲輪〜本丸)を、4枚の
-      平面(実際の区画に合わせて回転・配置)で覆う。区画の正確な
-      形状は複雑な多角形だが、簡易的に矩形で近似している。
-
-      【確度:曲輪内部が地面(土・砂利)で覆われていたこと=確定
-      (模型・現地案内板より)/各平面の正確な範囲・輪郭=推定
-      (矩形による簡易近似)】
-    -->
-    <!-- 地面1:清水曲輪 北半分(よっちゃばれ広場寄り) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667900; longitude: 138.569800;">
-      <a-plane width="42" height="72" rotation="-90 144.6 0"
-        material="src: #tex-ground; repeat: 6 10" position="0 0.01 0"></a-plane>
-    </a-entity>
-    <!-- 地面2:清水曲輪 南半分〜山手御門手前(武家地) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667300; longitude: 138.570300;">
-      <a-plane width="42" height="70" rotation="-90 100 0"
-        material="src: #tex-ground; repeat: 6 10" position="0 0.01 0"></a-plane>
-    </a-entity>
-    <!-- 地面3:山手御門 桝形の内部 -->
-    <a-entity gps-projected-entity-place="latitude: 35.667100; longitude: 138.570800;">
-      <a-plane width="22" height="32" rotation="-90 20 0"
-        material="src: #tex-ground; repeat: 3 5" position="0 0.01 0"></a-plane>
-    </a-entity>
-    <!-- 地面4:稲荷曲輪・本丸 -->
-    <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.571800;">
-      <a-plane width="62" height="92" rotation="-90 144.6 0"
-        material="src: #tex-ground; repeat: 9 13" position="0 0.01 0"></a-plane>
-    </a-entity>
-
-    <!--
-      ============================================
-      樹木(v53・北エリア忠実度強化)
-      ============================================
-      【背景】模型では、曲輪の各所(特に石垣沿い・角地)に松と
-      見られる木がまとまって植えられており、これが景観の重要な
-      要素になっている。一方これまでのARには樹木が1本も
-      なかったため、模型で木が多く見られた区画を中心に、
-      簡略化した木のオブジェクト(幹+葉の塊)を配置する。
-
-      正確な樹種・本数・位置は写真から特定できないため、
-      「木々がまとまって存在していたこと」を伝える象徴的な
-      配置とする。
-
-      【確度:これらの区画に樹木がまとまって存在すること=確定
-      (模型で確認)/正確な樹種・本数・位置=創作補完(象徴配置)】
-    -->
-    <!-- 樹木クラスタ:清水曲輪 北(よっちゃばれ広場寄り)(10本) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668111; longitude: 138.569539;">
-      <a-cylinder position="0 0.52 0" radius="0.07" height="1.04" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.57 0" radius="0.96" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.30 1.33 0.22" radius="0.67" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667838; longitude: 138.570006;">
-      <a-cylinder position="0 0.67 0" radius="0.09" height="1.33" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.00 0" radius="1.22" color="#42663f"></a-sphere>
-      <a-sphere position="0.39 1.70 0.28" radius="0.85" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668027; longitude: 138.569474;">
-      <a-cylinder position="0 0.57 0" radius="0.08" height="1.14" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.71 0" radius="1.04" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.33 1.45 0.24" radius="0.73" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668141; longitude: 138.569846;">
-      <a-cylinder position="0 0.60 0" radius="0.08" height="1.2" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.81 0" radius="1.10" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.35 1.53 0.25" radius="0.77" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668152; longitude: 138.569839;">
-      <a-cylinder position="0 0.66 0" radius="0.09" height="1.31" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.97 0" radius="1.20" color="#42663f"></a-sphere>
-      <a-sphere position="0.38 1.67 0.27" radius="0.84" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668032; longitude: 138.569660;">
-      <a-cylinder position="0 0.63 0" radius="0.08" height="1.26" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.90 0" radius="1.16" color="#375636"></a-sphere>
-      <a-sphere position="0.37 1.61 0.26" radius="0.81" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668085; longitude: 138.569469;">
-      <a-cylinder position="0 0.71 0" radius="0.09" height="1.42" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.13 0" radius="1.30" color="#375636"></a-sphere>
-      <a-sphere position="0.41 1.81 0.29" radius="0.91" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667939; longitude: 138.569657;">
-      <a-cylinder position="0 0.47 0" radius="0.06" height="0.95" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.43 0" radius="0.87" color="#375636"></a-sphere>
-      <a-sphere position="0.28 1.21 0.20" radius="0.61" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667887; longitude: 138.569561;">
-      <a-cylinder position="0 0.46 0" radius="0.06" height="0.91" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.37 0" radius="0.84" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.27 1.16 0.19" radius="0.59" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667809; longitude: 138.570101;">
-      <a-cylinder position="0 0.64 0" radius="0.08" height="1.27" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.91 0" radius="1.17" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.37 1.62 0.27" radius="0.82" color="#42663f"></a-sphere>
-    </a-entity>
-    <!-- 樹木クラスタ:清水曲輪 南〜武家地(8本) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667089; longitude: 138.570523;">
-      <a-cylinder position="0 0.73 0" radius="0.10" height="1.46" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.20 0" radius="1.34" color="#42663f"></a-sphere>
-      <a-sphere position="0.43 1.86 0.30" radius="0.94" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667348; longitude: 138.570275;">
-      <a-cylinder position="0 0.48 0" radius="0.06" height="0.96" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.44 0" radius="0.88" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.28 1.22 0.20" radius="0.62" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667334; longitude: 138.570436;">
-      <a-cylinder position="0 0.67 0" radius="0.09" height="1.34" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.02 0" radius="1.23" color="#375636"></a-sphere>
-      <a-sphere position="0.39 1.71 0.28" radius="0.86" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667279; longitude: 138.569972;">
-      <a-cylinder position="0 0.65 0" radius="0.09" height="1.3" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.95 0" radius="1.19" color="#42663f"></a-sphere>
-      <a-sphere position="0.38 1.66 0.27" radius="0.83" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667315; longitude: 138.570110;">
-      <a-cylinder position="0 0.59 0" radius="0.08" height="1.18" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.77 0" radius="1.08" color="#375636"></a-sphere>
-      <a-sphere position="0.34 1.50 0.24" radius="0.76" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667338; longitude: 138.570629;">
-      <a-cylinder position="0 0.67 0" radius="0.09" height="1.33" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.00 0" radius="1.22" color="#42663f"></a-sphere>
-      <a-sphere position="0.39 1.70 0.28" radius="0.85" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667419; longitude: 138.570193;">
-      <a-cylinder position="0 0.69 0" radius="0.09" height="1.39" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.09 0" radius="1.28" color="#42663f"></a-sphere>
-      <a-sphere position="0.41 1.77 0.29" radius="0.90" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667425; longitude: 138.570570;">
-      <a-cylinder position="0 0.71 0" radius="0.09" height="1.42" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.13 0" radius="1.30" color="#42663f"></a-sphere>
-      <a-sphere position="0.41 1.81 0.29" radius="0.91" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <!-- 樹木クラスタ:山手御門 桝形(4本) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667132; longitude: 138.570751;">
-      <a-cylinder position="0 0.52 0" radius="0.07" height="1.03" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.55 0" radius="0.95" color="#375636"></a-sphere>
-      <a-sphere position="0.30 1.31 0.21" radius="0.66" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667198; longitude: 138.570865;">
-      <a-cylinder position="0 0.56 0" radius="0.08" height="1.13" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.70 0" radius="1.03" color="#375636"></a-sphere>
-      <a-sphere position="0.33 1.44 0.23" radius="0.72" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667247; longitude: 138.570796;">
-      <a-cylinder position="0 0.60 0" radius="0.08" height="1.21" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.82 0" radius="1.11" color="#375636"></a-sphere>
-      <a-sphere position="0.35 1.54 0.25" radius="0.78" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667009; longitude: 138.570657;">
-      <a-cylinder position="0 0.46 0" radius="0.06" height="0.92" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.39 0" radius="0.85" color="#42663f"></a-sphere>
-      <a-sphere position="0.27 1.18 0.19" radius="0.59" color="#42663f"></a-sphere>
-    </a-entity>
-    <!-- 樹木クラスタ:稲荷曲輪・本丸(13本) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665697; longitude: 138.572022;">
-      <a-cylinder position="0 0.67 0" radius="0.09" height="1.33" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.00 0" radius="1.22" color="#375636"></a-sphere>
-      <a-sphere position="0.39 1.70 0.28" radius="0.85" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665870; longitude: 138.572225;">
-      <a-cylinder position="0 0.69 0" radius="0.09" height="1.38" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.07 0" radius="1.26" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.40 1.76 0.29" radius="0.88" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666020; longitude: 138.571565;">
-      <a-cylinder position="0 0.53 0" radius="0.07" height="1.06" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.59 0" radius="0.97" color="#42663f"></a-sphere>
-      <a-sphere position="0.31 1.35 0.22" radius="0.68" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666428; longitude: 138.571702;">
-      <a-cylinder position="0 0.68 0" radius="0.09" height="1.36" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.04 0" radius="1.24" color="#3d5c3a"></a-sphere>
-      <a-sphere position="0.40 1.73 0.28" radius="0.87" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665626; longitude: 138.571949;">
-      <a-cylinder position="0 0.69 0" radius="0.09" height="1.39" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.09 0" radius="1.28" color="#375636"></a-sphere>
-      <a-sphere position="0.41 1.77 0.29" radius="0.90" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666252; longitude: 138.571573;">
-      <a-cylinder position="0 0.65 0" radius="0.09" height="1.3" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.95 0" radius="1.19" color="#42663f"></a-sphere>
-      <a-sphere position="0.38 1.66 0.27" radius="0.83" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665889; longitude: 138.571621;">
-      <a-cylinder position="0 0.49 0" radius="0.07" height="0.98" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.48 0" radius="0.90" color="#375636"></a-sphere>
-      <a-sphere position="0.29 1.25 0.20" radius="0.63" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666258; longitude: 138.571676;">
-      <a-cylinder position="0 0.76 0" radius="0.10" height="1.52" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.29 0" radius="1.40" color="#375636"></a-sphere>
-      <a-sphere position="0.44 1.94 0.32" radius="0.98" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665598; longitude: 138.571810;">
-      <a-cylinder position="0 0.64 0" radius="0.08" height="1.27" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.91 0" radius="1.17" color="#375636"></a-sphere>
-      <a-sphere position="0.37 1.62 0.27" radius="0.82" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666255; longitude: 138.571586;">
-      <a-cylinder position="0 0.55 0" radius="0.07" height="1.1" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.66 0" radius="1.01" color="#42663f"></a-sphere>
-      <a-sphere position="0.32 1.40 0.23" radius="0.71" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665651; longitude: 138.571713;">
-      <a-cylinder position="0 0.51 0" radius="0.07" height="1.01" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.52 0" radius="0.92" color="#375636"></a-sphere>
-      <a-sphere position="0.29 1.29 0.21" radius="0.64" color="#42663f"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666037; longitude: 138.571977;">
-      <a-cylinder position="0 0.45 0" radius="0.06" height="0.9" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.36 0" radius="0.83" color="#42663f"></a-sphere>
-      <a-sphere position="0.26 1.15 0.19" radius="0.58" color="#375636"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665723; longitude: 138.571854;">
-      <a-cylinder position="0 0.78 0" radius="0.10" height="1.55" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 2.33 0" radius="1.42" color="#42663f"></a-sphere>
-      <a-sphere position="0.45 1.98 0.32" radius="0.99" color="#3d5c3a"></a-sphere>
-    </a-entity>
-
-    <!--
-      山手御門(仮モデル・Ver.3・現地写真をもとに比率調整)
-      実際は「山手門(高麗門)」と「山手渡櫓門(2階建ての櫓門)」の
-      2つの独立した構造物からなる複合門。それぞれ自前の石垣・通路を持つ。
-
-      【この版での変更点(発案者提供の参考写真をもとに調整)】
-      - 山手門・山手渡櫓門を、共通の石垣に乗せるのではなく、
-        それぞれ独立した石垣・構造として分離
-      - 山手渡櫓門を人物比較から推定し、全体高さを約8mに引き上げ
-        (門扉部分だけで人物の2倍近い高さがあるため)
-      - 山手門は、独立して自立する門として、屋根形状を調整
-      - 【Ver.4追記】離れた場所(夢小路手前)から撮影された別角度の写真では、
-        土橋状の高まりの上に建ち、石垣がより高く堂々として見えたため、
-        石垣の高さをさらに引き上げ(全体高さ約13m程度に)
-      - 【Ver.52追記】発案者提供の現地写真3枚(門扉正面・外観・石垣)により、
-        以下を確認し追加:①軒先に丸瓦(軒丸瓦)が連続していること、
-        ②軒下に垂木の先端が並んで見えること、③門扉の表面に対角の
-        方立(化粧材)と金属飾り金具があること、④石垣上端に木柵が
-        設置されていること(現況の安全設備の可能性が高いが、現地の
-        見た目に一致させるため反映)。全体の寸法・配置は従来から
-        変更していない(現地写真と大きな矛盾はなかったため)。
-
-      正確な寸法・質感は今後の現地実測・撮影でさらに更新予定。
-      色は白漆喰(壁)+黒瓦(屋根)+木部(柱・扉)のコントラストを仮再現。
-    -->
-
-    <!-- ① 山手門(高麗門・独立した小さめの門) -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.667180; longitude: 138.570780;"
-      id="yamate-mon-placeholder"
-    >
-      <!-- 自前の石垣土台(【Ver.27】公式資料の幅約5mに合わせて微調整) -->
-      <a-box position="0 0.8 0" width="5.5" height="1.6" depth="4"
-        material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
-      <!-- 木部の柱・扉 -->
-      <a-box position="0 2.8 0" width="3.5" height="3.2" depth="1.4"
-        material="src: #tex-wood; repeat: 1 1"></a-box>
-      <!--
-        【Ver.52】発案者提供の現地写真(3枚)により、扉面に対角の
-        方立(筋交い状の化粧材)と、下部に金属の飾り金具があることを
-        確認。門扉の質感を近づけるため追加する。
-        【確度:実物の扉に対角材・金具があること=確定(現地写真で確認)/
-        本数・正確な配置=推定(簡略化した象徴表現)】
-      -->
-      <a-box position="0.6 2.8 0.71" width="0.25" height="4.3" depth="0.06"
-        rotation="0 0 32" color="#5a2f18"></a-box>
-      <a-box position="-0.6 2.8 0.71" width="0.25" height="4.3" depth="0.06"
-        rotation="0 0 -32" color="#5a2f18"></a-box>
-      <a-box position="0 1.35 0.72" width="3.3" height="0.35" depth="0.05" color="#2a2a2a"></a-box>
-      <a-box position="-1.5 1.35 0.73" width="0.4" height="0.4" depth="0.03" color="#1c1c1c"></a-box>
-      <a-box position="1.5 1.35 0.73" width="0.4" height="0.4" depth="0.03" color="#1c1c1c"></a-box>
-      <!-- 切妻屋根(黒瓦・二段構成で反りを表現/Ver.45アップグレード) -->
-      <a-cone
-        position="0 4.6 0" radius-bottom="3.3" radius-top="2.7"
-        height="0.4" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 1 1"
-      ></a-cone>
-      <a-cone
-        position="0 5.4 0" radius-bottom="2.7" radius-top="0"
-        height="1.2" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 1 1"
-      ></a-cone>
-      <!--
-        【Ver.52】軒先の丸瓦(軒丸瓦)の並びと、軒下に覗く垂木を追加。
-        現地写真で、屋根の縁に沿って丸い瓦が連続し、その下に
-        木製の垂木の先端が並んで見えることを確認したための追加。
-        【確度:軒丸瓦・垂木の存在=確定(一般的な城郭建築の様式かつ
-        現地写真で確認)/本数・正確な間隔=簡略化した象徴表現】
-      -->
-      <a-cylinder position="0 4.42 0" radius="3.35" height="0.12"
-        segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-box position="0.0 4.5 3.55" width="0.12" height="0.12" depth="0.7" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.51 4.5 2.51" width="0.12" height="0.12" depth="0.7" rotation="0 45.0 0" color="#3a2418"></a-box>
-      <a-box position="3.55 4.5 0.0" width="0.12" height="0.12" depth="0.7" rotation="0 90.0 0" color="#3a2418"></a-box>
-      <a-box position="2.51 4.5 -2.51" width="0.12" height="0.12" depth="0.7" rotation="0 135.0 0" color="#3a2418"></a-box>
-      <a-box position="0.0 4.5 -3.55" width="0.12" height="0.12" depth="0.7" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.51 4.5 -2.51" width="0.12" height="0.12" depth="0.7" rotation="0 225.0 0" color="#3a2418"></a-box>
-      <a-box position="-3.55 4.5 -0.0" width="0.12" height="0.12" depth="0.7" rotation="0 270.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.51 4.5 2.51" width="0.12" height="0.12" depth="0.7" rotation="0 315.0 0" color="#3a2418"></a-box>
-      <a-text
-        value="山手門(高麗門・高さ約6m)"
-        position="0 6.2 0"
-        align="center"
-        color="#ffffff"
-        width="10"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      番所(見張り小屋)(近景・確定:実在の記録あり)
-      史実:「甲府城」Wikipediaによれば、山手門には番所が
-      設置されていたことが記録されている。小規模な建物のため、
-      詳細な形状は簡略化した推定復元とする。
-      【確度:実在=確定/形状・座標=推定】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.667100; longitude: 138.570820;">
-      <a-box position="0 0.2 0" width="2" height="0.4" depth="2" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1 0" width="1.7" height="1.2" depth="1.7" material="src: #tex-wood"></a-box>
-      <a-cone position="0 1.7 0" radius-bottom="1.7" radius-top="1.4" height="0.3" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0 2.1 0" radius-bottom="1.4" radius-top="0" height="0.6" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="番所(山手門の見張り小屋・実在)" position="0 2.9 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      桝形内部の小さな木箱状の構造物(井戸または収納庫・創作補完)
-      模型写真(近接カット)で、山手渡櫓門のすぐ脇に、屋根のない
-      木箱状の小さな構造物が2つ確認できたため追加する。用途は
-      写真からは特定できない(井戸・物置・資材置き場等が考えられる)。
-      【確度:この位置に何らかの木箱状構造物があること=確定
-      (模型で確認)/具体的な用途・正確な形状=創作補完】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.667165; longitude: 138.570790;">
-      <a-box position="0 0.35 0" width="1.3" height="0.7" depth="1" material="src: #tex-wood"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667150; longitude: 138.570760;">
-      <a-box position="0 0.3 0" width="1" height="0.6" depth="0.8" material="src: #tex-wood"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      山手御門前の堀と橋(近景・確定:記録あり/正確な幅は未確認のため推定)
-      ============================================
-      史実:人々は木橋と土橋で堀を渡り、城内に出入りしていた
-      という記録がある。山手御門は「城の内と外の境界」そのもの
-      であり、この堀と橋が、その境界を目に見える形で示す
-      最も重要な要素。門のすぐ外側(北側)に配置する。
-
-      【幅について】甲府城の堀の正確な幅を示す史料は今回未特定。
-      当初は暫定的に4mとしていたが、これは明らかに過小であり、
-      他城の堀の一般的な規模(例:高田城で幅約36〜58m)を参考に、
-      主要な虎口の堀として現実的な規模(約20m)に修正した。
-      「確定した数値」ではなく、一般的な城郭規模を参考にした
-      推定値であることを明記する。
-
-      【Ver.33】橋は「擬宝珠高欄付きの太鼓橋」だったことが判明。
-      平板な板橋ではなく、欄干(手すり)と擬宝珠(玉ねぎ状の飾り)を
-      追加し、実物に近づける。
-
-      【確度:堀・橋の実在=確定(擬宝珠高欄付き太鼓橋という形式も
-      確定)/正確な位置・幅=推定(他城参考の推定値)】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.667080; longitude: 138.570730;">
-      <!-- 堀の水面(幅を約4m→約20mに修正) -->
-      <a-box width="30" height="0.15" depth="20" rotation="0 20 0"
-        color="#3f7a7a" opacity="0.5" position="0 0.05 0"></a-box>
-      <!-- 木橋(門へ渡るための橋、堀の幅拡大にあわせて延長) -->
-      <a-box width="3" height="0.2" depth="22" rotation="0 20 0"
-        material="src: #tex-wood" position="0 0.15 0"></a-box>
-      <!-- 欄干(手すり、両側) -->
-      <a-box width="0.15" height="0.6" depth="22" rotation="0 20 0"
-        material="src: #tex-wood" position="1.4 0.45 0"></a-box>
-      <a-box width="0.15" height="0.6" depth="22" rotation="0 20 0"
-        material="src: #tex-wood" position="-1.4 0.45 0"></a-box>
-      <!-- 擬宝珠(欄干の柱頭飾り、両端に配置) -->
-      <a-sphere position="1.4 0.9 9.5" radius="0.18" color="#7a9a8a"></a-sphere>
-      <a-sphere position="-1.4 0.9 9.5" radius="0.18" color="#7a9a8a"></a-sphere>
-      <a-sphere position="1.4 0.9 -9.5" radius="0.18" color="#7a9a8a"></a-sphere>
-      <a-sphere position="-1.4 0.9 -9.5" radius="0.18" color="#7a9a8a"></a-sphere>
-      <a-text value="堀と橋(擬宝珠高欄付きの太鼓橋・木橋と土橋で城内へ/幅は推定約20m)"
-        position="0 2.2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!-- ② 山手渡櫓門(奥の大きい2階建て櫓門) -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.667226; longitude: 138.570866;"
-      id="yamate-watariyagura-mon-placeholder"
-    >
-      <!--
-        自前の石垣土台
-
-        【Ver.5・重要な訂正】人物と門扉を直接比較できる写真(現地取得)
-        では、門扉はほぼ地面と同じ高さから始まっており、目立った
-        石垣の段差は見られなかった。以前(Ver.4)、離れた場所から
-        見上げるアングルの写真をもとに石垣を大きく引き上げたが、
-        これは遠近感による誇張だった可能性が高いと判断し、
-        人物比較というより信頼できる根拠を優先して石垣を低く戻す。
-
-        【Ver.19】現地写真(山手渡櫓門正面)との一致度が高かったため、
-        寸法・比率は維持しつつ、瓦・格子窓・木目・石垣のテクスチャを
-        追加し、質感の情報量を底上げする。屋根は単純な四角錐から、
-        裾が広がる二段構成にし、実物で見られた反りのある
-        シルエットに近づける。
-
-        【Ver.27】公式資料により「高さ約12m・幅約14m」という寸法が
-        確認できたため、これに合わせて高さを微調整(幅は既に一致)。
-      -->
-      <a-box position="0 1 0" width="14" height="2" depth="6"
-        material="src: #tex-stone-wall; repeat: 3 1"></a-box>
-      <!-- 1階部分(木部・門扉) -->
-      <a-box position="0 4 0" width="9" height="4" depth="3"
-        material="src: #tex-wood; repeat: 2 1"></a-box>
-      <!--
-        【Ver.52】発案者提供の現地写真(3枚)により、巨大な門扉の
-        表面に対角の方立(化粧材)と下部の金属飾り金具が確認できた。
-        山手門と同様に追加し、木部だけの単調な面から質感を近づける。
-        【確度:対角材・金具の存在=確定(現地写真で確認)/
-        本数・正確な配置=推定(簡略化した象徴表現)】
-      -->
-      <a-box position="1.5 4 1.51" width="0.35" height="5.6" depth="0.08"
-        rotation="0 0 30" color="#5a2f18"></a-box>
-      <a-box position="-1.5 4 1.51" width="0.35" height="5.6" depth="0.08"
-        rotation="0 0 -30" color="#5a2f18"></a-box>
-      <a-box position="0 2.3 1.52" width="8.6" height="0.4" depth="0.06" color="#2a2a2a"></a-box>
-      <a-box position="-3.8 2.3 1.53" width="0.5" height="0.5" depth="0.04" color="#1c1c1c"></a-box>
-      <a-box position="3.8 2.3 1.53" width="0.5" height="0.5" depth="0.04" color="#1c1c1c"></a-box>
-      <!-- 2階部分(白漆喰の壁+格子窓) -->
-      <a-box position="0 7.55 0" width="10" height="3.1" depth="3.6"
-        material="src: #tex-lattice-wall"></a-box>
-      <!-- 寄棟屋根(黒瓦・二段構成で裾の反りを表現) -->
-      <a-cone
-        position="0 9.35 0" radius-bottom="8.2" radius-top="6.8"
-        height="0.5" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 2 2"
-      ></a-cone>
-      <a-cone
-        position="0 10.8 0" radius-bottom="6.8" radius-top="0"
-        height="2.4" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 2 2"
-      ></a-cone>
-      <!--
-        【Ver.52】山手門と同様に、軒丸瓦の帯と軒下の垂木を追加。
-        山手渡櫓門は山手門よりひとまわり大きいため、本数・半径を
-        拡大したスケールで表現する。
-        【確度:軒丸瓦・垂木の存在=確定/本数・間隔=簡略化した象徴表現】
-      -->
-      <a-cylinder position="0 9.1 0" radius="8.3" height="0.2"
-        segments-radial="24" material="src: #tex-roof-tile; repeat: 6 1"></a-cylinder>
-      <a-box position="0.0 9.2 8.5" width="0.2" height="0.2" depth="1.0" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="4.25 9.2 7.36" width="0.2" height="0.2" depth="1.0" rotation="0 30.0 0" color="#3a2418"></a-box>
-      <a-box position="7.36 9.2 4.25" width="0.2" height="0.2" depth="1.0" rotation="0 60.0 0" color="#3a2418"></a-box>
-      <a-box position="8.5 9.2 0.0" width="0.2" height="0.2" depth="1.0" rotation="0 90.0 0" color="#3a2418"></a-box>
-      <a-box position="7.36 9.2 -4.25" width="0.2" height="0.2" depth="1.0" rotation="0 120.0 0" color="#3a2418"></a-box>
-      <a-box position="4.25 9.2 -7.36" width="0.2" height="0.2" depth="1.0" rotation="0 150.0 0" color="#3a2418"></a-box>
-      <a-box position="0.0 9.2 -8.5" width="0.2" height="0.2" depth="1.0" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-4.25 9.2 -7.36" width="0.2" height="0.2" depth="1.0" rotation="0 210.0 0" color="#3a2418"></a-box>
-      <a-box position="-7.36 9.2 -4.25" width="0.2" height="0.2" depth="1.0" rotation="0 240.0 0" color="#3a2418"></a-box>
-      <a-box position="-8.5 9.2 -0.0" width="0.2" height="0.2" depth="1.0" rotation="0 270.0 0" color="#3a2418"></a-box>
-      <a-box position="-7.36 9.2 4.25" width="0.2" height="0.2" depth="1.0" rotation="0 300.0 0" color="#3a2418"></a-box>
-      <a-box position="-4.25 9.2 7.36" width="0.2" height="0.2" depth="1.0" rotation="0 330.0 0" color="#3a2418"></a-box>
-      <a-text
-        value="山手渡櫓門(柳沢吉保時代・高さ約12m)"
-        position="0 13.2 0"
-        align="center"
-        color="#ffffff"
-        width="12"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      桝形の囲い壁(近景・確定:右折れの枡形という構造は確定)
-      ============================================
-      史実:山手御門は「右折れの枡形」だったことがWikipediaで
-      確認されている。山手門(外門)をくぐった後、右に折れて
-      山手渡櫓門(内門)に至る、L字型の防御空間(桝形)を形成して
-      いた。この空間は石垣・土塀で四方を囲まれ、侵入者を
-      内部に足止めして射撃できる構造になっていた。
-
-      2つの門の間を壁で結び、この「囲まれた空間」を表現する。
-      正確な壁の位置・高さは絵図から未特定のため、2つの門を
-      自然につなぐ経路として象徴的に配置する。
-
-      【確度:右折れの枡形という構造=確定/壁の正確な位置・高さ=推定】
-    -->
-    <!--
-      【Ver.52】発案者提供の現地写真により、石垣の上端に沿って
-      木製の柵(転落防止の高欄)が設置されていることを確認した。
-      これは安全対策のための現代の設備である可能性が高いが、
-      現地の実際の見た目に一致させるため追加する。
-      【確度:柵の存在=確定(現地写真で確認)/これが江戸期の意匠か
-      現代の安全設備かは不明のため、史実の再現ではなく
-      「現状の景観再現」という位置づけで扱う】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.667195; longitude: 138.570810;">
-      <a-box width="10" height="2.2" depth="0.5" rotation="0 75 0"
-        material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
-      <a-box width="10" height="0.08" depth="0.08" rotation="0 75 0"
-        color="#6b5238" position="0 2.35 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667215; longitude: 138.570840;">
-      <a-box width="8" height="2.2" depth="0.5" rotation="0 15 0"
-        material="src: #tex-stone-wall; repeat: 2 1" position="0 1.1 0"></a-box>
-      <a-box width="8" height="0.08" depth="0.08" rotation="0 15 0"
-        color="#6b5238" position="0 2.35 0"></a-box>
-      <a-text value="桝形(右折れ・侵入者を足止めする防御構造/実在)"
-        position="0 2.8 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      清水曲輪〜山手御門 連続する石垣・堀ライン(v51・北エリア忠実度強化)
-      ============================================
-      【背景】従来はこの区間に、位置が離れた独立の塀オブジェクトが
-      点在するのみで、実際の模型のように「途切れない曲輪の輪郭」には
-      なっていなかった。今回、よっちゃばれ広場付近から山手御門手前まで、
-      石垣と堀を1本の連続した経路として再構成する。
-
-      【区間の根拠】
-      - 山手御門に最も近い区間(既存点を継承):公式資料により
-        高石垣+土塀で連続していたことは確定。正確な区間の
-        切り替え地点は推定。
-      - よっちゃばれ広場寄りの区間:清水曲輪が堀で囲まれた曲輪
-        だったことは測量図・現地案内板で確定。ただし現存しない
-        区間の正確な座標(屈曲点)は、測量図の形状から補間した推定値。
-
-      【技術メモ:回転角度について】
-      各区間の石垣・堀の向き(rotation.y)は、2地点間のGPS方位角
-      (真北基準・時計回り)をそのまま採用している。この方位角と
-      AR.js(gps-projected-entity-place)上の実際の見え方との対応関係は、
-      理論値であり現地での実機検証はまだ行っていない。
-      もしAR上で向きがずれる場合は、生成スクリプト側で一括して
-      オフセットを調整できるようにしてある(/home/claude配下の
-      gen_wall.py・build_north_loop.py。本番コードにはPythonの
-      出力結果のみを貼り付けている)。
-
-      【確度:曲輪が堀・石垣で連続して囲まれていたこと=確定/
-      個々の屈曲点の座標・高さの変化=推定】
-    -->
-    <!--
-      ============================================
-      体験設計メモ:甲府駅北口改札〜エスカレーター付近(v54)
-      ============================================
-      発案者の目標:「甲府駅に降り立ち、改札を出て北口側の
-      エスカレーター付近からARを開いた瞬間の感動」と、
-      「そこから山手御門へ歩いて行く道中の感動」を実現すること。
-
-      この目標を踏まえ、起点(よっちゃばれ広場・北口目安地点:
-      35.668361, 138.569244)から半径50m以内に、これまで
-      AR オブジェクトが1つもなかった(最も近い建物でも約47m先)
-      ことが判明したため、起点のすぐそばまで堀端の石垣・水面を
-      延長し、「アプリを開いた瞬間に、すでに江戸期の堀端に
-      立っている」という体験になるようにする。
-
-      清水櫓(近景・推定復元、後述)がこの起点から約60m先にあり、
-      最初に視界に入る「櫓」としての役割を担う想定。
-
-      【確度:よっちゃばれ広場一帯が清水曲輪(堀に囲まれた曲輪)の
-      跡地であること=確定/起点から堀端までの正確な距離=推定】
-    -->
-    <!-- 起点付近の堀端(北口改札・エスカレーター直近): 35.668361,138.569244 -> 35.668300,138.569600 (延長約32.9m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668330; longitude: 138.569422;">
-      <a-box width="0.6" height="2.2" depth="32.87" rotation="0 101.9 0"
-        material="src: #tex-stone-wall" position="0 1.1 0"></a-box>
-    </a-entity>
-    <!-- 起点付近の堀端(堀水面): 35.668361,138.569244 -> 35.668300,138.569600 -->
-    <a-entity gps-projected-entity-place="latitude: 35.668330; longitude: 138.569422;">
-      <a-box width="12" height="0.15" depth="32.87" rotation="0 101.9 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 起点付近の樹木(2本・堀端に沿って) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668355; longitude: 138.569320;">
-      <a-cylinder position="0 0.55 0" radius="0.08" height="1.1" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.65 0" radius="1.0" color="#3d5c3a"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.668318; longitude: 138.569480;">
-      <a-cylinder position="0 0.5 0" radius="0.07" height="1.0" color="#5c4630"></a-cylinder>
-      <a-sphere position="0 1.5 0" radius="0.9" color="#42663f"></a-sphere>
-    </a-entity>
-    <!-- 起点付近の小さな石標(現地案内板イメージ・創作補完) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668345; longitude: 138.569380;">
-      <a-box position="0 0.4 0" width="0.3" height="0.8" depth="0.3" material="src: #tex-stone-wall"></a-box>
-      <a-text value="清水曲輪跡(この付近一帯・推定復元)" position="0 1 0" align="center"
-        color="#a8e6a1" width="7" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      【Ver.60】v58で追加した8棟の建物は撤去した
-      ============================================
-      発案者判断(v59時点):この一帯(清水曲輪〜山手御門間)は、
-      模型写真(甲府市公式復元模型)を精査したところ、建物のない
-      一面の空き地(「JR甲府駅」の案内札が置かれた区画)として
-      表現されていることが確認できた。
-
-      「模型を最優先の根拠とする」という方針を一貫させるため、
-      模型に基づかない創作補完の建物8棟(v58で追加)を撤去した。
-      石垣・堀・地面・樹木(v51・v53)は模型で確認できる要素の
-      ため、そのまま残す。
-
-      【確度:この一帯が空き地であったこと=確定(模型より)】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569775;">
-      <a-box width="0.6" height="2.2" depth="54.57" rotation="0 144.6 0"
-        material="src: #tex-stone-wall" position="0 1.1 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 堀 1/5(堀水面): 35.668300,138.569600 -> 35.667900,138.569950 (延長約54.6m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569775;">
-      <a-box width="14" height="0.15" depth="54.57" rotation="0 144.6 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 石垣 2/5: 清水曲輪 東縁→清水曲輪 東縁(南下): 35.667900,138.569950 -> 35.667600,138.570200 (延長約40.3m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667750; longitude: 138.570075;">
-      <a-box width="0.6" height="2.3" depth="40.28" rotation="0 145.9 0"
-        material="src: #tex-stone-wall" position="0 1.15 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 堀 2/5(堀水面): 35.667900,138.569950 -> 35.667600,138.570200 (延長約40.3m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667750; longitude: 138.570075;">
-      <a-box width="14" height="0.15" depth="40.28" rotation="0 145.9 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 石垣 3/5: 清水曲輪 東縁(南下)→山手御門手前(武家地寄り/既存点を継承): 35.667600,138.570200 -> 35.667350,138.570100 (延長約29.2m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667475; longitude: 138.570150;">
-      <a-box width="0.6" height="2.4" depth="29.23" rotation="0 198.0 0"
-        material="src: #tex-stone-wall" position="0 1.2 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 堀 3/5(堀水面): 35.667600,138.570200 -> 35.667350,138.570100 (延長約29.2m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667475; longitude: 138.570150;">
-      <a-box width="14" height="0.15" depth="29.23" rotation="0 198.0 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 石垣 4/5: 山手御門手前(武家地寄り/既存点を継承)→山手御門手前(既存点を継承): 35.667350,138.570100 -> 35.667280,138.570350 (延長約23.9m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667315; longitude: 138.570225;">
-      <a-box width="0.6" height="2.5" depth="23.89" rotation="0 109.0 0"
-        material="src: #tex-stone-wall" position="0 1.25 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 堀 4/5(堀水面): 35.667350,138.570100 -> 35.667280,138.570350 (延長約23.9m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667315; longitude: 138.570225;">
-      <a-box width="14" height="0.15" depth="23.89" rotation="0 109.0 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 石垣 5/5: 山手御門手前(既存点を継承)→山手御門ゲート至近(既存点を継承): 35.667280,138.570350 -> 35.667240,138.570600 (延長約23.0m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667260; longitude: 138.570475;">
-      <a-box width="0.6" height="2.6" depth="23.02" rotation="0 101.1 0"
-        material="src: #tex-stone-wall" position="0 1.3 0"></a-box>
-    </a-entity>
-    <!-- 清水曲輪チェーン 堀 5/5(堀水面): 35.667280,138.570350 -> 35.667240,138.570600 (延長約23.0m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667260; longitude: 138.570475;">
-      <a-box width="14" height="0.15" depth="23.02" rotation="0 101.1 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      【Ver.60】よっちゃばれ広場〜山手御門間の追加密度は撤去した
-      ============================================
-      以前はこの区間に「武家地の建物・人物」を配置していたが、
-      模型写真で確認したところ、この区間全体が建物のない
-      空き地として表現されていたため撤去した(v59での判断を
-      踏襲)。石垣・堀・地面・樹木は模型で確認できる要素の
-      ため、そのまま残す。
-    -->
-
-    <!-- 【Ver.60】このコメント欄で言及していた建物3棟・小物2点は撤去済み(上記と同じ理由) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666900; longitude: 138.570775;">
-      <a-box width="0.6" height="2.8" depth="22.69" rotation="0 191.5 0"
-        material="src: #tex-stone-wall" position="0 1.4 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 堀 1/6(堀水面): 35.667000,138.570800 -> 35.666800,138.570750 (延長約22.7m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666900; longitude: 138.570775;">
-      <a-box width="18" height="0.15" depth="22.69" rotation="0 191.5 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 石垣 2/6: 遠景方向(既存点を継承)→稲荷曲輪への接続(推定): 35.666800,138.570750 -> 35.666500,138.571100 (延長約46.0m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666650; longitude: 138.570925;">
-      <a-box width="0.6" height="3.24" depth="45.96" rotation="0 136.5 0"
-        material="src: #tex-stone-wall" position="0 1.62 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 堀 2/6(堀水面): 35.666800,138.570750 -> 35.666500,138.571100 (延長約46.0m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666650; longitude: 138.570925;">
-      <a-box width="18" height="0.15" depth="45.96" rotation="0 136.5 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 石垣 3/6: 稲荷曲輪への接続(推定)→稲荷曲輪への接続(推定): 35.666500,138.571100 -> 35.666100,138.571500 (延長約57.3m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.571300;">
-      <a-box width="0.6" height="3.68" depth="57.31" rotation="0 140.9 0"
-        material="src: #tex-stone-wall" position="0 1.84 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 堀 3/6(堀水面): 35.666500,138.571100 -> 35.666100,138.571500 (延長約57.3m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.571300;">
-      <a-box width="18" height="0.15" depth="57.31" rotation="0 140.9 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 石垣 4/6: 稲荷曲輪への接続(推定)→稲荷曲輪門付近: 35.666100,138.571500 -> 35.665950,138.571750 (延長約28.1m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666025; longitude: 138.571625;">
-      <a-box width="0.6" height="4.12" depth="28.08" rotation="0 126.4 0"
-        material="src: #tex-stone-wall" position="0 2.06 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 堀 4/6(堀水面): 35.666100,138.571500 -> 35.665950,138.571750 (延長約28.1m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.666025; longitude: 138.571625;">
-      <a-box width="18" height="0.15" depth="28.08" rotation="0 126.4 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <!--
-      【Ver.57修正】以下2区間(稲荷櫓・天守台への接続部)は、稲荷曲輪・
-      本丸という高台への上り坂にあたる。堀(水面)は通常、高台の
-      裾野までしか達しないため、この区間の水面表現は不自然と判断し
-      撤去した。石垣(高石垣が続いている表現)はそのまま残す。
-    -->
-    <!-- 稲荷曲輪チェーン 石垣 5/6: 稲荷曲輪門付近→稲荷櫓(確定): 35.665950,138.571750 -> 35.665948,138.572013 (延長約23.8m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665949; longitude: 138.571882;">
-      <a-box width="0.6" height="4.56" depth="23.76" rotation="0 90.5 0"
-        material="src: #tex-stone-wall" position="0 2.28 0"></a-box>
-    </a-entity>
-    <!-- 稲荷曲輪チェーン 石垣 6/6: 稲荷櫓(確定)→天守台方向(確定): 35.665948,138.572013 -> 35.665700,138.571700 (延長約39.5m) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665824; longitude: 138.571856;">
-      <a-box width="0.6" height="5.0" depth="39.50" rotation="0 225.7 0"
-        material="src: #tex-stone-wall" position="0 2.5 0"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      清水櫓(近景・推定復元)
-      ============================================
-      史実:清水曲輪(現・甲府駅周辺)の北西にあった二重櫓。
-      別名「戌亥櫓」。二階に千鳥破風があったことが記録されている。
-      甲府駅は清水曲輪の跡地にあたるため、この建物は
-      「今、観光客が立っている場所のすぐ近く」にあった建造物として、
-      「足元にタイムスリップ」体験の近景を担う中心的な要素。
-
-      【確度:推定】
-      清水櫓そのものの詳細な絵図・寸法は現時点で未確認。
-      同時代・同型(二重櫓・千鳥破風あり)で実物復元済みの「稲荷櫓」を
-      参考に、類似建造物として推定復元している。
-
-      【座標について:象徴的配置】
-      清水曲輪の正確な範囲・清水櫓の正確な位置を示す絵図は
-      未特定のため、座標は「清水曲輪跡地(駅周辺)の象徴的な一点」
-      として暫定配置している。現地調査・追加史料により更新予定。
-    -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.667900; longitude: 138.569700;"
-      id="shimizu-yagura-placeholder"
-    >
-      <!-- 石垣土台 -->
-      <a-box
-        position="0 1 0"
-        width="7" height="2" depth="7"
-        material="src: #tex-stone-wall; repeat: 1.5 1"
-      ></a-box>
-      <!-- 1階(木部) -->
-      <a-box position="0 3.5 0" width="6" height="3" depth="6"
-        material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <!--
-        【Ver.55】稲荷櫓と同様、2階に下見板張りの帯を追加(様式を統一)。
-        【確度:稲荷櫓が同型であること=推定/この帯の再現=推定】
-      -->
-      <a-box position="0 5.35 0" width="5.2" height="0.7" depth="5.2"
-        material="src: #tex-wood; repeat: 1.5 0.4"></a-box>
-      <!-- 2階(白漆喰、1階よりひと回り小さい) -->
-      <a-box position="0 6.35 0" width="5" height="1.7" depth="5"
-        material="src: #tex-lattice-wall"></a-box>
-      <!-- 千鳥破風(2階正面の小さな三角屋根アクセント) -->
-      <a-cone
-        position="0 7.6 2.6" radius-bottom="1.8" radius-top="0"
-        height="1.2" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile"
-      ></a-cone>
-      <!-- 大屋根(黒瓦、寄棟・二段構成で反りを表現/Ver.48アップグレード) -->
-      <a-cone
-        position="0 7.7 0" radius-bottom="5" radius-top="4.1" height="0.5" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 1.5 1.5"
-      ></a-cone>
-      <a-cone
-        position="0 8.8 0" radius-bottom="4.1" radius-top="0"
-        height="1.7" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 1.5 1.5"
-      ></a-cone>
-      <!-- 【Ver.55】軒丸瓦の帯と軒下の垂木(稲荷櫓・山手渡櫓門と統一) -->
-      <a-cylinder position="0 7.45 0" radius="5.05" height="0.15"
-        segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-box position="0.0 7.05 5.0" width="0.2" height="0.2" depth="0.8" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.5 7.05 4.33" width="0.2" height="0.2" depth="0.8" rotation="0 30.0 0" color="#3a2418"></a-box>
-      <a-box position="4.33 7.05 2.5" width="0.2" height="0.2" depth="0.8" rotation="0 60.0 0" color="#3a2418"></a-box>
-      <a-box position="5.0 7.05 0.0" width="0.2" height="0.2" depth="0.8" rotation="0 90.0 0" color="#3a2418"></a-box>
-      <a-box position="4.33 7.05 -2.5" width="0.2" height="0.2" depth="0.8" rotation="0 120.0 0" color="#3a2418"></a-box>
-      <a-box position="2.5 7.05 -4.33" width="0.2" height="0.2" depth="0.8" rotation="0 150.0 0" color="#3a2418"></a-box>
-      <a-box position="0.0 7.05 -5.0" width="0.2" height="0.2" depth="0.8" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.5 7.05 -4.33" width="0.2" height="0.2" depth="0.8" rotation="0 210.0 0" color="#3a2418"></a-box>
-      <a-box position="-4.33 7.05 -2.5" width="0.2" height="0.2" depth="0.8" rotation="0 240.0 0" color="#3a2418"></a-box>
-      <a-box position="-5.0 7.05 -0.0" width="0.2" height="0.2" depth="0.8" rotation="0 270.0 0" color="#3a2418"></a-box>
-      <a-box position="-4.33 7.05 2.5" width="0.2" height="0.2" depth="0.8" rotation="0 300.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.5 7.05 4.33" width="0.2" height="0.2" depth="0.8" rotation="0 330.0 0" color="#3a2418"></a-box>
-      <a-text
-        value="清水櫓(推定復元・戌亥櫓)"
-        position="0 10.8 0"
-        align="center"
-        color="#ffd166"
-        width="12"
-        side="double"
-      ></a-text>
-      <a-text
-        value="※稲荷櫓を参考にした推定復元です"
-        position="0 9.7 0"
-        align="center"
-        color="#ffd166"
-        width="7"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      清水曲輪 境界ライン(近景・推定・象徴表示)
-      ============================================
-      史実:清水曲輪の正確な区画を示す絵図は未特定。
-      散策マップ等から得られる大まかな位置関係をもとに、
-      「この辺りから城内でした」という体感的な境界を、
-      半透明の帯として地面に表示する。ピンポイントの正確性は
-      主張しない、あくまで象徴的な演出であることをラベルで明示。
-    -->
-    <a-entity id="shimizu-kuruwa-boundary">
-      <a-entity gps-projected-entity-place="latitude: 35.668100; longitude: 138.569900;">
-        <a-box
-          width="60" height="0.3" depth="3"
-          rotation="0 30 0"
-          color="#c94f4f"
-          opacity="0.55"
-          position="0 0.2 0"
-        ></a-box>
-        <a-text
-          value="この辺りから先が、かつて甲府城「清水曲輪」の内側でした(推定・象徴表示)"
-          position="0 2 0"
-          align="center"
-          color="#ffffff"
-          width="10"
-          side="double"
-        ></a-text>
-      </a-entity>
-    </a-entity>
-
-    <!--
-      ============================================
-      稲荷櫓(遠景・確定情報に基づく実座標)
-      ============================================
-      史実:実在が確認され、平成16年(2004年)に史実に基づき
-      実物大で復元済み。座標は実際の稲荷櫓の位置(舞鶴城公園内)。
-      一条小山の高台に位置するため、駅周辺からは「遠景」として
-      見える想定。天守は非採用(4.3節参照)のため、
-      遠景スカイラインの中心はこの稲荷櫓が担う。
-
-      【確度:確定(建物の実在・場所)/推定(仮モデルの外観)】
-    -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.665948; longitude: 138.572013;"
-      id="inari-yagura-placeholder"
-    >
-      <!-- 石垣土台(高台の上にあることを表現するため高めに設定) -->
-      <a-box
-        position="0 4 0"
-        width="10" height="8" depth="9"
-        material="src: #tex-stone-wall; repeat: 2 2"
-      ></a-box>
-      <!--
-        【Ver.62】山梨県公式観光サイトにより、稲荷櫓の公式寸法
-        (南北5間=10m、東西6間=12m)が判明。従来の8m四方の
-        正方形から、実際の長方形(南北10m×東西12m)に修正。
-        【確度:公式寸法=確定(山梨県公式サイト)】
-      -->
-      <!-- 1階(木部・下見板張りをイメージした濃い色) -->
-      <a-box position="0 9.5 0" width="12" height="3" depth="10"
-        material="src: #tex-wood; repeat: 2 1"></a-box>
-      <!--
-        【Ver.55】発案者提供の模型写真(近接カット)により、2階の
-        壁が「上部の白漆喰+下部の濃色の下見板張り」の二層構成で
-        あることを確認したため、単一の格子壁材質から、下見板の帯を
-        追加した二層構成に変更する。
-        【確度:実物が二層の壁であること=確定(模型写真で確認)/
-        正確な色・高さの配分=推定】
-      -->
-      <a-box position="0 11.85 0" width="8.5" height="1" depth="7.5"
-        material="src: #tex-wood; repeat: 2 0.4"></a-box>
-      <!-- 2階(白漆喰) -->
-      <a-box position="0 13 0" width="8.2" height="2" depth="7.2"
-        material="src: #tex-lattice-wall"></a-box>
-      <!-- 大屋根(黒瓦・二段構成で反りを表現/山手渡櫓門と同様の形状にアップグレード) -->
-      <a-cone
-        position="0 14.9 0" radius-bottom="7.4" radius-top="6"
-        height="0.6" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 2 2"
-      ></a-cone>
-      <a-cone
-        position="0 16.3 0" radius-bottom="6" radius-top="0"
-        height="2.2" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile; repeat: 2 2"
-      ></a-cone>
-      <!--
-        【Ver.55】模型写真で、正面に「千鳥破風」(三角形の小さな
-        切妻屋根が主屋根から突き出す装飾)が確認できたため追加する。
-        稲荷櫓は史実に基づき実物大で復元済みの建物であり、
-        この特徴は史実側の資料でも広く知られているため確度は高い。
-        【確度:千鳥破風の実在=確定/簡略化した形状表現=近似】
-      -->
-      <a-box position="0 14.6 4.6" width="3.2" height="1.6" depth="0.15" color="#f5f2e9"></a-box>
-      <a-cone position="0 15.55 4.6" radius-bottom="2.4" radius-top="0" height="1.1"
-        segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1 1"></a-cone>
-      <!--
-        【Ver.55】軒丸瓦の帯と軒下の垂木を追加(山手渡櫓門と同様の手法)。
-      -->
-      <a-cylinder position="0 14.65 0" radius="7.45" height="0.2" segments-radial="24" material="src: #tex-roof-tile; repeat: 5 1"></a-cylinder>
-      <a-box position="0.0 13.75 7.4" width="0.25" height="0.25" depth="1.1" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.83 13.75 6.84" width="0.25" height="0.25" depth="1.1" rotation="0 22.5 0" color="#3a2418"></a-box>
-      <a-box position="5.23 13.75 5.23" width="0.25" height="0.25" depth="1.1" rotation="0 45.0 0" color="#3a2418"></a-box>
-      <a-box position="6.84 13.75 2.83" width="0.25" height="0.25" depth="1.1" rotation="0 67.5 0" color="#3a2418"></a-box>
-      <a-box position="7.4 13.75 0.0" width="0.25" height="0.25" depth="1.1" rotation="0 90.0 0" color="#3a2418"></a-box>
-      <a-box position="6.84 13.75 -2.83" width="0.25" height="0.25" depth="1.1" rotation="0 112.5 0" color="#3a2418"></a-box>
-      <a-box position="5.23 13.75 -5.23" width="0.25" height="0.25" depth="1.1" rotation="0 135.0 0" color="#3a2418"></a-box>
-      <a-box position="2.83 13.75 -6.84" width="0.25" height="0.25" depth="1.1" rotation="0 157.5 0" color="#3a2418"></a-box>
-      <a-box position="0.0 13.75 -7.4" width="0.25" height="0.25" depth="1.1" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.83 13.75 -6.84" width="0.25" height="0.25" depth="1.1" rotation="0 202.5 0" color="#3a2418"></a-box>
-      <a-box position="-5.23 13.75 -5.23" width="0.25" height="0.25" depth="1.1" rotation="0 225.0 0" color="#3a2418"></a-box>
-      <a-box position="-6.84 13.75 -2.83" width="0.25" height="0.25" depth="1.1" rotation="0 247.5 0" color="#3a2418"></a-box>
-      <a-box position="-7.4 13.75 -0.0" width="0.25" height="0.25" depth="1.1" rotation="0 270.0 0" color="#3a2418"></a-box>
-      <a-box position="-6.84 13.75 2.83" width="0.25" height="0.25" depth="1.1" rotation="0 292.5 0" color="#3a2418"></a-box>
-      <a-box position="-5.23 13.75 5.23" width="0.25" height="0.25" depth="1.1" rotation="0 315.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.83 13.75 6.84" width="0.25" height="0.25" depth="1.1" rotation="0 337.5 0" color="#3a2418"></a-box>
-      <a-text
-        value="稲荷櫓(実在・復元済み/遠景)"
-        position="0 18.5 0"
-        align="center"
-        color="#a8e6a1"
-        width="14"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      天守台(遠景・確定:石垣は現存/建物は非表示)
-      ============================================
-      史実:天守台(石垣の土台)は現存するが、その上に建物(天守)が
-      実際に建てられていたかどうかは確認されていない(4.3節参照)。
-      そのため、ここでは「石垣の土台のみ」を表示し、
-      建物は意図的に配置しない。これにより「実は天守がなかった」
-      という史実そのものを、体験のコンテンツとして活かす。
-
-      山手御門から実際に「天守台と稲荷櫓、その脇に富士山」が
-      セットで見えるという記録があるため、稲荷櫓と近い位置に配置し、
-      同じ視界内で遠景として構成する。
-
-      【座標について:象徴的配置】
-      天守台の正確な座標は今回未特定のため、稲荷櫓に近接する
-      本丸エリアの象徴的な一点として暫定配置している。
-
-      【確度:確定(石垣の実在・建物が無いこと)/推定(座標)】
-    -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.665700; longitude: 138.571700;"
-      id="tenshudai-placeholder"
-    >
-      <!-- 石垣土台のみ(建物は意図的に配置しない) -->
-      <a-box
-        position="0 5 0"
-        width="14" height="10" depth="14"
-        material="src: #tex-stone-wall; repeat: 3 3"
-      ></a-box>
-      <a-text
-        value="天守台(石垣のみ現存・建物は無かったとされる)"
-        position="0 11.5 0"
-        align="center"
-        color="#a8e6a1"
-        width="13"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      稲荷神社(遠景・推定:模型に小さな祠が確認できる)
-      ============================================
-      情報源:公式復元模型の写真。稲荷曲輪の中心付近に、
-      小さな祠(ほこら)のような建造物が確認できる。「稲荷」と
-      いう名称から、稲荷神を祀る社があった可能性が高いと
-      考えられるが、これは推測を含む判断のため「推定」とする。
-
-      【確度:模型に小さな祠状の構造物が見える=確定/
-      それが稲荷神社であるという解釈=推定】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665880; longitude: 138.571900;">
-      <a-box position="0 0.3 0" width="1.5" height="0.6" depth="1.5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1 0" width="0.8" height="0.8" depth="0.8" color="#c94f4f"></a-box>
-      <a-cone position="0 1.6 0" radius-bottom="1" radius-top="0" height="0.5" segments-radial="4" rotation="0 45 0" color="#2b2b2b"></a-cone>
-      <a-text value="稲荷神社(推定・模型に小さな祠を確認)" position="0 2.4 0" align="center" color="#ffd166" width="8" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      曲輪間の連結壁(遠景・一体感の強化)
-      ============================================
-      史実:各曲輪は石垣・土塀で明確に区切られていたことは
-      確定しているが、これまでの実装は曲輪ごとに孤立した
-      建物・壁が中心で、曲輪間の繋がりが薄かった。「模型の中に
-      入ったような一体感」を強めるため、主要な曲輪間を結ぶ壁を
-      追加する。
-
-      【確度:区切られていたこと自体=確定/正確なルート=推定・象徴表示】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665780; longitude: 138.571800;">
-      <a-box width="10" height="2" depth="0.4" rotation="0 50 0" material="src: #tex-stone-wall; repeat: 2 1" position="0 1 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665900; longitude: 138.572150;">
-      <a-box width="10" height="2" depth="0.4" rotation="0 100 0" material="src: #tex-stone-wall; repeat: 2 1" position="0 1 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666100; longitude: 138.572250;">
-      <a-box width="10" height="1.8" depth="0.4" rotation="0 20 0" material="src: #tex-stone-wall; repeat: 2 1" position="0 0.9 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665450; longitude: 138.571500;">
-      <a-box width="10" height="1.8" depth="0.4" rotation="0 90 0" material="src: #tex-stone-wall; repeat: 2 1" position="0 0.9 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665300; longitude: 138.571650;">
-      <a-box width="10" height="1.8" depth="0.4" rotation="0 40 0" material="src: #tex-stone-wall; repeat: 2 1" position="0 0.9 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665700; longitude: 138.571400;">
-      <a-box width="8" height="1.8" depth="0.4" rotation="0 70 0" material="src: #tex-stone-wall; repeat: 2 1" position="0 0.9 0"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      焔硝蔵(火薬庫)(遠景・確度高い)
-      ============================================
-      史実:稲荷曲輪の西側にあったとされる火薬庫。発掘調査で
-      検出され、かつ『楽只堂年録』(柳沢吉保時代の記録)にも
-      記載があり、両者が一致することから確度の高い建物と判断。
-      ただし17世紀の絵図には見られないため、柳沢吉保時代
-      またはそれ以降に設けられたと考えられる。
-
-      【確度:建物の実在・時代=確定に近い/座標=推定(稲荷曲輪の
-      西側という記述をもとに、稲荷櫓付近から西寄りに象徴配置)】
-
-      外観:火薬を扱う性質上、装飾性のない実務的な土蔵造りを
-      想定。白漆喰壁+簡素な切妻屋根という、他の櫓建築とは
-      異なる、控えめな外観にしている。
-    -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.666100; longitude: 138.571400;"
-      id="enshoguda-placeholder"
-    >
-      <a-box position="0 0.5 0" width="6" height="1" depth="5"
-        material="src: #tex-stone-wall; repeat: 1 1"></a-box>
-      <a-box position="0 2.3 0" width="5.5" height="2.6" depth="4.5"
-        material="src: #tex-lattice-wall; repeat: 0.3 1"></a-box>
-      <a-cone
-        position="0 3.9 0" radius-bottom="4.6" radius-top="3.8" height="0.4" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile"
-      ></a-cone>
-      <a-cone
-        position="0 4.6 0" radius-bottom="3.8" radius-top="0"
-        height="1.4" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile"
-      ></a-cone>
-      <a-text
-        value="焔硝蔵(火薬庫・発掘調査と楽只堂年録で確認)"
-        position="0 5.4 0"
-        align="center"
-        color="#a8e6a1"
-        width="11"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      武家屋敷・蔵(近景・推定/一般的イメージ)
-      ============================================
-      史実:甲府城の二ノ堀に囲まれた武家地(内郭)には、甲府勤番
-      役宅・勤番士の屋敷・年貢米を集める米蔵・御花畑・薬園・
-      徽典館(学問所)があったことが記録されている。清水曲輪も
-      この武家地の一部だった。
-
-      ただし、1棟ごとの正確な位置・形状を示す絵図は今回未特定。
-      そのため、ここに配置する建物は「特定の実在建物の復元」
-      ではなく、「この地区に一般的にあった建物種別(屋敷・蔵)の
-      イメージ」として、推定・象徴的に配置する。
-
-      【確度:建物種別・地区としての実在=確定/個別の位置・形状=創作補完】
-      ラベルに「推定・一般的イメージ」である旨を明記する。
-    -->
-    <a-entity
-      gps-projected-entity-place="latitude: 35.667950; longitude: 138.569550;"
-      id="bukeyashiki-1-placeholder"
-    >
-      <a-box position="0 0.3 0" width="5" height="0.6" depth="4"
-        material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.8 0" width="4.5" height="2.4" depth="3.5"
-        material="src: #tex-wood; repeat: 1 0.8"></a-box>
-      <a-cone
-        position="0 3.4 0" radius-bottom="3.4" radius-top="0"
-        height="1.4" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile"
-      ></a-cone>
-      <a-text
-        value="武家屋敷(推定・一般的イメージ)"
-        position="0 4.6 0"
-        align="center"
-        color="#ffd166"
-        width="9"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <a-entity
-      gps-projected-entity-place="latitude: 35.667820; longitude: 138.569850;"
-      id="bukeyashiki-2-placeholder"
-    >
-      <a-box position="0 0.3 0" width="4.5" height="0.6" depth="3.5"
-        material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.6 0" width="4" height="2" depth="3"
-        material="src: #tex-wood; repeat: 1 0.8"></a-box>
-      <a-cone
-        position="0 3 0" radius-bottom="3" radius-top="0"
-        height="1.2" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile"
-      ></a-cone>
-      <a-text
-        value="武家屋敷(推定・一般的イメージ)"
-        position="0 4 0"
-        align="center"
-        color="#ffd166"
-        width="9"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <a-entity
-      gps-projected-entity-place="latitude: 35.667920; longitude: 138.570180;"
-      id="kura-1-placeholder"
-    >
-      <!-- 【Ver.57修正】v51で追加した堀の中心線上(35.668000,138.569900)に
-           あったことが判明(発案者指摘の「堀の中に蔵」に該当)。
-           曲輪内部の妥当な位置へ移動した。 -->
-      <a-box position="0 0.3 0" width="4" height="0.6" depth="3.5"
-        material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 2 0" width="3.5" height="3.4" depth="3"
-        material="src: #tex-lattice-wall; repeat: 0.2 1"></a-box>
-      <a-cone
-        position="0 4.2 0" radius-bottom="2.7" radius-top="0"
-        height="1.1" segments-radial="4" rotation="0 45 0"
-        material="src: #tex-roof-tile"
-      ></a-cone>
-      <a-text
-        value="米蔵(推定・一般的イメージ)"
-        position="0 5.2 0"
-        align="center"
-        color="#ffd166"
-        width="9"
-        side="double"
-      ></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      土塀(近景・構成上の演出・象徴表示)
-      ============================================
-      史実:甲府城の武家地(内郭)は塀・堀で区画されていたことが
-      記録されている。ただし、清水櫓・武家屋敷・米蔵の間を実際に
-      結んでいた塀の正確な経路を示す絵図は、今回未特定。
-
-      そのため、これらの建物群を「塀で区切られた一区画だった」と
-      いう一般的な史実を伝えるための、構成上の演出として、
-      建物間を緩やかに結ぶ塀を象徴的に配置する。
-      個々の塀の位置・長さの正確性は主張しない。
-
-      【確度:武家地が塀で区画されていたこと=確定/塀の個別経路=創作補完】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.667930; longitude: 138.569620;">
-      <a-box position="0 1 0" width="10" height="1.8" depth="0.4"
-        rotation="0 60 0" material="src: #tex-stone-wall; repeat: 2 1"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667880; longitude: 138.569750;">
-      <a-box position="0 1 0" width="9" height="1.8" depth="0.4"
-        rotation="0 20 0" material="src: #tex-stone-wall; repeat: 2 1"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667960; longitude: 138.569820;">
-      <a-box position="0 1 0" width="8" height="1.8" depth="0.4"
-        rotation="0 100 0" material="src: #tex-stone-wall; repeat: 2 1"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      堀の水面(近景・象徴表示)【v51で撤去】
-      ============================================
-      このセクションにあった単一の象徴的な水面(1枚板)は、
-      「清水曲輪〜山手御門 連続する石垣・堀ライン」(v51で新設)と
-      同じ区域を表現しており、役割が重複するため撤去した。
-      堀の表現は、新設の連続チェーン側に一本化している。
-    -->
-
-    <!--
-      ============================================
-      人物シルエット(近景・一般的イメージ)
-      ============================================
-      史実:特定の人物・出来事の記録ではない。江戸期の城下町に
-      武士・町人が生活していたという、一般的な史実を伝えるための
-      演出。単純な円柱+球の組み合わせによる、抽象的な
-      シルエット表現とし、実在の人物を装わないようにしている。
-
-      【確度:創作補完(一般的な生活風景の演出)】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.667910; longitude: 138.569680;">
-      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#3a3a3a"></a-cylinder>
-      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
-      <a-text value="(当時の人々のイメージ・推定)" position="0 2.4 0" align="center"
-        color="#ffd166" width="7" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667200; longitude: 138.570700;">
-      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#5a4632"></a-cylinder>
-      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
-      <a-text value="(当時の人々のイメージ・推定)" position="0 2.4 0" align="center"
-        color="#ffd166" width="7" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      実在確認済みの追加の櫓4棟(遠景・確度高い)
-      ============================================
-      史実:稲荷櫓・清水櫓以外にも、以下の櫓の実在が記録されている。
-      いずれも名称・大まかな位置(方角)が文献上確認できる、
-      「一般的なイメージ」ではない具体的な建造物。
-
-      - 本丸櫓(本丸、二重櫓、古写真あり)
-      - 月見櫓(二の丸南西部、三重櫓)
-      - 数寄屋櫓(別名辰巳櫓、二重櫓、古写真あり)
-      - 太鼓櫓(柳門内)
-
-      【確度:建物の実在・大まかな方角=確定/正確な座標=推定(方角の
-      記述をもとに、天守台・稲荷櫓を基準とした象徴配置)】
-      各建物の詳細な形状(層数以外)は、稲荷櫓と同型の外観を
-      流用した推定復元である。
-
-      【Ver.56】稲荷櫓・清水櫓(v55)で追加した「下見板の帯+
-      軒丸瓦+垂木」の様式を、この4棟にも統一して適用した。
-      これにより、遠景に見える全ての実在確定の櫓が、同じ
-      質感レベル・同じ建築様式(白漆喰+下見板+軒丸瓦)で
-      揃うようになった。
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.571900;">
-      <a-box position="0 3 0" width="7" height="6" depth="7" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
-      <a-box position="0 7 0" width="6" height="2.4" depth="6" material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <!-- 【Ver.56】稲荷櫓と様式を統一するため下見板の帯を追加 -->
-      <a-box position="0 8.4 0" width="5.3" height="0.6" depth="5.3" material="src: #tex-wood; repeat: 1.5 0.4"></a-box>
-      <a-box position="0 9.2 0" width="5" height="1.6" depth="5" material="src: #tex-lattice-wall"></a-box>
-      <a-cone position="0 10.2 0" radius-bottom="5" radius-top="4.1" height="0.5" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 10.68 0.0" radius-bottom="4.1" radius-top="3.36" height="0.35" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 11.54 0.0" radius-bottom="3.36" radius-top="0" height="1.36" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <!-- 【Ver.56】軒丸瓦・垂木(稲荷櫓・山手渡櫓門と統一) -->
-      <a-cylinder position="0 9.95 0" radius="5.05" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-box position="0.0 9.95 5.05" width="0.18" height="0.18" depth="0.9" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.52 9.95 4.37" width="0.18" height="0.18" depth="0.9" rotation="0 30.0 0" color="#3a2418"></a-box>
-      <a-box position="4.37 9.95 2.53" width="0.18" height="0.18" depth="0.9" rotation="0 60.0 0" color="#3a2418"></a-box>
-      <a-box position="5.05 9.95 0.0" width="0.18" height="0.18" depth="0.9" rotation="0 90.0 0" color="#3a2418"></a-box>
-      <a-box position="4.37 9.95 -2.52" width="0.18" height="0.18" depth="0.9" rotation="0 120.0 0" color="#3a2418"></a-box>
-      <a-box position="2.52 9.95 -4.37" width="0.18" height="0.18" depth="0.9" rotation="0 150.0 0" color="#3a2418"></a-box>
-      <a-box position="0.0 9.95 -5.05" width="0.18" height="0.18" depth="0.9" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.53 9.95 -4.37" width="0.18" height="0.18" depth="0.9" rotation="0 210.0 0" color="#3a2418"></a-box>
-      <a-box position="-4.37 9.95 -2.53" width="0.18" height="0.18" depth="0.9" rotation="0 240.0 0" color="#3a2418"></a-box>
-      <a-box position="-5.05 9.95 -0.0" width="0.18" height="0.18" depth="0.9" rotation="0 270.0 0" color="#3a2418"></a-box>
-      <a-box position="-4.37 9.95 2.53" width="0.18" height="0.18" depth="0.9" rotation="0 300.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.53 9.95 4.37" width="0.18" height="0.18" depth="0.9" rotation="0 330.0 0" color="#3a2418"></a-box>
-      <a-text value="本丸櫓(実在・二重櫓)" position="0 13.2 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      鉄門(くろがねもん)(実在・確定/座標は推定)
-      ============================================
-      情報源:山梨県公式観光サイト(やまなし観光推進機構)。
-      天守曲輪から本丸へ通じる南側の門。左右に石垣を有した
-      2階建ての櫓門で、平成25年(2013年)に約140年ぶりに復元。
-      建物の実在・形式(2階建て櫓門)=確定。ただし正確なGPS座標
-      までは情報源に記載がなく、天守台・本丸櫓の既存確定座標
-      から、両者の間の南側という位置関係をもとに補間した。
-
-      【確度:実在・2階建て櫓門であること=確定/正確な座標=推定
-      (天守台・本丸間の位置関係からの補間)】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.571780;">
-      <a-box position="0 1 0" width="10" height="2" depth="4"
-        material="src: #tex-stone-wall; repeat: 2 1"></a-box>
-      <a-box position="0 3 0" width="6" height="2.4" depth="2.2"
-        material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <a-box position="0 4.35 0" width="5.3" height="0.6" depth="1.9"
-        material="src: #tex-wood; repeat: 1.2 0.4"></a-box>
-      <a-box position="0 5.1 0" width="5" height="1.5" depth="1.7"
-        material="src: #tex-lattice-wall"></a-box>
-      <a-cone position="0 6.1 0" radius-bottom="4.4" radius-top="3.6" height="0.4"
-        segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1"></a-cone>
-      <a-cone position="0 6.68 0" radius-bottom="3.6" radius-top="0" height="1.5"
-        segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1"></a-cone>
-      <a-cylinder position="0 5.85 0" radius="4.45" height="0.15"
-        segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-text value="鉄門(実在・2013年復元/座標は推定)" position="0 9 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.665300; longitude: 138.571100;">
-      <a-box position="0 3 0" width="8" height="6" depth="8" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
-      <a-box position="0 7.2 0" width="7" height="2.4" depth="7" material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <a-box position="0 9.4 0" width="6" height="2.2" depth="6" material="src: #tex-lattice-wall"></a-box>
-      <!-- 【Ver.56】3階部分と大屋根の間にも下見板の帯を追加 -->
-      <a-box position="0 10.9 0" width="5.3" height="0.6" depth="5.3" material="src: #tex-wood; repeat: 1.2 0.4"></a-box>
-      <a-box position="0 11.6 0" width="5" height="1.5" depth="5" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0 12.7 0" radius-bottom="4.6" radius-top="3.8" height="0.5" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 13.2 0.0" radius-bottom="3.8" radius-top="3.12" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 14.16 0.0" radius-bottom="3.12" radius-top="0" height="1.53" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <!-- 【Ver.56】軒丸瓦・垂木 -->
-      <a-cylinder position="0 12.45 0" radius="4.65" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-box position="0.0 12.45 4.65" width="0.18" height="0.18" depth="0.85" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.02 12.45 4.19" width="0.18" height="0.18" depth="0.85" rotation="0 25.7 0" color="#3a2418"></a-box>
-      <a-box position="3.64 12.45 2.9" width="0.18" height="0.18" depth="0.85" rotation="0 51.4 0" color="#3a2418"></a-box>
-      <a-box position="4.53 12.45 1.03" width="0.18" height="0.18" depth="0.85" rotation="0 77.1 0" color="#3a2418"></a-box>
-      <a-box position="4.53 12.45 -1.03" width="0.18" height="0.18" depth="0.85" rotation="0 102.9 0" color="#3a2418"></a-box>
-      <a-box position="3.64 12.45 -2.9" width="0.18" height="0.18" depth="0.85" rotation="0 128.6 0" color="#3a2418"></a-box>
-      <a-box position="2.02 12.45 -4.19" width="0.18" height="0.18" depth="0.85" rotation="0 154.3 0" color="#3a2418"></a-box>
-      <a-box position="0.0 12.45 -4.65" width="0.18" height="0.18" depth="0.85" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.02 12.45 -4.19" width="0.18" height="0.18" depth="0.85" rotation="0 205.7 0" color="#3a2418"></a-box>
-      <a-box position="-3.64 12.45 -2.9" width="0.18" height="0.18" depth="0.85" rotation="0 231.4 0" color="#3a2418"></a-box>
-      <a-box position="-4.53 12.45 -1.03" width="0.18" height="0.18" depth="0.85" rotation="0 257.1 0" color="#3a2418"></a-box>
-      <a-box position="-4.53 12.45 1.03" width="0.18" height="0.18" depth="0.85" rotation="0 282.9 0" color="#3a2418"></a-box>
-      <a-box position="-3.64 12.45 2.9" width="0.18" height="0.18" depth="0.85" rotation="0 308.6 0" color="#3a2418"></a-box>
-      <a-box position="-2.02 12.45 4.19" width="0.18" height="0.18" depth="0.85" rotation="0 334.3 0" color="#3a2418"></a-box>
-      <a-text value="月見櫓(実在・三重櫓)" position="0 16 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      【Ver.41訂正】発案者が撮影した公式復元模型の写真(Image4)により、
-      数寄屋櫓のラベルは天守台南側・鍛冶曲輪付近にあることが判明。
-      別名「辰巳櫓」(辰巳=南東の方角)とも整合するため、
-      以前の座標(稲荷曲輪の東側)は誤りと判断し、修正する。
-    -->
-    <!--
-      【Ver.42再訂正】発案者提供の縮尺・方位記号付き測量図により、
-      数寄屋曲輪は天守曲輪の東側、堀に沿ったカーブ部分にあることが
-      判明。前回(Ver.41)の南寄りの修正から、東寄りに再修正する。
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.572400;">
-      <a-box position="0 2.5 0" width="6" height="5" depth="6" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
-      <a-box position="0 6 0" width="5" height="2" depth="5" material="src: #tex-wood; repeat: 1.5 1"></a-box>
-      <!-- 【Ver.56】下見板の帯を追加(様式統一) -->
-      <a-box position="0 7.35 0" width="4.4" height="0.5" depth="4.4" material="src: #tex-wood; repeat: 1.2 0.4"></a-box>
-      <a-box position="0 8 0" width="4.2" height="1.3" depth="4.2" material="src: #tex-lattice-wall"></a-box>
-      <a-cone position="0.0 8.5 0.0" radius-bottom="3.8" radius-top="3.12" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 9.46 0.0" radius-bottom="3.12" radius-top="0" height="1.53" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <!-- 【Ver.56】軒丸瓦・垂木 -->
-      <a-cylinder position="0 8.3 0" radius="3.85" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-box position="0.0 8.3 3.85" width="0.18" height="0.18" depth="0.7" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.26 8.3 3.11" width="0.18" height="0.18" depth="0.7" rotation="0 36.0 0" color="#3a2418"></a-box>
-      <a-box position="3.66 8.3 1.19" width="0.18" height="0.18" depth="0.7" rotation="0 72.0 0" color="#3a2418"></a-box>
-      <a-box position="3.66 8.3 -1.19" width="0.18" height="0.18" depth="0.7" rotation="0 108.0 0" color="#3a2418"></a-box>
-      <a-box position="2.26 8.3 -3.11" width="0.18" height="0.18" depth="0.7" rotation="0 144.0 0" color="#3a2418"></a-box>
-      <a-box position="0.0 8.3 -3.85" width="0.18" height="0.18" depth="0.7" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.26 8.3 -3.11" width="0.18" height="0.18" depth="0.7" rotation="0 216.0 0" color="#3a2418"></a-box>
-      <a-box position="-3.66 8.3 -1.19" width="0.18" height="0.18" depth="0.7" rotation="0 252.0 0" color="#3a2418"></a-box>
-      <a-box position="-3.66 8.3 1.19" width="0.18" height="0.18" depth="0.7" rotation="0 288.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.26 8.3 3.11" width="0.18" height="0.18" depth="0.7" rotation="0 324.0 0" color="#3a2418"></a-box>
-      <a-text value="数寄屋櫓(実在・辰巳櫓/縮尺付き測量図で位置を再訂正)" position="0 11 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.570900;">
-      <a-box position="0 2 0" width="5" height="4" depth="5" material="src: #tex-stone-wall; repeat: 1.2 1.2"></a-box>
-      <!-- 【Ver.56】下見板の帯を追加(様式統一) -->
-      <a-box position="0 4.25 0" width="4.5" height="0.5" depth="4.5" material="src: #tex-wood; repeat: 1 0.4"></a-box>
-      <a-box position="0 4.9 0" width="4.2" height="1.6" depth="4.2" material="src: #tex-wood; repeat: 1.2 1"></a-box>
-      <a-cone position="0 5.9 0" radius-bottom="3.5" radius-top="2.9" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
-      <a-cone position="0.0 6.19 0.0" radius-bottom="2.9" radius-top="2.38" height="0.29" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
-      <a-cone position="0.0 6.88 0.0" radius-bottom="2.38" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.2 1.2"></a-cone>
-      <!-- 【Ver.56】軒丸瓦・垂木 -->
-      <a-cylinder position="0 5.7 0" radius="3.55" height="0.15" segments-radial="20" material="src: #tex-roof-tile; repeat: 4 1"></a-cylinder>
-      <a-box position="0.0 5.7 3.55" width="0.18" height="0.18" depth="0.65" rotation="0 0.0 0" color="#3a2418"></a-box>
-      <a-box position="2.09 5.7 2.87" width="0.18" height="0.18" depth="0.65" rotation="0 36.0 0" color="#3a2418"></a-box>
-      <a-box position="3.38 5.7 1.1" width="0.18" height="0.18" depth="0.65" rotation="0 72.0 0" color="#3a2418"></a-box>
-      <a-box position="3.38 5.7 -1.1" width="0.18" height="0.18" depth="0.65" rotation="0 108.0 0" color="#3a2418"></a-box>
-      <a-box position="2.09 5.7 -2.87" width="0.18" height="0.18" depth="0.65" rotation="0 144.0 0" color="#3a2418"></a-box>
-      <a-box position="0.0 5.7 -3.55" width="0.18" height="0.18" depth="0.65" rotation="0 180.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.09 5.7 -2.87" width="0.18" height="0.18" depth="0.65" rotation="0 216.0 0" color="#3a2418"></a-box>
-      <a-box position="-3.38 5.7 -1.1" width="0.18" height="0.18" depth="0.65" rotation="0 252.0 0" color="#3a2418"></a-box>
-      <a-box position="-3.38 5.7 1.1" width="0.18" height="0.18" depth="0.65" rotation="0 288.0 0" color="#3a2418"></a-box>
-      <a-box position="-2.09 5.7 2.87" width="0.18" height="0.18" depth="0.65" rotation="0 324.0 0" color="#3a2418"></a-box>
-      <a-text value="太鼓櫓(実在・柳門内)" position="0 8.4 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      薮田重守屋敷・甲府勤番山手役宅(近景・確度中)
-      ============================================
-      史実:「北口(甲府市)」の記録によれば、北口地域には
-      柳沢城主時代の家老・薮田重守の屋敷地と、甲府勤番山手役宅が
-      存在した。人物名・役職名は具体的に特定できるが、
-      「柳沢家老屋敷や甲府勤番役宅の所在地は不明である」と
-      明記されているため、座標は象徴的な配置とする。
-
-      これまでの「一般的な武家屋敷」より一段具体的な、実在の
-      人物・役職に紐づく建物として区別する。北口地域内の、
-      これまで建物を置いていなかった方角に配置し、空白を埋める。
-
-      【確度:人物・役職の実在=確定/建物の所在地=不明のため象徴配置】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.668250; longitude: 138.570300;">
-      <a-box position="0 0.4 0" width="6" height="0.8" depth="5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 2.3 0" width="5.3" height="3" depth="4.3" material="src: #tex-wood; repeat: 1.3 1"></a-box>
-      <a-cone position="0.0 3.62 0.0" radius-bottom="3.8" radius-top="3.12" height="0.33" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 4.42 0.0" radius-bottom="3.12" radius-top="0" height="1.27" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="家老・薮田重守屋敷(柳沢時代/所在地不明のため象徴配置)"
-        position="0 5.4 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.668300; longitude: 138.569900;">
-      <a-box width="30" height="0.1" depth="3" rotation="0 80 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
-      <a-text value="桜小路(江戸期の道・現在の弥生町/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667500; longitude: 138.569400;">
-      <a-box width="30" height="0.1" depth="3" rotation="0 10 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
-      <a-text value="先手小路(江戸期の道・現在の水門町/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667100; longitude: 138.570400;">
-      <a-box width="25" height="0.1" depth="3" rotation="0 130 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
-      <a-text value="森下小路(江戸期の道・現在の日向町/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      武家地の建物群・増量(近景・推定/一般的イメージ)
-      ============================================
-      史実:武家地が屋敷・蔵で密に建て詰まっていたこと自体は
-      確実な史実。個々の建物の正確な位置までは分からないため、
-      これまでと同じ「推定・一般的イメージ」という誠実な位置づけ
-      のまま、数を大幅に増やし、密度のある街並みとして表現する。
-      「棟数を増やすこと」自体は、忠実度の方針(5章)に反しない
-      (個々の位置精度を偽って主張しない限り、量を増やすことは
-      史実の捏造にはあたらない)。
-
-      【確度:地区として建て詰まっていたこと=確定/個別棟数・配置=創作補完】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.668050; longitude: 138.569600;">
-      <a-box position="0 0.25 0" width="3" height="0.5" depth="2.6" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.3 0" width="2.6" height="1.6" depth="2.2" material="src: #tex-wood; repeat: 1 0.7"></a-box>
-      <a-cone position="0.0 1.95 0.0" radius-bottom="1.9" radius-top="1.56" height="0.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.43 0.0" radius-bottom="1.56" radius-top="0" height="0.77" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-    <!-- 【Ver.57修正】v51の堀チェーンと重なっていたため位置を調整 -->
-    <a-entity gps-projected-entity-place="latitude: 35.668080; longitude: 138.569950;">
-      <a-box position="0 0.25 0" width="3.4" height="0.5" depth="3" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.5 0" width="3" height="2" depth="2.5" material="src: #tex-wood; repeat: 1 0.7"></a-box>
-      <a-cone position="0.0 2.37 0.0" radius-bottom="2.3" radius-top="1.89" height="0.24" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.96 0.0" radius-bottom="1.89" radius-top="0" height="0.94" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667850; longitude: 138.569750;">
-      <a-text value="この一帯の建物群は、武家地の密度を伝える推定・一般的イメージです"
-        position="0 5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      町人地(御納戸町・愛宕町・元城屋町)(近景・推定/一般的イメージ)
-      ============================================
-      史実:「北口(甲府市)」の記録によれば、北口地域には町人地
-      だった御納戸町・愛宕町・元城屋町(の一部)も含まれていた。
-      御納戸町は、江戸期に納戸役の組屋敷(役人の集合住宅)が
-      あったことに由来する町名。
-
-      個々の店舗・住居の正確な配置は不明のため、「町人地としての
-      一般的な町並みイメージ」として、武家屋敷とは異なる、
-      商家・町家らしい外観(軒の低い、間口の狭い町家造り)で
-      象徴的に配置する。
-
-      【確度:町の実在・名称=確定/個別建物の配置=創作補完】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.668350; longitude: 138.570100;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="6" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.4 0" width="2.6" height="2.4" depth="5.6" material="src: #tex-wood; repeat: 1 2"></a-box>
-      <a-box position="0 2.9 0" width="3.2" height="0.3" depth="6.2" material="src: #tex-roof-tile; repeat: 1 2"></a-box>
-      <a-text value="御納戸町(町人地・納戸役組屋敷に由来/推定配置)"
-        position="0 4 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.667350; longitude: 138.570550;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.3 0" width="2.6" height="2.2" depth="4.6" material="src: #tex-wood; repeat: 1 1.5"></a-box>
-      <a-box position="0 2.6 0" width="3.2" height="0.3" depth="5.2" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
-      <a-text value="愛宕町(町人地/推定配置)"
-        position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.667050; longitude: 138.569900;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.3 0" width="2.6" height="2.2" depth="4.6" material="src: #tex-wood; repeat: 1 1.5"></a-box>
-      <a-box position="0 2.6 0" width="3.2" height="0.3" depth="5.2" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
-      <a-text value="元城屋町(町人地/推定配置)"
-        position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!-- 三念坂(近景・確度高い:坂道の実在・名称は確定、ルートは推定) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667900; longitude: 138.570350;">
-      <a-box width="20" height="0.1" depth="3" rotation="0 55 0" color="#8a7a5a" opacity="0.6" position="0 0.05 0"></a-box>
-      <a-text value="三念坂(江戸期の坂道/推定ルート)" position="0 1.5 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!-- 追加の町家群(近景・推定・一般的イメージ、密度をさらに底上げ) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668280; longitude: 138.569780;">
-      <a-box position="0 0.2 0" width="2.6" height="0.4" depth="4.5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.2 0" width="2.2" height="2" depth="4.1" material="src: #tex-wood; repeat: 1 1.5"></a-box>
-      <a-box position="0 2.4 0" width="2.8" height="0.3" depth="4.7" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667450; longitude: 138.570800;">
-      <a-box position="0 0.2 0" width="2.6" height="0.4" depth="4.2" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.2 0" width="2.2" height="2" depth="3.8" material="src: #tex-wood; repeat: 1 1.5"></a-box>
-      <a-box position="0 2.4 0" width="2.8" height="0.3" depth="4.4" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666900; longitude: 138.570150;">
-      <a-box position="0 0.2 0" width="2.4" height="0.4" depth="4" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.1 0" width="2" height="1.8" depth="3.6" material="src: #tex-wood; repeat: 1 1.5"></a-box>
-      <a-box position="0 2.2 0" width="2.6" height="0.3" depth="4.2" material="src: #tex-roof-tile; repeat: 1 1.5"></a-box>
-    </a-entity>
-
-    <!-- 追加の人物シルエット(町人地の賑わいを表現) -->
-    <a-entity gps-projected-entity-place="latitude: 35.668300; longitude: 138.570000;">
-      <a-cylinder position="0 0.85 0" radius="0.24" height="1.4" color="#7a5a3a"></a-cylinder>
-      <a-sphere position="0 1.75 0" radius="0.21" color="#d8c3a5"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667400; longitude: 138.570600;">
-      <a-cylinder position="0 0.85 0" radius="0.24" height="1.4" color="#3a5a4a"></a-cylinder>
-      <a-sphere position="0 1.75 0" radius="0.21" color="#d8c3a5"></a-sphere>
-    </a-entity>
-
-    <!--
-      ============================================
-      稲荷曲輪門・鍛冶曲輪門(遠景・確定:実物が復元済み)
-      ============================================
-      史実:稲荷曲輪門は享保の大火を免れ明治初期まで現存していた
-      記録があり、1999年に復元。鍛冶曲輪門は城跡南西側の門として
-      復元済み。いずれも山手御門・稲荷櫓と同様、実際に現地で
-      見ることができる実在の建造物。
-
-      これまで稲荷櫓・天守台などの周辺に空白があったため、
-      この2つの実在する門を追加し、遠景クラスターの密度と
-      正確性を同時に高める。
-
-      【確度:実在・復元済み=確定/座標=推定(曲輪の位置関係に基づく象徴配置)】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665850; longitude: 138.571750;">
-      <a-box position="0 0.4 0" width="5" height="0.8" depth="4" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 2 0" width="4.3" height="2.4" depth="1.2" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0 3.2 0" radius-bottom="3.5" radius-top="2.9" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.51 0.0" radius-bottom="2.9" radius-top="2.38" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 4.04 0.0" radius-bottom="2.38" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="稲荷曲輪門(実在・復元済み)" position="0 5 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.665400; longitude: 138.571850;">
-      <a-box position="0 0.4 0" width="5" height="0.8" depth="4" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 2 0" width="4.3" height="2.4" depth="1.2" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0 3.2 0" radius-bottom="3.5" radius-top="2.9" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.51 0.0" radius-bottom="2.9" radius-top="2.38" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 4.04 0.0" radius-bottom="2.38" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="鍛冶曲輪門(実在・復元済み)" position="0 5 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      鍛冶曲輪内の蔵2棟(近景・推定:模型写真で確認)
-      模型写真(近接カット)で、鍛冶曲輪門のすぐ近くの堀沿いに、
-      細長い切妻屋根の蔵(下見板張り)が2棟並んでいることが
-      確認できたため追加する。
-      【確度:この位置に蔵状の建物が2棟あること=確定(模型より)/
-      正確な寸法・用途=推定】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665650; longitude: 138.570950;">
-      <a-box position="0 0.25 0" width="7" height="0.5" depth="2.6" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.5 0" width="6.6" height="2" depth="2.2" material="src: #tex-wood; repeat: 3 1"></a-box>
-      <a-cone position="0 2.7 0" radius-bottom="2" radius-top="0" height="1"
-        segments-radial="4" rotation="0 90 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="鍛冶曲輪の蔵(模型写真に基づく推定)" position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665620; longitude: 138.571100;">
-      <a-box position="0 0.25 0" width="7" height="0.5" depth="2.6" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.5 0" width="6.6" height="2" depth="2.2" material="src: #tex-wood; repeat: 3 1"></a-box>
-      <a-cone position="0 2.7 0" radius-bottom="2" radius-top="0" height="1"
-        segments-radial="4" rotation="0 90 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-
-    <!-- 数寄屋曲輪の土塀(遠景・確度高い:土塀に囲まれていたことは記録あり) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.571500;">
-      <a-box width="18" height="1.6" depth="0.4" rotation="0 70 0" material="src: #tex-lattice-wall; repeat: 3 1" position="0 0.8 0"></a-box>
-      <a-text value="数寄屋曲輪の土塀(実在・推定ルート)" position="0 2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      連結用の塀(近景〜遠景クラスターの連続性強化)
-      ============================================
-      史実:「史跡範囲」の図(現地案内板)によれば、城の外周は
-      堀・石垣・土塀で途切れることなく一周していたことが
-      分かる。これまでの実装は、近景(武家地)と遠景(城郭中心部)
-      のクラスターが離れて配置され、間が途切れていたため、
-      この連続性を補うための塀を追加する。
-
-      正確なルートは示す絵図の座標を持たないため、2つの
-      クラスターを結ぶ、象徴的な経路として配置する。
-
-      【確度:外周が連続していたこと=確定(現地案内板の史跡範囲図)/
-      経路の正確な位置=推定・象徴表示】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.666600; longitude: 138.570700;">
-      <a-box width="16" height="1.5" depth="0.4" rotation="0 40 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.570500;">
-      <a-box width="16" height="1.5" depth="0.4" rotation="0 50 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666000; longitude: 138.570300;">
-      <a-box width="16" height="1.5" depth="0.4" rotation="0 30 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665900; longitude: 138.571300;">
-      <a-box width="16" height="1.5" depth="0.4" rotation="0 80 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.571550;">
-      <a-box width="14" height="1.5" depth="0.4" rotation="0 60 0" material="src: #tex-stone-wall; repeat: 3 1" position="0 0.75 0"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      銅門跡・水溜・石切場(遠景・確度高い:現地案内板に記載)
-      ============================================
-      史実:現地の案内板(史跡範囲の図)に記載されている、
-      内松陰門近くの銅門跡(出入口跡)、稲荷曲輪内の水溜
-      (貯水施設)、石垣用の石を切り出した石切場。
-      いずれも現存する遺構・痕跡として確認されているが、
-      建物ではなく「跡」「施設」のため、簡易な表示にとどめる。
-
-      【確度:実在・案内板記載=確定/正確な座標=推定(案内板の図の
-      位置関係をもとにした象徴配置)】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665950; longitude: 138.571600;">
-      <a-box position="0 0.3 0" width="3" height="0.6" depth="2" material="src: #tex-stone-wall"></a-box>
-      <a-text value="銅門跡(出入口の跡・現地案内板に記載)" position="0 1.2 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665850; longitude: 138.572100;">
-      <a-box position="0 0.1 0" width="3" height="0.15" depth="3" color="#3f7a7a" opacity="0.5"></a-box>
-      <a-text value="水溜(貯水施設・現地案内板に記載)" position="0 1 0" align="center" color="#a8e6a1" width="8" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665700; longitude: 138.572200;">
-      <a-box position="0 0.4 0" width="4" height="0.8" depth="3" material="src: #tex-stone-wall; repeat: 1.5 1.5"></a-box>
-      <a-text value="石切場(石垣用の石を切り出した跡・現地案内板に記載)" position="0 1.4 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      内松陰門・屋形曲輪の建物群・追加の蔵(遠景・高確度の推定)
-      ============================================
-      情報源:甲府市が公式に展示している「甲府城復元模型」
-      (縮尺1:300)。専門家による発掘調査・絵図に基づく復元物では
-      あるが、絵図そのものではなく模型製作者による解釈も含まれる
-      ため、「確定」ではなく「高確度の推定」として扱う。
-
-      模型には、稲荷櫓・鉄門・内松陰門・鍛冶曲輪門など、既に
-      実装済みの建物と位置関係が確認できる、屋形曲輪の建物群、
-      および城内各所に見られる蔵(倉庫)群が確認できる。
-      これらを、既存の実装済み建物を基準点として、相対的な
-      位置関係を保ちながら追加する。
-
-      【確度:公式復元模型に基づく=高確度の推定(確定ではない)/
-      正確な座標=模型の相対位置関係をもとにした推定配置】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665650; longitude: 138.571500;">
-      <a-box position="0 0.4 0" width="4.5" height="0.8" depth="2.5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 2 0" width="3.8" height="2.4" depth="1.2" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0 3.2 0" radius-bottom="3.1" radius-top="2.5" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.45 0.0" radius-bottom="2.5" radius-top="2.05" height="0.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.94 0.0" radius-bottom="2.05" radius-top="0" height="0.77" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="内松陰門(実在・復元済み/公式模型で位置確認)" position="0 4.9 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.665500; longitude: 138.571000;">
-      <a-box position="0 0.3 0" width="6" height="0.6" depth="5" material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
-      <a-box position="0 1.8 0" width="5.4" height="2.4" depth="4.4" material="src: #tex-wood; repeat: 1.5 1.2"></a-box>
-      <a-cone position="0.0 2.85 0.0" radius-bottom="3.8" radius-top="3.12" height="0.31" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 3.6 0.0" radius-bottom="3.12" radius-top="0" height="1.19" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-text value="屋形曲輪の建物群(公式復元模型に基づく推定配置)" position="0 4.8 0" align="center" color="#ffd166" width="10" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665450; longitude: 138.570900;">
-      <a-box position="0 0.3 0" width="5" height="0.6" depth="4" material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
-      <a-box position="0 1.6 0" width="4.4" height="2" depth="3.4" material="src: #tex-wood; repeat: 1.5 1.2"></a-box>
-      <a-cone position="0.0 2.43 0.0" radius-bottom="3.2" radius-top="2.62" height="0.26" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 3.07 0.0" radius-bottom="2.62" radius-top="0" height="1.02" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.665200; longitude: 138.571600;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="8" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.4 0" width="2.6" height="2" depth="7.6" material="src: #tex-lattice-wall; repeat: 0.3 3"></a-box>
-      <a-box position="0 2.7 0" width="3.2" height="0.4" depth="8.2" material="src: #tex-roof-tile; repeat: 1 3"></a-box>
-      <a-text value="蔵(公式復元模型に基づく推定配置)" position="0 3.8 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665900; longitude: 138.572300;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="7" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.3 0" width="2.6" height="1.8" depth="6.6" material="src: #tex-lattice-wall; repeat: 0.3 3"></a-box>
-      <a-box position="0 2.5 0" width="3.2" height="0.4" depth="7.2" material="src: #tex-roof-tile; repeat: 1 3"></a-box>
-      <a-text value="蔵(公式復元模型に基づく推定配置)" position="0 3.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      長屋・本丸内建物・二の丸内建物(遠景・高確度の推定)
-      ============================================
-      情報源:甲府城復元模型(甲府市公式展示)。模型には、
-      追手口・出入口付近に細長い長屋状の建物(兵舎・倉庫等の
-      用途と考えられる)、本丸・二の丸内にも小規模な建物群が
-      複数確認できる。これらの外観の多様性を反映するため、
-      これまでにない「長屋」タイプの建物を新設する。
-
-      【確度:公式復元模型に基づく=高確度の推定/
-      正確な座標・用途=模型の相対位置関係をもとにした推定配置】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665250; longitude: 138.571200;">
-      <a-box position="0 0.15 0" width="2" height="0.3" depth="9" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.1 0" width="1.8" height="1.6" depth="8.6" material="src: #tex-wood; repeat: 0.5 3"></a-box>
-      <a-box position="0 2 0" width="2.2" height="0.3" depth="9.2" material="src: #tex-roof-tile; repeat: 0.8 4"></a-box>
-      <a-text value="長屋(兵舎・倉庫等/公式復元模型に基づく推定配置)" position="0 2.8 0" align="center" color="#ffd166" width="10" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.572000;">
-      <a-box position="0 0.15 0" width="2" height="0.3" depth="8" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.05 0" width="1.8" height="1.5" depth="7.6" material="src: #tex-wood; repeat: 0.5 3"></a-box>
-      <a-box position="0 1.9 0" width="2.2" height="0.3" depth="8.2" material="src: #tex-roof-tile; repeat: 0.8 4"></a-box>
-      <a-text value="長屋(公式復元模型に基づく推定配置)" position="0 2.6 0" align="center" color="#ffd166" width="9" side="double"></a-text>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.665800; longitude: 138.571850;">
-      <a-box position="0 0.25 0" width="5" height="0.5" depth="4" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.6 0" width="4.4" height="2.2" depth="3.4" material="src: #tex-wood; repeat: 1.3 1"></a-box>
-      <a-cone position="0 2.9 0" radius-bottom="3.6" radius-top="3" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.17 0.0" radius-bottom="3.0" radius-top="2.46" height="0.24" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.76 0.0" radius-bottom="2.46" radius-top="0" height="0.94" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="本丸内の建物(公式復元模型に基づく推定配置)" position="0 4.6 0" align="center" color="#ffd166" width="10" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665550; longitude: 138.571750;">
-      <a-box position="0 0.2 0" width="4.2" height="0.4" depth="3.5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.4 0" width="3.7" height="2" depth="3" material="src: #tex-wood; repeat: 1.2 1"></a-box>
-      <a-cone position="0 2.5 0" radius-bottom="3.1" radius-top="2.6" height="0.35" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.71 0.0" radius-bottom="2.6" radius-top="2.13" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.24 0.0" radius-bottom="2.13" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="二の丸内の建物(公式復元模型に基づく推定配置)" position="0 4 0" align="center" color="#ffd166" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      人質曲輪・花畑(遠景・確度高い:縮尺付き測量図に記載)
-      ============================================
-      情報源:発案者提供の「甲府城曲輪・主要施設の名称」測量図
-      (方位記号・縮尺付き)。稲荷曲輪の北東、花畑の近くに
-      「人質曲輪」という、これまで実装していなかった曲輪が
-      存在することが確認できた。花畑は建物ではなくオープン
-      スペースのため、緑地として表現する。
-
-      【確度:曲輪・花畑の実在・大まかな位置=確定(測量図に明記)/
-      正確な建物配置=未特定のため簡易な表現にとどめる】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.666300; longitude: 138.572400;">
-      <a-box position="0 0.3 0" width="5" height="0.6" depth="4" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.6 0" width="4.3" height="2" depth="3.3" material="src: #tex-wood; repeat: 1.2 1"></a-box>
-      <a-cone position="0.0 2.43 0.0" radius-bottom="3.1" radius-top="2.54" height="0.26" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.07 0.0" radius-bottom="2.54" radius-top="0" height="1.02" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="人質曲輪(実在・縮尺付き測量図で位置確認)" position="0 4 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.666500; longitude: 138.572900;">
-      <a-box position="0 0.05 0" width="14" height="0.1" depth="14" color="#6a8a4a" opacity="0.55"></a-box>
-      <a-text value="花畑(オープンスペース/縮尺付き測量図で位置確認)" position="0 1.2 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      帯曲輪・楽屋曲輪(遠景・確度高い:縮尺付き測量図に記載)
-      ============================================
-      情報源:縮尺付き測量図。本丸と二の丸の間に「帯曲輪」という
-      細長い区画、西側(現・山梨県庁議事堂付近)に「楽屋曲輪」が
-      あることが確認できた。
-
-      【確度:曲輪の実在・位置=確定(測量図に明記)/
-      内部の建物配置=未特定のため簡易な表現】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.571350;">
-      <a-box width="10" height="1.6" depth="0.4" rotation="0 20 0"
-        material="src: #tex-stone-wall; repeat: 2 1" position="0 0.8 0"></a-box>
-      <a-text value="帯曲輪(本丸と二の丸の間/測量図で位置確認)" position="0 2 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      内堀(遠景・確定:今も現存する堀)
-      ============================================
-      情報源:縮尺付き測量図。鍛冶曲輪・二の丸の南側に、
-      今も現存する「内堀」が明記されている。これは推定表示
-      ではなく、現在も実際に水を湛えた堀として見ることができる、
-      確度の高い要素。
-      【確度:実在・現存=確定/正確な形状=測量図に基づく推定表示】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665000; longitude: 138.571900;">
-      <a-box width="24" height="0.15" depth="10" rotation="0 15 0"
-        color="#3f7a7a" opacity="0.5" position="0 0.05 0"></a-box>
-      <a-text value="内堀(実在・現存する堀)" position="0 1.3 0" align="center" color="#a8e6a1" width="9" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.664850; longitude: 138.571300;">
-      <a-box width="20" height="0.15" depth="9" rotation="0 5 0"
-        color="#3f7a7a" opacity="0.5" position="0 0.05 0"></a-box>
-    </a-entity>
-
-    <a-entity gps-projected-entity-place="latitude: 35.665250; longitude: 138.570700;">
-      <a-box position="0 0.25 0" width="6" height="0.5" depth="5" material="src: #tex-stone-wall; repeat: 1.5 1"></a-box>
-      <a-box position="0 1.6 0" width="5.4" height="2.2" depth="4.4" material="src: #tex-wood; repeat: 1.5 1.2"></a-box>
-      <a-cone position="0.0 2.5 0.0" radius-bottom="3.8" radius-top="3.12" height="0.29" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-cone position="0.0 3.2 0.0" radius-bottom="3.12" radius-top="0" height="1.1" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile; repeat: 1.5 1.5"></a-cone>
-      <a-text value="楽屋曲輪の建物群(測量図で位置確認/推定配置)" position="0 4.2 0" align="center" color="#ffd166" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      鉄門(遠景・確定:実物が復元済み)
-      ============================================
-      史実:本丸南側の虎口に位置する門。平成25年(2013年)、
-      絵図・古文書・発掘調査結果をもとに復元された、実在の
-      建造物。これまで文脈上は触れていたが、AR上のオブジェクト
-      としては未実装だったため、追加する。
-
-      【確度:実在・復元済み=確定/座標=測量図の相対位置に基づく推定】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.571650;">
-      <a-box position="0 0.4 0" width="5" height="0.8" depth="4" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 2 0" width="4.3" height="2.4" depth="1.3" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0 3.2 0" radius-bottom="3.5" radius-top="2.9" height="0.4" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 3.51 0.0" radius-bottom="2.9" radius-top="2.38" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 4.04 0.0" radius-bottom="2.38" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-text value="鉄門(実在・復元済み/2013年復元)" position="0 5.1 0" align="center" color="#a8e6a1" width="10" side="double"></a-text>
-    </a-entity>
-
-    <!--
-      ============================================
-      追手口周辺の長屋(遠景・高確度の推定)
-      ============================================
-      情報源:甲府城復元模型の写真(Image1・Image3)。追手口
-      付近に、細長い長屋状の建物が2棟並んでいる様子が確認できる。
-      【確度:公式復元模型に基づく=高確度の推定】
-    -->
-    <a-entity gps-projected-entity-place="latitude: 35.665000; longitude: 138.570600;">
-      <a-box position="0 0.15 0" width="2" height="0.3" depth="7" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.05 0" width="1.8" height="1.5" depth="6.6" material="src: #tex-wood; repeat: 0.5 2.5"></a-box>
-      <a-box position="0 1.9 0" width="2.2" height="0.3" depth="7.2" material="src: #tex-roof-tile; repeat: 0.8 3"></a-box>
-      <a-text value="追手口の長屋(公式復元模型に基づく推定配置)" position="0 2.6 0" align="center" color="#ffd166" width="10" side="double"></a-text>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665050; longitude: 138.570750;">
-      <a-box position="0 0.15 0" width="2" height="0.3" depth="6" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1 0" width="1.8" height="1.4" depth="5.6" material="src: #tex-wood; repeat: 0.5 2.5"></a-box>
-      <a-box position="0 1.8 0" width="2.2" height="0.3" depth="6.2" material="src: #tex-roof-tile; repeat: 0.8 3"></a-box>
-    </a-entity>
-
-    <!--
-      ============================================
-      手薄エリアの密度アップ(遠景・高確度の推定)
-      ============================================
-      情報源:公式復元模型・縮尺付き測量図。屋形曲輪・楽屋曲輪・
-      二の丸・天守曲輪周辺は、これまで1〜2棟しか配置しておらず、
-      模型で見られる密度に対して手薄だった。同エリアに建物を
-      追加し、密度を上げる。
-
-      【確度:曲輪としての実在・大まかな位置=確定/個別建物の
-      正確な配置=公式資料に基づく高確度の推定】
-    -->
-    <!-- 屋形曲輪の追加建物 -->
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.571150;">
-      <a-box position="0 0.25 0" width="4.5" height="0.5" depth="3.5" material="src: #tex-stone-wall; repeat: 1.3 1"></a-box>
-      <a-box position="0 1.5 0" width="4" height="2" depth="3" material="src: #tex-wood; repeat: 1.3 1"></a-box>
-      <a-cone position="0.0 2.27 0.0" radius-bottom="2.9" radius-top="2.38" height="0.24" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.86 0.0" radius-bottom="2.38" radius-top="0" height="0.94" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665420; longitude: 138.570950;">
-      <a-box position="0 0.2 0" width="3.8" height="0.4" depth="3" material="src: #tex-stone-wall; repeat: 1.2 1"></a-box>
-      <a-box position="0 1.3 0" width="3.3" height="1.8" depth="2.5" material="src: #tex-wood; repeat: 1.2 1"></a-box>
-      <a-cone position="0.0 2.01 0.0" radius-bottom="2.4" radius-top="1.97" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.54 0.0" radius-bottom="1.97" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-
-    <!-- 楽屋曲輪の追加建物 -->
-    <a-entity gps-projected-entity-place="latitude: 35.665150; longitude: 138.570550;">
-      <a-box position="0 0.25 0" width="5" height="0.5" depth="4" material="src: #tex-stone-wall; repeat: 1.3 1"></a-box>
-      <a-box position="0 1.5 0" width="4.4" height="2" depth="3.4" material="src: #tex-wood; repeat: 1.3 1"></a-box>
-      <a-cone position="0.0 2.23 0.0" radius-bottom="3.1" radius-top="2.54" height="0.26" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.87 0.0" radius-bottom="2.54" radius-top="0" height="1.02" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-
-    <!-- 二の丸の追加建物 -->
-    <a-entity gps-projected-entity-place="latitude: 35.665480; longitude: 138.571600;">
-      <a-box position="0 0.2 0" width="3.5" height="0.4" depth="3" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.3 0" width="3" height="1.8" depth="2.5" material="src: #tex-wood; repeat: 1.2 1"></a-box>
-      <a-cone position="0.0 2.01 0.0" radius-bottom="2.3" radius-top="1.89" height="0.22" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.54 0.0" radius-bottom="1.89" radius-top="0" height="0.85" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-
-    <!-- 天守曲輪周辺(天守台の周りの付属建物) -->
-    <a-entity gps-projected-entity-place="latitude: 35.665600; longitude: 138.571550;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="2.5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.2 0" width="2.6" height="1.6" depth="2.1" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0.0 1.85 0.0" radius-bottom="2.0" radius-top="1.64" height="0.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.33 0.0" radius-bottom="1.64" radius-top="0" height="0.77" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665780; longitude: 138.571620;">
-      <a-box position="0 0.2 0" width="3" height="0.4" depth="2.5" material="src: #tex-stone-wall"></a-box>
-      <a-box position="0 1.2 0" width="2.6" height="1.6" depth="2.1" material="src: #tex-wood; repeat: 1 1"></a-box>
-      <a-cone position="0.0 1.85 0.0" radius-bottom="2.0" radius-top="1.64" height="0.2" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-      <a-cone position="0.0 2.33 0.0" radius-bottom="1.64" radius-top="0" height="0.77" segments-radial="4" rotation="0 45 0" material="src: #tex-roof-tile"></a-cone>
-    </a-entity>
-
-
-    <a-entity gps-projected-entity-place="latitude: 35.665750; longitude: 138.570600;">
-      <a-box width="20" height="0.15" depth="10" rotation="0 15 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.665350; longitude: 138.570400;">
-      <a-box width="18" height="0.15" depth="10" rotation="0 5 0"
-        color="#3f7a7a" opacity="0.45" position="0 0.05 0"></a-box>
-    </a-entity>
-
-    <!-- 人物シルエットも増量(一般的イメージ) -->
-    <a-entity gps-projected-entity-place="latitude: 35.667780; longitude: 138.569650;">
-      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#4a5a3a"></a-cylinder>
-      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667930; longitude: 138.569880;">
-      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#6a3a3a"></a-cylinder>
-      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
-    </a-entity>
-    <a-entity gps-projected-entity-place="latitude: 35.667250; longitude: 138.570600;">
-      <a-cylinder position="0 0.9 0" radius="0.25" height="1.5" color="#3a3a5a"></a-cylinder>
-      <a-sphere position="0 1.85 0" radius="0.22" color="#d8c3a5"></a-sphere>
     </a-entity>
   </a-scene>
 
   <script>
-    document.getElementById('start-button').addEventListener('click', () => {
-      // モーションセンサーの許可リクエストが必要な端末(iOS 13+)だけ、
-      // 先に日本語の説明モーダルを見せる
-      if (typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission === 'function') {
-        document.getElementById('permission-explainer').style.display = 'flex';
-      } else {
-        startAR();
+    // =========================================================
+    // v71 runtime: 方位補正・調査モード・距離表示・診断
+    // =========================================================
+    const V71_ANCHOR = { lat: 35.667180, lon: 138.570780 };
+    const V71_FEATURES = {
+      yamate: { id: 'yamate-complex', label: '山手御門', lat: 35.667180, lon: 138.570780, status: '現地確認済み' },
+      inari: { id: 'inari-yagura-placeholder', label: '稲荷櫓', lat: 35.665700, lon: 138.571700, status: '座標仮／形状は公式資料準拠' },
+      tenshu: { id: 'tenshudai-placeholder', label: '天守台', lat: 35.665950, lon: 138.572050, status: '位置仮／現存石垣のみ' },
+      gakuya: { id: 'gakuya-kuruwa-placeholder', label: '楽屋曲輪', lat: 35.665500, lon: 138.570700, status: '模型・発掘資料由来の仮配置' },
+      otemon: { id: 'otemon-placeholder', label: '追手口', lat: 35.665300, lon: 138.570900, status: '模型由来の仮配置' }
+    };
+
+    // 形状・位置・寸法を分離して管理。A/B/Cを一つの総合評価にしない。
+    const V71_RESEARCH_REGISTRY = [
+      ['山手門', '形状:A / 位置:A / 寸法:A', '現地で位置・全体方向を確認済み。公式復元報告の形式・寸法を反映'],
+      ['山手渡櫓門', '形状:A / 位置:B / 寸法:A', '公式復元報告の1階5間×2間、2階7間×3間・入母屋造。枡形内の相対位置は次回現地確認対象'],
+      ['稲荷櫓', '形状:A / 位置:B / 寸法:B', '県公式復元資料・1/100ペーパークラフトで構造を確認。GPS位置は仮、細部寸法は公式図面照合を継続'],
+      ['鉄門', '形状:A / 位置:B / 寸法:A', '県公式復元資料で2階建櫓門を確認。1階3間×2間、2階7間×3間、総高約9.653m。GPS位置は仮'],
+      ['鍛冶曲輪門', '形状:A / 位置:B / 寸法:C', '県公式資料で薬医門形式を確認。GPS位置・正確な寸法は現地/図面照合前'],
+      ['内松陰門', '形状:A / 位置:B / 寸法:C', '県公式資料で高麗門形式を確認。GPS位置・正確な寸法は現地/図面照合前'],
+      ['稲荷曲輪門', '形状:A / 位置:B / 寸法:C', '公式整備資料で高麗門形式を確認。GPS位置・正確な寸法は現地照合前'],
+      ['本丸・曲輪', '形状:A / 位置:B / 寸法:B', '2022年整備基本計画の曲輪配置を基準化。本丸約60m×50mは既存公式資料を採用'],
+      ['追手門', '形状:A / 位置:C / 寸法:C', '県の発掘資料で櫓門の礎石を確認。現位置は県庁東口付近だが、AR座標・平面寸法は未確定。朱色橋を追手門本体として通常表示しない。'],
+      ['楽屋曲輪', '形状:B / 位置:C / 寸法:C', '公式整備計画・発掘資料で曲輪・石垣・土塁・水路を確認。建物群の細部は未確定のため通常表示から除外。'],
+      ['本丸櫓・月見櫓・数寄屋櫓・太鼓櫓', '形状:B/C / 位置:C / 寸法:C', '公式資料で櫓の存在は確認できるが、現行ARの個別位置・寸法は未確定。通常表示から除外']
+    ];
+
+    const V71_SOURCES = [
+      {name:'山梨県 史跡甲府城跡整備基本計画（2022）', url:'https://www.pref.yamanashi.jp/documents/103741/shisekikofujo_seibikeikaku2.pdf'},
+      {name:'山梨県 甲府城の追手門（遺跡トピックス0496）', url:'https://www.pref.yamanashi.jp/maizou-bnk/topics/401_500/0496.html'},
+      {name:'山梨県 楽屋曲輪の発掘調査（遺跡トピックス0362）', url:'https://www.pref.yamanashi.jp/maizou-bnk/topics/301-400/0362.html'},
+      {name:'山梨県 甲府城跡発掘調査成果', url:'https://www.pref.yamanashi.jp/maizou-bnk/ko-fu_zyou/koufu_jo_new/tyousa_seika.html'}
+    ];
+
+    // =========================================================
+    // V71 MODEL MASTER
+    // 「模型の世界をAR空間に復元する」を最上位方針として管理する。
+    // 数値が未確定の箇所は、勝手に補間せず「未確定」のまま保持する。
+    // =========================================================
+    const V71_MODEL_MASTER = {
+      source: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
+      sourceBasis: '2020年度の最新調査成果を元に改修・2021-03-14公開',
+      scaleRule: '模型上の相対関係 → 実寸スケール → 現地GPSの順に変換',
+      absoluteRule: '公式復元模型と矛盾する独自補完を行わない',
+      currentSurveyAnchor: '山手御門：現地確認済みGPS',
+      nextCalibration: '模型上の相対距離・方位を数値化してからGPS座標へ変換'
+    };
+
+    // 公式計画・復元資料から確認できる「関係」。
+    // これは座標そのものではなく、模型を読み解くためのトポロジー情報。
+    const V71_MODEL_RELATIONS = [
+      ['山手御門', '北側入口', '稲荷曲輪へ接続', '公式復元報告＋現地確認'],
+      ['稲荷曲輪', '本丸の北側', '数寄屋曲輪・鍛冶曲輪・屋形曲輪・清水曲輪へ接続', '2022整備基本計画'],
+      ['数寄屋曲輪', '稲荷曲輪の南側', '数寄屋勝手門で稲荷曲輪、数寄屋表門で鍛冶曲輪へ接続', '2022整備基本計画'],
+      ['鍛冶曲輪', '城内南東部', '稲荷曲輪・数寄屋曲輪・二の丸等と接続', '2022整備基本計画'],
+      ['本丸', '城の中心部', '東側に天守台、南側に天守曲輪等', '山梨県公式資料'],
+      ['天守曲輪', '本丸の東側〜南側外周', '本丸・人質曲輪・二の丸・稲荷曲輪と連続', '2022整備基本計画'],
+      ['追手門', '南側の主要虎口', '櫓門として発掘痕跡確認', '県発掘資料＋山手御門復元報告'],
+      ['楽屋曲輪', '県庁周辺を含む旧城域', '石垣・土塁・水路等の発掘成果あり', '県発掘資料']
+    ];
+
+    // 次回現地調査で「模型→実寸→GPS」の変換を確定するための測定項目。
+    const V71_SURVEY_TARGETS = [
+      ['山手御門', '山手門〜山手渡櫓門の相対距離・中心線方位', '模型との相対配置を固定する最優先項目'],
+      ['稲荷櫓', '櫓中心・石垣天端・建物長辺方向', '公式形状は高確度。GPSと向きを確定'],
+      ['本丸/天守台', '本丸東端から天守台中心までの距離・方位', '本丸60×50mの公式寸法と模型を結び付ける'],
+      ['鉄門', '本丸南西側での門中心・長辺方向', '公式復元寸法と現地位置を固定'],
+      ['鍛冶曲輪門', '門中心・道路/曲輪境界との関係', '模型上の門配置を現地へ対応'],
+      ['内松陰門', '門中心・本丸/二の丸側との接続方向', '模型上の曲輪接続を現地へ対応'],
+      ['稲荷曲輪門', '門中心・稲荷曲輪境界との関係', '模型上の曲輪接続を現地へ対応'],
+      ['追手門', '発掘位置・門中心・櫓門長軸', '現在のAR仮配置を確定するための測量対象'],
+      ['楽屋曲輪', '発掘遺構の端点・建物痕跡の有無', '模型の建物群を地上遺構へ対応させる']
+    ];
+
+    function addModelMasterOverlay() {
+      const world = document.getElementById('castle-world');
+      if (!world) return;
+      const show = new URLSearchParams(window.location.search).get('model') === '1';
+      let overlay = document.getElementById('model-master-overlay');
+      if (!overlay) {
+        overlay = document.createElement('a-entity');
+        overlay.id = 'model-master-overlay';
+        world.appendChild(overlay);
       }
-    });
+      overlay.setAttribute('visible', show ? 'true' : 'false');
+      overlay.innerHTML = '';
+      if (!show) return;
 
-    document.getElementById('proceed-button').addEventListener('click', async () => {
-      document.getElementById('permission-explainer').style.display = 'none';
+      // 模型の「数値未確定部分」を架空の建物で埋めない。
+      // 既存の確定/仮配置を囲うだけの調査用ラベルと軸を表示する。
+      const axis = document.createElement('a-entity');
+      axis.innerHTML = `
+        <a-box position="0 0.03 0" width="80" height="0.04" depth="0.04" color="#ffcc00" opacity="0.7"></a-box>
+        <a-box position="0 0.03 0" width="0.04" height="0.04" depth="80" color="#00ddff" opacity="0.7"></a-box>
+        <a-text value="MODEL MASTER / X=EAST" position="20 0.2 0" rotation="-90 0 0" align="center" width="8" color="#ffcc00"></a-text>
+        <a-text value="MODEL MASTER / Z=SOUTH" position="0 0.2 20" rotation="-90 0 0" align="center" width="8" color="#00ddff"></a-text>`;
+      overlay.appendChild(axis);
 
-      try {
-        const permState = await DeviceOrientationEvent.requestPermission();
-        if (permState !== 'granted') {
-          alert(
-            '方位センサーの利用が許可されませんでした。\n\n' +
-            '許可し直すには、Safari画面左上の「aA」アイコン → ' +
-            '「Webサイトの設定」から、このサイトの設定をリセットして、' +
-            'ページを再読み込みしてください。'
-          );
-          return;
+      const note = document.createElement('a-text');
+      note.setAttribute('value', '公式復元模型をAR化するための調査基準\n模型→実寸→GPS');
+      note.setAttribute('position', '0 4 0');
+      note.setAttribute('align', 'center');
+      note.setAttribute('width', '8');
+      note.setAttribute('color', '#ffffff');
+      overlay.appendChild(note);
+    }
+
+    function latLonToLocal(lat, lon) {
+      const latRad = V71_ANCHOR.lat * Math.PI / 180;
+      return {
+        x: (lon - V71_ANCHOR.lon) * 111320 * Math.cos(latRad),
+        z: -(lat - V71_ANCHOR.lat) * 111320
+      };
+    }
+
+    function applyFeatureCoordinates() {
+      Object.values(V71_FEATURES).forEach((f) => {
+        const el = document.getElementById(f.id);
+        if (!el) return;
+        const p = latLonToLocal(f.lat, f.lon);
+        el.dataset.lat = f.lat;
+        el.dataset.lon = f.lon;
+        el.dataset.localX = p.x.toFixed(2);
+        el.dataset.localZ = p.z.toFixed(2);
+        // The world-space model is based on lat/lon converted to local metres.
+        // Preserve the existing model-origin offset for Yamate and other groups.
+        if (f.id === 'yamate-complex') {
+          el.object3D.position.set(p.x, 0, p.z);
+        } else {
+          // Child model positions are set to their declared local coordinates.
+          el.object3D.position.set(p.x, 0, p.z);
         }
-      } catch (e) {
-        console.error(e);
-        return;
-      }
+      });
+    }
 
-      startAR();
-    });
+    const params69 = new URLSearchParams(window.location.search);
+    let headingOffset = parseFloat(params69.get('heading'));
+    if (!Number.isFinite(headingOffset)) headingOffset = Number(localStorage.getItem('kofuV71Heading') || 0);
+    if (!Number.isFinite(headingOffset)) headingOffset = 0;
+
+    function applyHeadingOffset() {
+      const world = document.getElementById('castle-world');
+      if (!world) return;
+      world.object3D.rotation.set(0, THREE.MathUtils.degToRad(headingOffset), 0);
+      const value = document.getElementById('heading-value');
+      if (value) value.textContent = `${headingOffset.toFixed(1)}°`;
+    }
+
+    function changeHeading(delta) {
+      headingOffset = ((headingOffset + delta + 180) % 360) - 180;
+      localStorage.setItem('kofuV71Heading', String(headingOffset));
+      applyHeadingOffset();
+      window.__diagPush(`v71方位補正を ${headingOffset.toFixed(1)}° に変更`);
+    }
+
+    function resetHeading() {
+      headingOffset = 0;
+      localStorage.setItem('kofuV71Heading', '0');
+      applyHeadingOffset();
+    }
 
     function startAR() {
       document.getElementById('start-button').style.display = 'none';
       document.getElementById('ar-scene').style.display = 'block';
+      document.getElementById('info-panel').classList.add('collapsed');
+      document.getElementById('info-toggle').classList.add('visible');
+      applyFeatureCoordinates();
+      applyHeadingOffset();
 
-      // カメラ映像を最大限見せるため、説明パネルは自動的に折りたたむ
-      const infoPanel = document.getElementById('info-panel');
-      const infoToggle = document.getElementById('info-toggle');
-      infoPanel.classList.add('collapsed');
-      infoToggle.classList.add('visible');
+      const isDebug = window.__DEBUG_MODE__;
+      if (isDebug) {
+        document.getElementById('survey-controls').style.display = 'flex';
+        document.getElementById('camera-status').style.display = 'block';
+        document.getElementById('survey-axis').setAttribute('visible', 'true');
+        document.getElementById('survey-points').setAttribute('visible', 'true');
+      }
 
-      infoToggle.addEventListener('click', () => {
-        infoPanel.classList.toggle('collapsed');
-      });
-
-      // カメラ映像(video要素)が実際に流れているかを監視し、
-      // 問題があれば画面上に理由を表示する(開発者向けデバッグ用)
-      // 通常のユーザーには表示せず、URLに ?debug を付けた時だけ動作する
-      const isDebugMode = window.__DEBUG_MODE__;
-
-      // サニティチェック用の赤い箱は、?debug でも表示しないように変更。
-      // 診断ボタン等は見たいが、赤い箱が視界を塞ぐのは困るという
-      // フィードバックを受け、完全に独立した専用パラメータ
-      // ?sanitycheck を付けた時だけ表示する方式にする。
-      const isSanityCheckMode = new URLSearchParams(window.location.search).has('sanitycheck');
-
-      if (isSanityCheckMode) {
+      const sanity = new URLSearchParams(window.location.search).has('sanitycheck');
+      if (sanity) {
         document.getElementById('sanity-check-box').setAttribute('visible', 'true');
         document.getElementById('sanity-check-label').setAttribute('visible', 'true');
       }
 
-      if (isDebugMode) {
-        document.getElementById('camera-status').style.display = 'block';
+      const cameraCheck = setInterval(() => {
+        const video = document.querySelector('video');
+        const status = document.getElementById('camera-status');
+        if (!isDebug) return clearInterval(cameraCheck);
+        if (!video) status.innerText = 'カメラ映像の要素を確認中…';
+        else if (video.readyState < 2) status.innerText = `カメラ映像を読み込み中… readyState=${video.readyState}`;
+        else { status.innerText = ''; status.style.display = 'none'; clearInterval(cameraCheck); }
+      }, 500);
 
-        let checkCount = 0;
-        const cameraCheckInterval = setInterval(() => {
-          checkCount++;
-          // 【Ver.35修正】videoTextureを無効化して以降、カメラ映像の
-          // <video>要素は#ar-sceneの外側に作られるようになったため、
-          // 検索範囲をページ全体に拡大する(以前は#ar-scene内だけを
-          // 探していたため、実際には正常なのに「見つからない」と
-          // 表示され続ける不具合があった)。
-          const video = document.querySelector('video');
-          const statusEl = document.getElementById('camera-status');
-
-          if (!video) {
-            statusEl.innerText = `カメラ映像の要素が見つかりません(確認中... ${checkCount})`;
-          } else if (video.readyState < 2) {
-            statusEl.innerText = `カメラ映像を読み込み中です(readyState: ${video.readyState})`;
-          } else if (video.videoWidth === 0) {
-            statusEl.innerText = 'カメラ映像のサイズが0です。カメラ許可を確認してください。';
-          } else {
-            statusEl.innerText = '';
-            statusEl.style.display = 'none';
-            clearInterval(cameraCheckInterval);
-          }
-
-          if (checkCount > 20) {
-            // タイムアウトした場合、原因不明のまま数字だけが残り続けない
-            // よう、明示的にタイムアウトした旨を表示してから消す。
-            statusEl.innerText = 'カメラ映像の確認がタイムアウトしました(表示は正常な場合もあります)';
-            clearInterval(cameraCheckInterval);
-            setTimeout(() => {
-              statusEl.innerText = '';
-              statusEl.style.display = 'none';
-            }, 3000);
-          }
-        }, 500);
-      }
-
-      // 距離表示:AR.js(gps-projected-entity-place)が各エンティティに公式に
-      // 保持している「distance」プロパティを、一定間隔で直接読み取る。
-      // (以前はイベント頼みだったが、new-location-based系コンポーネントは
-      // 一部のイベントに対応していないため、より確実なこの方式に変更)
-      const targetIds = [
-        'yamate-watariyagura-mon-placeholder',
-        'yamate-mon-placeholder',
-        'shimizu-yagura-placeholder',
-        'inari-yagura-placeholder',
-        'tenshudai-placeholder',
-        'enshoguda-placeholder',
-        'bukeyashiki-1-placeholder',
-        'bukeyashiki-2-placeholder',
-        'kura-1-placeholder'
-      ];
-      const targetLabels = {
-        'yamate-watariyagura-mon-placeholder': '山手渡櫓門(導線)',
-        'yamate-mon-placeholder': '山手門(導線)',
-        'shimizu-yagura-placeholder': '清水櫓(近景)',
-        'inari-yagura-placeholder': '稲荷櫓(遠景)',
-        'tenshudai-placeholder': '天守台(遠景)',
-        'enshoguda-placeholder': '焔硝蔵(遠景)',
-        'bukeyashiki-1-placeholder': '武家屋敷1(近景・推定)',
-        'bukeyashiki-2-placeholder': '武家屋敷2(近景・推定)',
-        'kura-1-placeholder': '米蔵(近景・推定)'
-      };
-
-      // 距離表示:コンポーネント固有の「distance」プロパティに頼るのをやめ、
-      // カメラとオブジェクトの3D空間上の座標(x,y,z)から、
-      // 直接ユークリッド距離を計算する。この座標は診断パネルで
-      // 実際に正しく更新されていることが確認できているため、
-      // これに基づく計算はコンポーネントの実装差異の影響を受けない。
-      setInterval(() => {
-        const cam = document.getElementById('ar-camera');
-        if (!cam || !cam.object3D) return;
-        const camPos = cam.object3D.position;
-
-        const lines = [];
-        targetIds.forEach((id) => {
-          const el = document.getElementById(id);
-          if (!el || !el.object3D) {
-            lines.push(`${targetLabels[id]}:取得待ち`);
-            return;
-          }
-          const p = el.object3D.position;
-          const dx = p.x - camPos.x;
-          const dz = p.z - camPos.z;
-          const dist = Math.sqrt(dx * dx + dz * dz);
-          lines.push(`${targetLabels[id]}:約${dist.toFixed(0)}m`);
-        });
-        document.getElementById('distance-indicator').innerHTML = lines.join('<br>');
-      }, 1000);
+      updateDistanceDisplay();
     }
 
-    // ============================================
-    // 診断パネル:今、内部で何が起きているかを可視化する
-    // ============================================
-    // ボタン操作で開閉できる。AR開始前から状態を確認できるよう、
-    // ページ読み込み直後から独立して動作する。
-    (function () {
-      const targetIds = [
-        'yamate-watariyagura-mon-placeholder',
-        'yamate-mon-placeholder',
-        'shimizu-yagura-placeholder',
-        'inari-yagura-placeholder',
-        'tenshudai-placeholder',
-        'enshoguda-placeholder',
-        'bukeyashiki-1-placeholder',
-        'bukeyashiki-2-placeholder',
-        'kura-1-placeholder'
+    function updateDistanceDisplay() {
+      if (!window.__DEBUG_MODE__) return;
+      const cam = document.getElementById('ar-camera');
+      const el = document.getElementById('distance-indicator');
+      if (!cam || !cam.object3D || !el) return;
+      const cp = cam.object3D.getWorldPosition(new THREE.Vector3());
+      const lines = [];
+      Object.values(V71_FEATURES).forEach((f) => {
+        const target = document.getElementById(f.id);
+        if (!target || !target.object3D) return;
+        const tp = target.object3D.getWorldPosition(new THREE.Vector3());
+        const d = Math.hypot(tp.x - cp.x, tp.z - cp.z);
+        lines.push(`${f.label}: 約${d.toFixed(0)}m (${f.status})`);
+      });
+      el.innerHTML = lines.join('<br>');
+    }
+
+    document.getElementById('start-button').addEventListener('click', () => {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        document.getElementById('permission-explainer').style.display = 'flex';
+      } else startAR();
+    });
+
+    document.getElementById('proceed-button').addEventListener('click', async () => {
+      document.getElementById('permission-explainer').style.display = 'none';
+      try {
+        const state = await DeviceOrientationEvent.requestPermission();
+        if (state !== 'granted') {
+          alert('方位センサーの利用が許可されませんでした。SafariのWebサイト設定を確認してください。');
+          return;
+        }
+      } catch (e) {
+        window.__diagPush(`方位センサー許可エラー: ${e.message}`);
+        return;
+      }
+      startAR();
+    });
+
+    document.getElementById('info-toggle').addEventListener('click', () => {
+      document.getElementById('info-panel').classList.toggle('collapsed');
+    });
+    document.getElementById('fidelity-badge').addEventListener('click', () => document.getElementById('fidelity-modal').classList.add('visible'));
+    document.getElementById('fidelity-close').addEventListener('click', () => document.getElementById('fidelity-modal').classList.remove('visible'));
+    document.getElementById('diag-close').addEventListener('click', () => document.getElementById('diag-panel').classList.remove('visible'));
+    document.getElementById('diag-open-button').addEventListener('click', () => { document.getElementById('diag-panel').classList.add('visible'); refreshDiag(); });
+
+    document.getElementById('heading-minus5').addEventListener('click', () => changeHeading(-5));
+    document.getElementById('heading-minus1').addEventListener('click', () => changeHeading(-1));
+    document.getElementById('heading-plus1').addEventListener('click', () => changeHeading(1));
+    document.getElementById('heading-plus5').addEventListener('click', () => changeHeading(5));
+    document.getElementById('heading-reset').addEventListener('click', resetHeading);
+
+    function refreshDiag() {
+      const parts = [];
+      parts.push('=== 甲府城AR v71 診断 ===');
+      parts.push('v71模型マスター版：公式復元模型を最上位基準。?model=1 で模型照合モード、?research=all で研究対象を表示');
+      parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? AFRAME.version : '❌なし'}`);
+      parts.push(`gps-projected-camera: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-camera'] ? 'あり' : '❌'}`);
+      parts.push(`gps-projected-entity-place: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-entity-place'] ? 'あり' : '❌'}`);
+      parts.push(`テストモード: ${window.__AR_TEST_MODE__ ? 'ON' : 'OFF'}`);
+      parts.push(`基準GPS: ${V71_ANCHOR.lat}, ${V71_ANCHOR.lon}`);
+      parts.push(`一括方位補正: ${headingOffset.toFixed(1)}°`);
+      parts.push('');
+      parts.push('=== 基準点 ===');
+      Object.values(V71_FEATURES).forEach(f => {
+        const p = latLonToLocal(f.lat, f.lon);
+        parts.push(`${f.label}: lat=${f.lat}, lon=${f.lon}, local=(${p.x.toFixed(2)}, ${p.z.toFixed(2)}) / ${f.status}`);
+      });
+      const cam = document.getElementById('ar-camera');
+      if (cam && cam.components && cam.components['gps-projected-camera']) {
+        const c = cam.components['gps-projected-camera'];
+        parts.push('');
+        parts.push('=== GPSカメラ ===');
+        try { parts.push(JSON.stringify(c.currentCoords || c.position || '未取得')); } catch(e) { parts.push('取得エラー'); }
+      }
+      parts.push('');
+      parts.push('=== 方位センサー ===');
+      parts.push(`alpha=${window.__lastOrientation ? window.__lastOrientation.alpha : '未取得'}`);
+      parts.push(`beta=${window.__lastOrientation ? window.__lastOrientation.beta : '未取得'}`);
+      parts.push(`gamma=${window.__lastOrientation ? window.__lastOrientation.gamma : '未取得'}`);
+      parts.push(`更新回数=${window.__orientationUpdateCount || 0}`);
+      parts.push('');
+      parts.push('=== 重要な調査ポイント ===');
+      parts.push('1. 山手御門：位置は合っているか／門の正面方向は何度か');
+      parts.push('2. 稲荷櫓：位置・10×12mの向き・石垣上の高さ');
+      parts.push('3. 天守台：現在の仮位置から何m・どの方角へズレるか');
+      parts.push('4. 追手口：橋の位置・向き・幅／石垣の位置');
+      parts.push('5. 楽屋曲輪：曲輪の範囲・建物棟数・建物の向き');
+      parts.push('6. 鍛冶曲輪門・内松陰門・稲荷曲輪門：公式の門形式を反映済み／座標は仮');
+      parts.push('7. 追手門は発掘資料上の櫓門。朱色橋を追手門本体として扱わない');
+      parts.push('8. 低確度の楽屋曲輪・追手口・未確定櫓は通常非表示');
+      parts.push('9. 模型・公式資料にない建物・人物・装飾は追加しない');
+      parts.push('');
+      parts.push('=== 模型マスター方針 ===');
+      parts.push(`基準模型: ${V71_MODEL_MASTER.source}`);
+      parts.push(`根拠: ${V71_MODEL_MASTER.sourceBasis}`);
+      parts.push(`変換: ${V71_MODEL_MASTER.scaleRule}`);
+      parts.push(`原則: ${V71_MODEL_MASTER.absoluteRule}`);
+      parts.push('');
+      parts.push('=== 模型上の関係（座標化前） ===');
+      V71_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
+      parts.push('');
+      parts.push('=== 次回現地調査：模型→実寸→GPSの固定項目 ===');
+      V71_SURVEY_TARGETS.forEach(r => parts.push(`${r[0]}：${r[1]} / ${r[2]}`));
+      parts.push('');
+      parts.push('=== 資料根拠レジストリ ===');
+      V71_RESEARCH_REGISTRY.forEach(r => parts.push(`${r[0]} [${r[1]}] ${r[2]}`));
+      parts.push('--- 主要参照資料 ---');
+      V71_SOURCES.forEach(x => parts.push(`${x.name} | ${x.url}`));
+      parts.push('');
+      parts.push('=== ログ ===');
+      parts.push((window.__diagLog || []).slice(-40).join('\n'));
+      document.getElementById('diag-content').innerText = parts.join('\n');
+    }
+
+    setInterval(updateDistanceDisplay, 1000);
+    setInterval(() => {
+      if (document.getElementById('diag-panel').classList.contains('visible')) refreshDiag();
+    }, 1000);
+
+    function applyResearchVisibility() {
+      const showAll = new URLSearchParams(window.location.search).get('research') === 'all';
+      const lowConfidenceIds = [
+        'gakuya-kuruwa-placeholder', 'otemon-placeholder',
+        'honmaru-yagura-model', 'tsukimi-yagura-model',
+        'sukiya-yagura-model', 'taiko-yagura-model'
       ];
+      lowConfidenceIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('visible', showAll ? 'true' : 'false');
+      });
+      window.__researchAll = showAll;
+    }
 
-      function buildDiagText() {
-        const parts = [];
-
-        parts.push('=== ライブラリの読み込み状況 ===');
-        parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? 'あり(バージョン ' + AFRAME.version + ')' : '❌ 読み込まれていません'}`);
-
-        if (typeof AFRAME !== 'undefined') {
-          const hasGpsCamera = !!AFRAME.components['gps-projected-camera'];
-          const hasGpsEntity = !!AFRAME.components['gps-projected-entity-place'];
-          parts.push(`gps-projected-camera 部品: ${hasGpsCamera ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
-          parts.push(`gps-projected-entity-place 部品: ${hasGpsEntity ? 'あり' : '❌ 登録されていません(重大な問題の可能性)'}`);
-        }
-
-        parts.push('');
-        parts.push('=== テストモード ===');
-        parts.push(`有効: ${window.__AR_TEST_MODE__ ? 'はい' : 'いいえ(通常のGPSを使用)'}`);
-
-        parts.push('');
-        parts.push('=== カメラ(#ar-camera)の状態 ===');
-        const cam = document.getElementById('ar-camera');
-        if (!cam) {
-          parts.push('❌ #ar-camera が見つかりません');
-        } else {
-          parts.push(`要素: 存在する`);
-          if (cam.components && cam.components['gps-projected-camera']) {
-            const camComp = cam.components['gps-projected-camera'];
-            parts.push('gps-projected-cameraコンポーネント: 存在する');
-            try {
-              parts.push(`  現在地(内部保持値): ${JSON.stringify(camComp.currentCoords || camComp.position || 'なし')}`);
-            } catch (e) {
-              parts.push('  現在地情報の取得でエラー: ' + e.message);
-            }
-          } else {
-            parts.push('❌ gps-projected-cameraコンポーネントが初期化されていません');
-          }
-        }
-
-        parts.push('');
-        parts.push('=== 各オブジェクトの状態 ===');
-        targetIds.forEach((id) => {
-          const el = document.getElementById(id);
-          parts.push(`[${id}]`);
-          if (!el) {
-            parts.push('  ❌ 要素が見つかりません');
-            return;
-          }
-          if (!el.components || !el.components['gps-projected-entity-place']) {
-            parts.push('  ❌ gps-projected-entity-placeコンポーネントが初期化されていません');
-            return;
-          }
-          const comp = el.components['gps-projected-entity-place'];
-          parts.push(`  distance: ${comp.distance !== undefined ? comp.distance : '未設定'}`);
-          try {
-            parts.push(`  設定値: ${JSON.stringify(comp.data)}`);
-          } catch (e) {}
-          try {
-            const pos = el.object3D.position;
-            parts.push(`  3D空間上の座標(x,y,z): ${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)}`);
-            parts.push(`  visible: ${el.object3D.visible}`);
-          } catch (e) {
-            parts.push('  3D座標の取得でエラー: ' + e.message);
-          }
-        });
-
-        try {
-          const camEl = document.getElementById('ar-camera');
-          const camPos = camEl.object3D.position;
-          const camRot = camEl.object3D.rotation;
-          parts.push('');
-          parts.push(`カメラの3D空間上の座標(x,y,z): ${camPos.x.toFixed(1)}, ${camPos.y.toFixed(1)}, ${camPos.z.toFixed(1)}`);
-          parts.push(`カメラの向き(ラジアン x,y,z): ${camRot.x.toFixed(2)}, ${camRot.y.toFixed(2)}, ${camRot.z.toFixed(2)}`);
-        } catch (e) {}
-
-        parts.push('');
-        parts.push('=== スマホ自体の向きセンサー(生データ) ===');
-        parts.push(`alpha(方位): ${window.__lastOrientation ? window.__lastOrientation.alpha : '未取得'}`);
-        parts.push(`beta(前後傾き): ${window.__lastOrientation ? window.__lastOrientation.beta : '未取得'}`);
-        parts.push(`gamma(左右傾き): ${window.__lastOrientation ? window.__lastOrientation.gamma : '未取得'}`);
-        parts.push(`更新回数: ${window.__orientationUpdateCount || 0}`);
-
-        parts.push('');
-        parts.push('=== ログ(最新50件) ===');
-        const recentLogs = (window.__diagLog || []).slice(-50);
-        parts.push(recentLogs.join('\n'));
-
-        return parts.join('\n');
+    window.addEventListener('DOMContentLoaded', () => {
+      applyResearchVisibility();
+      addModelMasterOverlay();
+      applyFeatureCoordinates();
+      applyHeadingOffset();
+      if (window.__DEBUG_MODE__) {
+        document.getElementById('version-label').style.display = '';
+        document.getElementById('diag-open-button').style.display = 'block';
+        document.getElementById('distance-indicator').style.display = 'block';
+        document.getElementById('survey-controls').style.display = 'flex';
       }
-
-      function refreshDiag() {
-        const panel = document.getElementById('diag-content');
-        if (panel) panel.innerText = buildDiagText();
-      }
-
-      document.getElementById('diag-open-button').addEventListener('click', () => {
-        document.getElementById('diag-panel').classList.add('visible');
-        refreshDiag();
-      });
-
-      document.getElementById('diag-close').addEventListener('click', () => {
-        document.getElementById('diag-panel').classList.remove('visible');
-      });
-
-      // 忠実度バッジ(常時表示・AR開始前後を問わず機能する)
-      document.getElementById('fidelity-badge').addEventListener('click', () => {
-        document.getElementById('fidelity-modal').classList.add('visible');
-      });
-      document.getElementById('fidelity-close').addEventListener('click', () => {
-        document.getElementById('fidelity-modal').classList.remove('visible');
-      });
-
-      setInterval(() => {
-        if (document.getElementById('diag-panel').classList.contains('visible')) {
-          refreshDiag();
-        }
-      }, 1000);
-    })();
-
+      if (window.__AR_TEST_MODE__) document.getElementById('test-mode-banner').style.display = 'block';
+      window.__diagPush('v71: 模型マスター基盤版を初期化');
+    });
   </script>
 
 </body>
