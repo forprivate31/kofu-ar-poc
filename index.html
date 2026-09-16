@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - Web資料精度向上 v71</title>
+  <title>甲府城AR PoC - 模型マスター事前調査版 v72</title>
 
   <script>
     // ============================================
@@ -935,10 +935,10 @@
 
   <script>
     // =========================================================
-    // v71 runtime: 方位補正・調査モード・距離表示・診断
+    // v72 runtime: 模型マスター事前調査・方位補正・調査モード・距離表示・診断
     // =========================================================
-    const V71_ANCHOR = { lat: 35.667180, lon: 138.570780 };
-    const V71_FEATURES = {
+    const V72_ANCHOR = { lat: 35.667180, lon: 138.570780 };
+    const V72_FEATURES = {
       yamate: { id: 'yamate-complex', label: '山手御門', lat: 35.667180, lon: 138.570780, status: '現地確認済み' },
       inari: { id: 'inari-yagura-placeholder', label: '稲荷櫓', lat: 35.665700, lon: 138.571700, status: '座標仮／形状は公式資料準拠' },
       tenshu: { id: 'tenshudai-placeholder', label: '天守台', lat: 35.665950, lon: 138.572050, status: '位置仮／現存石垣のみ' },
@@ -947,7 +947,7 @@
     };
 
     // 形状・位置・寸法を分離して管理。A/B/Cを一つの総合評価にしない。
-    const V71_RESEARCH_REGISTRY = [
+    const V72_RESEARCH_REGISTRY = [
       ['山手門', '形状:A / 位置:A / 寸法:A', '現地で位置・全体方向を確認済み。公式復元報告の形式・寸法を反映'],
       ['山手渡櫓門', '形状:A / 位置:B / 寸法:A', '公式復元報告の1階5間×2間、2階7間×3間・入母屋造。枡形内の相対位置は次回現地確認対象'],
       ['稲荷櫓', '形状:A / 位置:B / 寸法:B', '県公式復元資料・1/100ペーパークラフトで構造を確認。GPS位置は仮、細部寸法は公式図面照合を継続'],
@@ -961,19 +961,47 @@
       ['本丸櫓・月見櫓・数寄屋櫓・太鼓櫓', '形状:B/C / 位置:C / 寸法:C', '公式資料で櫓の存在は確認できるが、現行ARの個別位置・寸法は未確定。通常表示から除外']
     ];
 
-    const V71_SOURCES = [
+    const V72_SOURCES = [
       {name:'山梨県 史跡甲府城跡整備基本計画（2022）', url:'https://www.pref.yamanashi.jp/documents/103741/shisekikofujo_seibikeikaku2.pdf'},
       {name:'山梨県 甲府城の追手門（遺跡トピックス0496）', url:'https://www.pref.yamanashi.jp/maizou-bnk/topics/401_500/0496.html'},
       {name:'山梨県 楽屋曲輪の発掘調査（遺跡トピックス0362）', url:'https://www.pref.yamanashi.jp/maizou-bnk/topics/301-400/0362.html'},
       {name:'山梨県 甲府城跡発掘調査成果', url:'https://www.pref.yamanashi.jp/maizou-bnk/ko-fu_zyou/koufu_jo_new/tyousa_seika.html'}
     ];
 
+    // Web資料の追加：模型そのものの代替ではなく、形状・寸法・発掘根拠の照合用。
+    V72_SOURCES.push(
+      {name:'山梨県 埋文クラフト（稲荷櫓1/100・鉄門・鍛冶曲輪門等）', url:'https://www.pref.yamanashi.jp/maizou-bnk/siryou-fukyu/maibun-kurafuto.html'},
+      {name:'山梨県 甲府城内探検（遺構・礎石・井戸・水溜等）', url:'https://www.pref.yamanashi.jp/maizou-bnk/ko-fu_zyou/koufu_jo_new/jyounai_tanken.html'},
+      {name:'山梨県 甲府城歴史資料の情報提供・相談窓口', url:'https://www.pref.yamanashi.jp/bunka/maibun/kofujyou_shiryou.html'}
+    );
+
     // =========================================================
-    // V71 MODEL MASTER
+    // V72 MODEL MASTER PRE-FLIGHT
+    // 公式復元模型を最上位基準とし、Web資料は模型の読解・形状検証の補助に限定する。
+    // =========================================================
+    const V72_MODEL_PREFLIGHT = {
+      priority: 'MODEL_FIRST',
+      masterSource: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
+      modelUpdateBasis: '2020年度の最新調査成果を元に改修、2021-03-14お披露目',
+      webRole: '補助資料。模型と矛盾する場合は模型を優先し、矛盾は記録する',
+      coordinateRule: '模型上の相対配置を先に確定し、実寸化後にGPSへ変換',
+      currentBlocker: '高解像度・平面に近い模型全体写真が不足。遠近補正なしに模型画像から距離を数値化しない',
+      nextBestInput: '模型全体を真上または正面に近い複数方向から撮影した高解像度画像',
+      fidelityGate: [
+        '模型に存在する主要建物・門・石垣・堀・曲輪を一覧化する',
+        '模型上の相対位置・向き・接続関係を確定する',
+        '既知の実寸資料を基準点として模型スケールを校正する',
+        '模型の輪郭を実寸3Dへ変換する',
+        '最後に現地GPSへ剛体変換する'
+      ]
+    };
+
+    // =========================================================
+    // V72 MODEL MASTER
     // 「模型の世界をAR空間に復元する」を最上位方針として管理する。
     // 数値が未確定の箇所は、勝手に補間せず「未確定」のまま保持する。
     // =========================================================
-    const V71_MODEL_MASTER = {
+    const V72_MODEL_MASTER = {
       source: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
       sourceBasis: '2020年度の最新調査成果を元に改修・2021-03-14公開',
       scaleRule: '模型上の相対関係 → 実寸スケール → 現地GPSの順に変換',
@@ -984,7 +1012,7 @@
 
     // 公式計画・復元資料から確認できる「関係」。
     // これは座標そのものではなく、模型を読み解くためのトポロジー情報。
-    const V71_MODEL_RELATIONS = [
+    const V72_MODEL_RELATIONS = [
       ['山手御門', '北側入口', '稲荷曲輪へ接続', '公式復元報告＋現地確認'],
       ['稲荷曲輪', '本丸の北側', '数寄屋曲輪・鍛冶曲輪・屋形曲輪・清水曲輪へ接続', '2022整備基本計画'],
       ['数寄屋曲輪', '稲荷曲輪の南側', '数寄屋勝手門で稲荷曲輪、数寄屋表門で鍛冶曲輪へ接続', '2022整備基本計画'],
@@ -996,7 +1024,7 @@
     ];
 
     // 次回現地調査で「模型→実寸→GPS」の変換を確定するための測定項目。
-    const V71_SURVEY_TARGETS = [
+    const V72_SURVEY_TARGETS = [
       ['山手御門', '山手門〜山手渡櫓門の相対距離・中心線方位', '模型との相対配置を固定する最優先項目'],
       ['稲荷櫓', '櫓中心・石垣天端・建物長辺方向', '公式形状は高確度。GPSと向きを確定'],
       ['本丸/天守台', '本丸東端から天守台中心までの距離・方位', '本丸60×50mの公式寸法と模型を結び付ける'],
@@ -1042,15 +1070,15 @@
     }
 
     function latLonToLocal(lat, lon) {
-      const latRad = V71_ANCHOR.lat * Math.PI / 180;
+      const latRad = V72_ANCHOR.lat * Math.PI / 180;
       return {
-        x: (lon - V71_ANCHOR.lon) * 111320 * Math.cos(latRad),
-        z: -(lat - V71_ANCHOR.lat) * 111320
+        x: (lon - V72_ANCHOR.lon) * 111320 * Math.cos(latRad),
+        z: -(lat - V72_ANCHOR.lat) * 111320
       };
     }
 
     function applyFeatureCoordinates() {
-      Object.values(V71_FEATURES).forEach((f) => {
+      Object.values(V72_FEATURES).forEach((f) => {
         const el = document.getElementById(f.id);
         if (!el) return;
         const p = latLonToLocal(f.lat, f.lon);
@@ -1071,7 +1099,7 @@
 
     const params69 = new URLSearchParams(window.location.search);
     let headingOffset = parseFloat(params69.get('heading'));
-    if (!Number.isFinite(headingOffset)) headingOffset = Number(localStorage.getItem('kofuV71Heading') || 0);
+    if (!Number.isFinite(headingOffset)) headingOffset = Number(localStorage.getItem('kofuV72Heading') || 0);
     if (!Number.isFinite(headingOffset)) headingOffset = 0;
 
     function applyHeadingOffset() {
@@ -1084,14 +1112,14 @@
 
     function changeHeading(delta) {
       headingOffset = ((headingOffset + delta + 180) % 360) - 180;
-      localStorage.setItem('kofuV71Heading', String(headingOffset));
+      localStorage.setItem('kofuV72Heading', String(headingOffset));
       applyHeadingOffset();
-      window.__diagPush(`v71方位補正を ${headingOffset.toFixed(1)}° に変更`);
+      window.__diagPush(`v72方位補正を ${headingOffset.toFixed(1)}° に変更`);
     }
 
     function resetHeading() {
       headingOffset = 0;
-      localStorage.setItem('kofuV71Heading', '0');
+      localStorage.setItem('kofuV72Heading', '0');
       applyHeadingOffset();
     }
 
@@ -1136,7 +1164,7 @@
       if (!cam || !cam.object3D || !el) return;
       const cp = cam.object3D.getWorldPosition(new THREE.Vector3());
       const lines = [];
-      Object.values(V71_FEATURES).forEach((f) => {
+      Object.values(V72_FEATURES).forEach((f) => {
         const target = document.getElementById(f.id);
         if (!target || !target.object3D) return;
         const tp = target.object3D.getWorldPosition(new THREE.Vector3());
@@ -1183,17 +1211,17 @@
 
     function refreshDiag() {
       const parts = [];
-      parts.push('=== 甲府城AR v71 診断 ===');
-      parts.push('v71模型マスター版：公式復元模型を最上位基準。?model=1 で模型照合モード、?research=all で研究対象を表示');
+      parts.push('=== 甲府城AR v72 診断 ===');
+      parts.push('v72模型マスター版：公式復元模型を最上位基準。?model=1 で模型照合モード、?research=all で研究対象を表示');
       parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? AFRAME.version : '❌なし'}`);
       parts.push(`gps-projected-camera: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-camera'] ? 'あり' : '❌'}`);
       parts.push(`gps-projected-entity-place: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-entity-place'] ? 'あり' : '❌'}`);
       parts.push(`テストモード: ${window.__AR_TEST_MODE__ ? 'ON' : 'OFF'}`);
-      parts.push(`基準GPS: ${V71_ANCHOR.lat}, ${V71_ANCHOR.lon}`);
+      parts.push(`基準GPS: ${V72_ANCHOR.lat}, ${V72_ANCHOR.lon}`);
       parts.push(`一括方位補正: ${headingOffset.toFixed(1)}°`);
       parts.push('');
       parts.push('=== 基準点 ===');
-      Object.values(V71_FEATURES).forEach(f => {
+      Object.values(V72_FEATURES).forEach(f => {
         const p = latLonToLocal(f.lat, f.lon);
         parts.push(`${f.label}: lat=${f.lat}, lon=${f.lon}, local=(${p.x.toFixed(2)}, ${p.z.toFixed(2)}) / ${f.status}`);
       });
@@ -1223,21 +1251,27 @@
       parts.push('9. 模型・公式資料にない建物・人物・装飾は追加しない');
       parts.push('');
       parts.push('=== 模型マスター方針 ===');
-      parts.push(`基準模型: ${V71_MODEL_MASTER.source}`);
-      parts.push(`根拠: ${V71_MODEL_MASTER.sourceBasis}`);
-      parts.push(`変換: ${V71_MODEL_MASTER.scaleRule}`);
-      parts.push(`原則: ${V71_MODEL_MASTER.absoluteRule}`);
+      parts.push(`=== MODEL FIRST PREFLIGHT ===`);
+      parts.push(`最上位基準: ${V72_MODEL_PREFLIGHT.masterSource}`);
+      parts.push(`Web資料の役割: ${V72_MODEL_PREFLIGHT.webRole}`);
+      parts.push(`現在の阻害要因: ${V72_MODEL_PREFLIGHT.currentBlocker}`);
+      parts.push(`次に必要な入力: ${V72_MODEL_PREFLIGHT.nextBestInput}`);
+      V72_MODEL_PREFLIGHT.fidelityGate.forEach((x,i)=>parts.push(`${i+1}. ${x}`));
+      parts.push(`基準模型: ${V72_MODEL_MASTER.source}`);
+      parts.push(`根拠: ${V72_MODEL_MASTER.sourceBasis}`);
+      parts.push(`変換: ${V72_MODEL_MASTER.scaleRule}`);
+      parts.push(`原則: ${V72_MODEL_MASTER.absoluteRule}`);
       parts.push('');
       parts.push('=== 模型上の関係（座標化前） ===');
-      V71_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
+      V72_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
       parts.push('');
       parts.push('=== 次回現地調査：模型→実寸→GPSの固定項目 ===');
-      V71_SURVEY_TARGETS.forEach(r => parts.push(`${r[0]}：${r[1]} / ${r[2]}`));
+      V72_SURVEY_TARGETS.forEach(r => parts.push(`${r[0]}：${r[1]} / ${r[2]}`));
       parts.push('');
       parts.push('=== 資料根拠レジストリ ===');
-      V71_RESEARCH_REGISTRY.forEach(r => parts.push(`${r[0]} [${r[1]}] ${r[2]}`));
+      V72_RESEARCH_REGISTRY.forEach(r => parts.push(`${r[0]} [${r[1]}] ${r[2]}`));
       parts.push('--- 主要参照資料 ---');
-      V71_SOURCES.forEach(x => parts.push(`${x.name} | ${x.url}`));
+      V72_SOURCES.forEach(x => parts.push(`${x.name} | ${x.url}`));
       parts.push('');
       parts.push('=== ログ ===');
       parts.push((window.__diagLog || []).slice(-40).join('\n'));
@@ -1275,7 +1309,7 @@
         document.getElementById('survey-controls').style.display = 'flex';
       }
       if (window.__AR_TEST_MODE__) document.getElementById('test-mode-banner').style.display = 'block';
-      window.__diagPush('v71: 模型マスター基盤版を初期化');
+      window.__diagPush('v72: 模型マスター基盤版を初期化');
     });
   </script>
 
