@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型座標化準備 v73</title>
+  <title>甲府城AR PoC - 模型完全再現 v76</title>
 
   <script>
     // ============================================
@@ -931,11 +931,41 @@
         </a-entity>
       </a-entity>
     </a-entity>
+
+    <!-- =====================================================
+         V76 MODEL TERRAIN / CASTLE-MASS PREVIEW
+         模型完全再現に向け、建物だけでなく曲輪・石垣・堀の
+         「城郭の骨格」を一体として確認するための事前表示。
+         座標は最終確定ではないため ?terrain=1 の時のみ表示。
+         ===================================================== -->
+    <a-entity id="v76-model-terrain-preview" visible="false">
+      <!-- 曲輪の面：模型の城郭構成を把握するための低不透明度フットプリント -->
+      <a-box id="terrain-honmaru" position="105.8 0.18 159.2" width="60" height="0.35" depth="50" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-tenshukuruwa" position="113 0.18 170" width="45" height="0.35" depth="55" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-inari-kuruwa" position="78 0.18 165" width="32" height="32" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-sukiya-kuruwa" position="76 0.18 190" width="42" height="28" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-kaji-kuruwa" position="45 0.18 202" width="55" height="28" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-ninomaru" position="18 0.18 155" width="50" height="52" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-gakuya-kuruwa" position="-5 0.18 187" width="38" height="30" color="#8d7350" opacity="0.20"></a-box>
+      <a-box id="terrain-obikuruwa" position="92 0.18 178" width="72" height="15" color="#8d7350" opacity="0.16"></a-box>
+
+      <!-- 曲輪境界を「壁」として確認する簡易表示。最終形状は模型照合後に置換。 -->
+      <a-box id="terrain-wall-north" position="72 2.0 130" width="105" height="3.6" depth="1.8" color="#777" opacity="0.55"></a-box>
+      <a-box id="terrain-wall-east" position="145 2.0 170" width="1.8" height="3.6" depth="82" color="#777" opacity="0.55"></a-box>
+      <a-box id="terrain-wall-south" position="75 2.0 222" width="140" height="3.6" depth="1.8" color="#777" opacity="0.55"></a-box>
+      <a-box id="terrain-wall-west" position="-1 2.0 180" width="1.8" height="3.6" depth="84" color="#777" opacity="0.55"></a-box>
+
+      <!-- 南側に現存する水堀を、城郭骨格確認用として明示 -->
+      <a-box id="terrain-south-moat" position="58 0.05 217" width="125" height="0.10" depth="7" color="#426b86" opacity="0.55"></a-box>
+
+      <a-text id="terrain-preview-label" value="模型全体・曲輪/石垣/堀 プレビュー\n※模型との位置照合前の確認用" position="70 8 217" align="center" color="#ffd166" width="12" side="double"></a-text>
+    </a-entity>
+
   </a-scene>
 
   <script>
     // =========================================================
-    // v73 runtime: 模型マスター事前調査・方位補正・調査モード・距離表示・診断
+    // v76 runtime: 模型完全再現準備・対象棚卸し・方位補正・調査モード・距離表示・診断
     // =========================================================
     const V72_ANCHOR = { lat: 35.667180, lon: 138.570780 };
     const V72_FEATURES = {
@@ -976,10 +1006,44 @@
     );
 
     // =========================================================
-    // V72 MODEL MASTER PRE-FLIGHT
+    // =========================================================
+    // V74 MODEL COVERAGE REGISTRY
+    // 「模型に存在する対象」を漏らさず管理するための棚卸し。
+    // 位置未確定のものを勝手に正確な座標へ固定しない。
+    // =========================================================
+    const V76_MODEL_COVERAGE = [
+      {name:'山手門', kind:'門', render:'implemented', confidence:'A/B'},
+      {name:'山手渡櫓門', kind:'櫓門', render:'implemented', confidence:'A/B'},
+      {name:'稲荷櫓', kind:'櫓', render:'implemented', confidence:'B'},
+      {name:'鉄門', kind:'櫓門', render:'implemented', confidence:'B'},
+      {name:'鍛冶曲輪門', kind:'門', render:'implemented', confidence:'B'},
+      {name:'内松陰門', kind:'門', render:'implemented', confidence:'B'},
+      {name:'稲荷曲輪門', kind:'門', render:'implemented', confidence:'B'},
+      {name:'本丸櫓', kind:'櫓', render:'candidate', confidence:'B/C'},
+      {name:'数寄屋櫓（巽櫓）', kind:'櫓', render:'candidate', confidence:'B/C'},
+      {name:'月見櫓', kind:'櫓', render:'candidate', confidence:'C'},
+      {name:'太鼓櫓', kind:'櫓', render:'candidate', confidence:'C'},
+      {name:'銅門', kind:'櫓門', render:'candidate', confidence:'B'},
+      {name:'中の門', kind:'門', render:'candidate', confidence:'B'},
+      {name:'天守曲輪門', kind:'門', render:'candidate', confidence:'B'},
+      {name:'人質曲輪門', kind:'門', render:'candidate', confidence:'B'},
+      {name:'武具土蔵', kind:'土蔵', render:'candidate', confidence:'B'},
+      {name:'煙硝蔵', kind:'蔵', render:'candidate', confidence:'B'},
+      {name:'楽屋曲輪建物群', kind:'建物群', render:'candidate', confidence:'C'},
+      {name:'追手門（大手門）', kind:'櫓門', render:'candidate', confidence:'B/C'},
+      {name:'曲輪・石垣群', kind:'地形構造', render:'terrain-needed', confidence:'A/B'},
+      {name:'内堀', kind:'堀', render:'terrain-needed', confidence:'A/B'},
+      {name:'土橋・橋', kind:'交通構造', render:'terrain-needed', confidence:'B/C'}
+    ];
+
+    const V76_MODEL_INVENTORY_RULE =
+      '最重要目的=公式復元模型の完全再現。Web資料は模型の形状・寸法・位置関係を補強するためだけに使用。';
+
+    // V74 MODEL MASTER PRE-FLIGHT
+
     // 公式復元模型を最上位基準とし、Web資料は模型の読解・形状検証の補助に限定する。
     // =========================================================
-    const V72_MODEL_PREFLIGHT = {
+    const V76_MODEL_PREFLIGHT = {
       priority: 'MODEL_FIRST',
       masterSource: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
       modelUpdateBasis: '2020年度の最新調査成果を元に改修、2021-03-14お披露目',
@@ -1001,7 +1065,7 @@
     // 「模型の世界をAR空間に復元する」を最上位方針として管理する。
     // 数値が未確定の箇所は、勝手に補間せず「未確定」のまま保持する。
     // =========================================================
-    const V72_MODEL_MASTER = {
+    const V76_MODEL_MASTER = {
       source: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
       sourceBasis: '2020年度の最新調査成果を元に改修・2021-03-14公開',
       scaleRule: '模型上の相対関係 → 実寸スケール → 現地GPSの順に変換',
@@ -1012,7 +1076,7 @@
 
     // 公式計画・復元資料から確認できる「関係」。
     // これは座標そのものではなく、模型を読み解くためのトポロジー情報。
-    const V72_MODEL_RELATIONS = [
+    const V76_MODEL_RELATIONS = [
       ['山手御門', '北側入口', '稲荷曲輪へ接続', '公式復元報告＋現地確認'],
       ['稲荷曲輪', '本丸の北側', '数寄屋曲輪・鍛冶曲輪・屋形曲輪・清水曲輪へ接続', '2022整備基本計画'],
       ['数寄屋曲輪', '稲荷曲輪の南側', '数寄屋勝手門で稲荷曲輪、数寄屋表門で鍛冶曲輪へ接続', '2022整備基本計画'],
@@ -1022,6 +1086,40 @@
       ['追手門', '南側の主要虎口', '櫓門として発掘痕跡確認', '県発掘資料＋山手御門復元報告'],
       ['楽屋曲輪', '県庁周辺を含む旧城域', '石垣・土塁・水路等の発掘成果あり', '県発掘資料']
     ];
+
+    // =========================================================
+    // V75 FULL MODEL PREVIEW
+    // 公式復元模型に存在することを調査対象としている候補を、
+    // テスト時だけまとめて可視化する。これは「確定GPS版」ではなく
+    // 模型全体の見え方を確認するためのプレビュー。
+    // 起動URLに ?full=1 を付けた場合のみ有効。
+    // =========================================================
+    const V75_FULL_MODEL_PREVIEW = new URLSearchParams(location.search).get('full') === '1';
+    if (V75_FULL_MODEL_PREVIEW) {
+      const previewIds = [
+        'gakuya-kuruwa-placeholder',
+        'otemon-placeholder',
+        'honmaru-yagura-model',
+        'tsukimi-yagura-model',
+        'sukiya-yagura-model',
+        'taiko-yagura-model',
+        'moat-reference',
+        'castle-wall-reference'
+      ];
+      window.addEventListener('DOMContentLoaded', () => {
+        previewIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.setAttribute('visible', 'true');
+        });
+        const badge = document.getElementById('fidelity-badge');
+        if (badge) {
+          badge.textContent = 'MODEL TERRAIN PREVIEW / v76';
+          badge.style.background = 'rgba(180,120,0,.92)';
+        }
+        window.__diagPush('FULL MODEL PREVIEW: 候補・地形参照を表示。位置は未確定のものを含む。');
+      });
+    }
+
 
     // 次回現地調査で「模型→実寸→GPS」の変換を確定するための測定項目。
     const V72_SURVEY_TARGETS = [
@@ -1211,8 +1309,8 @@
 
     function refreshDiag() {
       const parts = [];
-      parts.push('=== 甲府城AR v73 診断 ===');
-      parts.push('v73模型マスター版：公式復元模型を最上位基準。?model=1 で模型照合モード、?research=all で研究対象を表示');
+      parts.push('=== 甲府城AR v76 診断 ===');
+      parts.push('v76模型完全再現プレビュー版：公式復元模型を最上位基準。?model=1 で模型照合モード、?coverage=1 で模型対象棚卸し・候補表示、?full=1 で模型全体プレビュー、?research=all で研究対象を表示');
       parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? AFRAME.version : '❌なし'}`);
       parts.push(`gps-projected-camera: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-camera'] ? 'あり' : '❌'}`);
       parts.push(`gps-projected-entity-place: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-entity-place'] ? 'あり' : '❌'}`);
@@ -1252,18 +1350,18 @@
       parts.push('');
       parts.push('=== 模型マスター方針 ===');
       parts.push(`=== MODEL FIRST PREFLIGHT ===`);
-      parts.push(`最上位基準: ${V72_MODEL_PREFLIGHT.masterSource}`);
-      parts.push(`Web資料の役割: ${V72_MODEL_PREFLIGHT.webRole}`);
-      parts.push(`現在の阻害要因: ${V72_MODEL_PREFLIGHT.currentBlocker}`);
-      parts.push(`次に必要な入力: ${V72_MODEL_PREFLIGHT.nextBestInput}`);
-      V72_MODEL_PREFLIGHT.fidelityGate.forEach((x,i)=>parts.push(`${i+1}. ${x}`));
-      parts.push(`基準模型: ${V72_MODEL_MASTER.source}`);
-      parts.push(`根拠: ${V72_MODEL_MASTER.sourceBasis}`);
-      parts.push(`変換: ${V72_MODEL_MASTER.scaleRule}`);
-      parts.push(`原則: ${V72_MODEL_MASTER.absoluteRule}`);
+      parts.push(`最上位基準: ${V76_MODEL_PREFLIGHT.masterSource}`);
+      parts.push(`Web資料の役割: ${V76_MODEL_PREFLIGHT.webRole}`);
+      parts.push(`現在の阻害要因: ${V76_MODEL_PREFLIGHT.currentBlocker}`);
+      parts.push(`次に必要な入力: ${V76_MODEL_PREFLIGHT.nextBestInput}`);
+      V76_MODEL_PREFLIGHT.fidelityGate.forEach((x,i)=>parts.push(`${i+1}. ${x}`));
+      parts.push(`基準模型: ${V76_MODEL_MASTER.source}`);
+      parts.push(`根拠: ${V76_MODEL_MASTER.sourceBasis}`);
+      parts.push(`変換: ${V76_MODEL_MASTER.scaleRule}`);
+      parts.push(`原則: ${V76_MODEL_MASTER.absoluteRule}`);
       parts.push('');
       parts.push('=== 模型上の関係（座標化前） ===');
-      V72_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
+      V76_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
       parts.push('');
       parts.push('=== 次回現地調査：模型→実寸→GPSの固定項目 ===');
       V72_SURVEY_TARGETS.forEach(r => parts.push(`${r[0]}：${r[1]} / ${r[2]}`));
@@ -1283,6 +1381,47 @@
       if (document.getElementById('diag-panel').classList.contains('visible')) refreshDiag();
     }, 1000);
 
+    function applyModelCoverageVisibility() {
+      const enabled = new URLSearchParams(window.location.search).get('coverage') === '1';
+      const ids = [
+        'gakuya-kuruwa-placeholder',
+        'honmaru-yagura-model',
+        'tsukimi-yagura-model',
+        'sukiya-yagura-model',
+        'taiko-yagura-model'
+      ];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('visible', enabled ? 'true' : 'false');
+      });
+      // 追手門は現在の旧「朱色橋」表現を復活させない。
+      const ote = document.getElementById('otemon-placeholder');
+      if (ote) ote.setAttribute('visible', 'false');
+      window.__modelCoverage = enabled;
+    }
+
+    function addModelCoverageOverlay() {
+      const enabled = new URLSearchParams(window.location.search).get('coverage') === '1';
+      if (!enabled) return;
+      const world = document.getElementById('castle-world');
+      if (!world) return;
+      let overlay = document.getElementById('model-coverage-overlay');
+      if (!overlay) {
+        overlay = document.createElement('a-entity');
+        overlay.id = 'model-coverage-overlay';
+        world.appendChild(overlay);
+      }
+      overlay.innerHTML = '';
+      const lines = V76_MODEL_COVERAGE.map((x,i)=>`${String(i+1).padStart(2,'0')} ${x.name} / ${x.kind} / ${x.render} / ${x.confidence}`);
+      const text = document.createElement('a-text');
+      text.setAttribute('value', ['MODEL COVERAGE v76','公式復元模型の完全再現対象を棚卸し',...lines].join('\\n'));
+      text.setAttribute('position','-35 12 -20');
+      text.setAttribute('width','5.5');
+      text.setAttribute('color','#ffffff');
+      text.setAttribute('side','double');
+      overlay.appendChild(text);
+    }
+
     function applyResearchVisibility() {
       const showAll = new URLSearchParams(window.location.search).get('research') === 'all';
       const lowConfidenceIds = [
@@ -1299,7 +1438,9 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       applyResearchVisibility();
+      applyModelCoverageVisibility();
       addModelMasterOverlay();
+      addModelCoverageOverlay();
       applyFeatureCoordinates();
       applyHeadingOffset();
       if (window.__DEBUG_MODE__) {
@@ -1309,9 +1450,20 @@
         document.getElementById('survey-controls').style.display = 'flex';
       }
       if (window.__AR_TEST_MODE__) document.getElementById('test-mode-banner').style.display = 'block';
-      window.__diagPush('v73: 模型マスター基盤版を初期化');
+      window.__diagPush('v76: 模型完全再現準備版を初期化');
     });
   </script>
+
+
+<script>
+(() => {
+  const q = new URLSearchParams(location.search);
+  const terrain = q.get('terrain') === '1';
+  const el = document.getElementById('v76-model-terrain-preview');
+  if (el) el.setAttribute('visible', terrain ? 'true' : 'false');
+  if (terrain && window.__diagPush) window.__diagPush('MODEL TERRAIN PREVIEW / v76: 曲輪・石垣・南側水堀の骨格を確認用表示');
+})();
+</script>
 
 </body>
 </html>
