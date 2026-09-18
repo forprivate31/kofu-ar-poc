@@ -1447,7 +1447,8 @@
     }, 1000);
 
     function applyModelCoverageVisibility() {
-      const enabled = new URLSearchParams(window.location.search).get('coverage') === '1';
+      const params = new URLSearchParams(window.location.search);
+      const enabled = params.get('coverage') === '1' || params.get('testall') === '1';
       const ids = [
         'gakuya-kuruwa-placeholder',
         'honmaru-yagura-model',
@@ -1488,7 +1489,8 @@
     }
 
     function applyResearchVisibility() {
-      const showAll = new URLSearchParams(window.location.search).get('research') === 'all';
+      const params = new URLSearchParams(window.location.search);
+      const showAll = params.get('research') === 'all' || params.get('testall') === '1';
       const lowConfidenceIds = [
         'gakuya-kuruwa-placeholder', 'otemon-placeholder',
         'honmaru-yagura-model', 'tsukimi-yagura-model',
@@ -1523,7 +1525,7 @@
 <script>
 (() => {
   const q = new URLSearchParams(location.search);
-  const terrain = q.get('modelterrain') === '1';
+  const terrain = q.get('modelterrain') === '1' || q.get('testall') === '1';
   const el = document.getElementById('v77-model-structure-preview');
   if (el) el.setAttribute('visible', terrain ? 'true' : 'false');
   if (terrain && window.__diagPush) window.__diagPush('MODEL STRUCTURE PREVIEW / v77: 曲輪・石垣・堀・山手口の連続構造を確認用表示');
