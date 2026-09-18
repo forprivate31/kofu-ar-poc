@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型完全再現 v77</title>
+  <title>甲府城AR PoC - 模型完全再現 v78</title>
 
   <script>
     // ============================================
@@ -599,21 +599,21 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v77
+    build: v78
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v77]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v78]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v77(模型構造再現・山手御門相対配置修正・曲輪/石垣/堀プレビュー)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v78(模型写真読み取り・石垣/堀/塀ハードスケープ強化)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR v77・模型構造再現版</strong><br>
+    <strong>甲府城AR v78・模型写真ハードスケープ強化版</strong><br>
     公式復元資料・復元模型・現地確認を優先し、城郭全体を1つのローカル座標系で構成しています。<br>
-    v77では、公式復元模型を最上位基準とし、曲輪・石垣・堀・山手御門の連続構造を反映しています。未確認の位置・寸法は「仮」のまま残しています。
+    v78では、公式復元模型を最上位基準とし、模型写真から読み取れる石垣・堀・塀をテスト用ハードスケープとして最大限反映しています。位置・寸法が未確定のものは模型照合用の仮配置です。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -931,6 +931,16 @@
         </a-entity>
       </a-entity>
     </a-entity>
+
+    <!-- =====================================================
+         V78 MODEL HARD-SCAPE / 石垣・堀・塀の模型写真読み取り層
+         目的：模型写真から読み取れる①石垣 ②堀 ③塀を、
+         既存v77構造より高密度にARで確認する。
+         ?modelhardscape=1 または ?testall=1 で表示。
+         座標は山手御門GPSアンカーを原点とするローカル座標。
+         模型写真・配置図からの読取りであり、現地測量確定値ではない。
+         ===================================================== -->
+    <a-entity id="v78-model-hardscape" visible="false"></a-entity>
 
     <!-- =====================================================
          V77 MODEL STRUCTURE / CASTLE-MASS RECONSTRUCTION
@@ -1521,6 +1531,147 @@
     });
   </script>
 
+
+<script>
+(() => {
+  const q = new URLSearchParams(location.search);
+  const show = q.get('modelhardscape') === '1' || q.get('testall') === '1';
+  const root = document.getElementById('v78-model-hardscape');
+  if (!root) return;
+  root.setAttribute('visible', show ? 'true' : 'false');
+  if (!show) return;
+
+  const NS = 'http://www.w3.org/1999/xhtml';
+  const rad = Math.PI / 180;
+  const make = (tag, attrs, parent=root) => {
+    const el = document.createElement(tag);
+    Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+    parent.appendChild(el);
+    return el;
+  };
+  const seg = (a,b,opts={}) => {
+    const dx=b[0]-a[0], dz=b[1]-a[1];
+    const len=Math.hypot(dx,dz);
+    const mx=(a[0]+b[0])/2, mz=(a[1]+b[1])/2;
+    const yaw=Math.atan2(dx,dz)/rad;
+    return make('a-box',{
+      position:`${mx} ${opts.y ?? 1} ${mz}`,
+      width:String(opts.width ?? len),
+      height:String(opts.height ?? 2.4),
+      depth:String(opts.depth ?? 0.65),
+      rotation:`0 ${yaw} 0`,
+      material:opts.material ?? 'src:#tex-stone-wall; repeat:4 2',
+      opacity:String(opts.opacity ?? 0.95)
+    });
+  };
+  const moat=(a,b,w=10,opacity=0.60)=>{
+    const dx=b[0]-a[0], dz=b[1]-a[1], len=Math.hypot(dx,dz);
+    const mx=(a[0]+b[0])/2, mz=(a[1]+b[1])/2, yaw=Math.atan2(dx,dz)/rad;
+    return make('a-box',{
+      position:`${mx} 0.04 ${mz}`, width:String(w), height:'0.10', depth:String(len),
+      rotation:`0 ${yaw} 0`, color:'#243f55', opacity:String(opacity)
+    });
+  };
+  const fence=(a,b,h=1.35)=>seg(a,b,{height:h,width:Math.hypot(b[0]-a[0],b[1]-a[1]),depth:0.16,y:h/2,material:'src:#tex-wood; repeat:6 1',opacity:0.92});
+  const loop=(pts,fn)=>pts.forEach((p,i)=>fn(p,pts[(i+1)%pts.length]));
+
+  // A. 模型外周の連続水堀：写真4582/4586/4588/4590で明瞭に確認できる外周形状。
+  const outerMoat=[[-30,122],[35,112],[105,116],[151,135],[164,171],[157,211],[132,231],[72,238],[17,232],[-27,211],[-45,177],[-42,145]];
+  loop(outerMoat,(a,b)=>moat(a,b,7.5,0.66));
+
+  // B. 外周石垣：水堀内側の石垣ライン。写真で連続性が確認できる範囲。
+  const outerWall=[[-22,128],[35,119],[98,123],[142,141],[153,173],[148,205],[125,221],[73,228],[23,222],[-19,202],[-34,174],[-32,148]];
+  loop(outerWall,(a,b)=>seg(a,b,{height:3.4,depth:1.0,y:1.7,opacity:0.96}));
+
+  // C. 模型写真4586の中央高石垣・本丸周辺の屈曲。
+  const honmaruWall=[
+    [65,145],[91,136],[119,143],[130,157],[126,169],[113,177],
+    [101,171],[91,187],[72,181],[61,166],[65,145]
+  ];
+  for(let i=0;i<honmaruWall.length-1;i++) seg(honmaruWall[i],honmaruWall[i+1],{height:5.0,depth:1.0,y:2.5,opacity:0.97});
+
+  // D. 本丸北東〜天守台周辺の高石垣。
+  const tenshudaiWall=[[91,136],[119,143],[130,157],[126,169],[113,177]];
+  for(let i=0;i<tenshudaiWall.length-1;i++) seg(tenshudaiWall[i],tenshudaiWall[i+1],{height:5.6,depth:1.0,y:2.8,opacity:0.97});
+
+  // E. 天守曲輪〜数寄屋曲輪側の折れた石垣。
+  const sukiyaWall=[[126,169],[144,181],[139,197],[121,207],[101,205],[92,193],[101,181],[113,177]];
+  for(let i=0;i<sukiyaWall.length-1;i++) seg(sukiyaWall[i],sukiyaWall[i+1],{height:4.0,depth:0.9,y:2.0,opacity:0.95});
+
+  // F. 鍛冶曲輪側の長い石垣と屈曲部。
+  const kajiWall=[[101,205],[87,216],[58,220],[31,214],[18,201],[28,188],[43,184],[61,192],[72,181]];
+  for(let i=0;i<kajiWall.length-1;i++) seg(kajiWall[i],kajiWall[i+1],{height:3.2,depth:0.9,y:1.6,opacity:0.95});
+
+  // G. 二の丸側：写真4593/4589で確認できる長い境界石垣。
+  const ninomaruWall=[[18,201],[5,184],[-1,160],[8,141],[28,132],[50,137],[61,145]];
+  for(let i=0;i<ninomaruWall.length-1;i++) seg(ninomaruWall[i],ninomaruWall[i+1],{height:3.0,depth:0.9,y:1.5,opacity:0.94});
+
+  // H. 内部の低石垣・段差境界：模型写真で確認できる複数の区画境界。
+  const innerWalls=[
+    [[43,184],[57,173],[72,181]],
+    [[57,173],[68,160],[91,155]],
+    [[72,181],[84,193],[101,205]],
+    [[91,155],[104,163],[113,177]],
+    [[68,160],[80,149],[91,136]],
+    [[28,188],[43,184],[50,172]],
+    [[5,184],[28,188],[31,214]],
+    [[119,143],[119,130],[143,129]],
+    [[139,197],[150,201],[148,214]]
+  ];
+  innerWalls.forEach(poly=>{
+    for(let i=0;i<poly.length-1;i++) seg(poly[i],poly[i+1],{height:2.1,depth:0.7,y:1.05,opacity:0.90});
+  });
+
+  // I. 模型上で確認できる塀・土塀：建物単体ではなく区画境界として表示。
+  const fences=[
+    [[-20,132],[12,132]],
+    [[14,128],[52,128]],
+    [[54,126],[91,126]],
+    [[96,128],[126,128]],
+    [[130,132],[146,141]],
+    [[144,150],[150,170]],
+    [[153,177],[148,192]],
+    [[133,214],[112,220]],
+    [[86,224],[63,224]],
+    [[39,219],[22,212]],
+    [[-8,205],[-19,194]],
+    [[-28,181],[-30,160]],
+    [[-19,145],[-8,136]],
+    [[31,151],[50,151]],
+    [[52,151],[67,151]],
+    [[103,132],[103,145]],
+    [[135,161],[135,176]],
+    [[116,187],[135,187]],
+    [[78,202],[94,202]],
+    [[34,198],[51,198]],
+    [[17,166],[34,166]]
+  ];
+  fences.forEach(x=>fence(x[0],x[1],1.25));
+
+  // J. 山手口：模型写真4589/4590で確認できる「堀→土橋→石垣→門郭」側の外周補強。
+  moat([-25,-24],[25,-24],11,0.60);
+  seg([-28,-17],[28,-17],{height:2.5,depth:0.9,y:1.25,opacity:0.94});
+  seg([-22,-11],[-6,-5],{height:2.3,depth:0.8,y:1.15,opacity:0.92});
+  seg([8,-5],[25,-12],{height:2.3,depth:0.8,y:1.15,opacity:0.92});
+  fence([-18,-15],[-4,-15],1.2);
+  fence([8,-10],[20,-10],1.2);
+
+  // K. 水堀の内側に沿う低い縁取り：写真で黒い水面と芝地の境界が明瞭な区間。
+  const waterEdges=[
+    [[-22,128],[35,119]], [[98,123],[142,141]], [[153,173],[148,205]],
+    [[125,221],[73,228]], [[23,222],[-19,202]], [[-34,174],[-32,148]],
+    [[18,201],[5,184]], [[31,214],[18,201]], [[58,220],[31,214]]
+  ];
+  waterEdges.forEach(x=>fence(x[0],x[1],0.55));
+
+  // テスト用凡例。
+  const label=make('a-text',{
+    value:'V78 模型写真読み取り\n①石垣 ②堀 ③塀\n※模型照合用・仮配置',
+    position:'40 8 240',align:'center',color:'#ffd166',width:'10',side:'double'
+  });
+  if(window.__diagPush) window.__diagPush('v78: 模型写真から読み取れる石垣・堀・塀ハードスケープをテスト表示');
+})();
+</script>
 
 <script>
 (() => {
