@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型完全再現 v76</title>
+  <title>甲府城AR PoC - 模型完全再現 v77</title>
 
   <script>
     // ============================================
@@ -569,9 +569,9 @@
 
   <div id="fidelity-modal">
     <div class="card">
-      <h2>v69の復元方針</h2>
+      <h2>v77の復元方針</h2>
       <p>
-        v69は、v62を技術的な土台として、甲府城復元模型と測量図を
+        v77は、v76を技術的な土台として、甲府城復元模型と測量図を
         「全体配置のマスター」として再設計した現地調査用ビルドです。
       </p>
       <table>
@@ -599,21 +599,21 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v69
+    build: v77
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v69]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v77]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v69(公式復元形状・門構造追加・模型準拠の基準座標系)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v77(模型構造再現・山手御門相対配置修正・曲輪/石垣/堀プレビュー)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR v69・Web資料精度向上版</strong><br>
+    <strong>甲府城AR v77・模型構造再現版</strong><br>
     公式復元資料・復元模型・現地確認を優先し、城郭全体を1つのローカル座標系で構成しています。<br>
-    v69では、Web上で確認できる復元図・ペーパークラフト・現存復元建築写真を反映しました。未確認の位置・寸法は「仮」のまま残しています。
+    v77では、公式復元模型を最上位基準とし、曲輪・石垣・堀・山手御門の連続構造を反映しています。未確認の位置・寸法は「仮」のまま残しています。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -745,7 +745,7 @@
           </a-entity>
 
           <!-- 山手渡櫓門：2階7間×3間、1階5間×2間。 -->
-          <a-entity id="yamate-watariyagura-mon" position="7.0 0 1.0" rotation="0 56.64 0">
+          <a-entity id="yamate-watariyagura-mon" position="-6.2 0 1.2" rotation="0 56.64 0">
             <!-- 1階：門通路＋木造部 -->
             <a-box id="watari-ground" position="0 0.25 0" width="9.85" height="0.5" depth="3.94" material="src:#tex-stone-wall"></a-box>
             <a-box id="watari-wood-left" position="-2.35 2.25 0" width="0.34" height="4.5" depth="3.15" material="src:#tex-wood"></a-box>
@@ -933,39 +933,93 @@
     </a-entity>
 
     <!-- =====================================================
-         V76 MODEL TERRAIN / CASTLE-MASS PREVIEW
-         模型完全再現に向け、建物だけでなく曲輪・石垣・堀の
-         「城郭の骨格」を一体として確認するための事前表示。
-         座標は最終確定ではないため ?terrain=1 の時のみ表示。
+         V77 MODEL STRUCTURE / CASTLE-MASS RECONSTRUCTION
+         模型写真＋「甲府城曲輪・主要施設の名称」図から読める
+         城郭骨格を、矩形ではなく折れ線の曲輪面＋石垣帯として
+         確認するための構造プレビュー。
+         ?modelterrain=1 の時のみ表示。
          ===================================================== -->
-    <a-entity id="v76-model-terrain-preview" visible="false">
-      <!-- 曲輪の面：模型の城郭構成を把握するための低不透明度フットプリント -->
-      <a-box id="terrain-honmaru" position="105.8 0.18 159.2" width="60" height="0.35" depth="50" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-tenshukuruwa" position="113 0.18 170" width="45" height="0.35" depth="55" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-inari-kuruwa" position="78 0.18 165" width="32" height="32" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-sukiya-kuruwa" position="76 0.18 190" width="42" height="28" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-kaji-kuruwa" position="45 0.18 202" width="55" height="28" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-ninomaru" position="18 0.18 155" width="50" height="52" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-gakuya-kuruwa" position="-5 0.18 187" width="38" height="30" color="#8d7350" opacity="0.20"></a-box>
-      <a-box id="terrain-obikuruwa" position="92 0.18 178" width="72" height="15" color="#8d7350" opacity="0.16"></a-box>
+    <a-entity id="v77-model-structure-preview" visible="false">
+      <!--
+        V77では「曲輪を四角い箱で置く」方式をやめ、模型写真で確認できる
+        折れ曲がった石垣・段差の連続性を優先する。
+        座標は現行の模型座標案を基準にした相対配置で、最終GPS測量値ではない。
+      -->
+      <a-entity id="v77-terrain-plates">
+        <!-- 稲荷曲輪：北東側の高台 -->
+        <a-box position="78 1.05 164" width="42" height="2.1" depth="28" rotation="0 0 0" color="#8c7451" opacity="0.78"></a-box>
+        <a-box position="88 1.05 176" width="24" height="2.1" depth="10" color="#8c7451" opacity="0.78"></a-box>
 
-      <!-- 曲輪境界を「壁」として確認する簡易表示。最終形状は模型照合後に置換。 -->
-      <a-box id="terrain-wall-north" position="72 2.0 130" width="105" height="3.6" depth="1.8" color="#777" opacity="0.55"></a-box>
-      <a-box id="terrain-wall-east" position="145 2.0 170" width="1.8" height="3.6" depth="82" color="#777" opacity="0.55"></a-box>
-      <a-box id="terrain-wall-south" position="75 2.0 222" width="140" height="3.6" depth="1.8" color="#777" opacity="0.55"></a-box>
-      <a-box id="terrain-wall-west" position="-1 2.0 180" width="1.8" height="3.6" depth="84" color="#777" opacity="0.55"></a-box>
+        <!-- 本丸：中心高台 -->
+        <a-box position="105 2.15 157" width="48" height="4.3" depth="34" color="#8c7451" opacity="0.82"></a-box>
+        <a-box position="114 2.15 143" width="30" height="4.3" depth="12" color="#8c7451" opacity="0.82"></a-box>
 
-      <!-- 南側に現存する水堀を、城郭骨格確認用として明示 -->
-      <a-box id="terrain-south-moat" position="58 0.05 217" width="125" height="0.10" depth="7" color="#426b86" opacity="0.55"></a-box>
+        <!-- 天守曲輪：本丸南〜東側の一段下の曲輪 -->
+        <a-box position="112 1.45 180" width="48" height="2.9" depth="26" color="#8c7451" opacity="0.80"></a-box>
+        <a-box position="134 1.45 172" width="18" height="2.9" depth="16" color="#8c7451" opacity="0.80"></a-box>
 
-      <a-text id="terrain-preview-label" value="模型全体・曲輪/石垣/堀 プレビュー\n※模型との位置照合前の確認用" position="70 8 217" align="center" color="#ffd166" width="12" side="double"></a-text>
+        <!-- 帯曲輪：本丸周囲の帯状部分 -->
+        <a-box position="91 1.25 178" width="52" height="2.5" depth="10" color="#8c7451" opacity="0.70"></a-box>
+
+        <!-- 数寄屋曲輪：東側の張り出した曲輪 -->
+        <a-box position="73 0.95 191" width="38" height="1.9" depth="25" color="#8c7451" opacity="0.78"></a-box>
+        <a-box position="92 0.95 201" width="18" height="1.9" depth="12" color="#8c7451" opacity="0.78"></a-box>
+
+        <!-- 鍛冶曲輪：南側の大きな曲輪 -->
+        <a-box position="42 0.75 202" width="58" height="1.5" depth="26" color="#8c7451" opacity="0.76"></a-box>
+        <a-box position="69 0.75 211" width="30" height="1.5" depth="10" color="#8c7451" opacity="0.76"></a-box>
+
+        <!-- 二の丸：西側の広い曲輪 -->
+        <a-box position="18 0.65 154" width="48" height="1.3" depth="48" color="#8c7451" opacity="0.74"></a-box>
+        <a-box position="37 0.65 177" width="20" height="1.3" depth="18" color="#8c7451" opacity="0.74"></a-box>
+
+        <!-- 楽屋曲輪：さらに西〜南西側の城域 -->
+        <a-box position="-8 0.45 188" width="36" height="0.9" depth="28" color="#8c7451" opacity="0.68"></a-box>
+      </a-entity>
+
+      <!-- 主要石垣：曲輪の縁を連続した「壁」として確認する。 -->
+      <a-entity id="v77-stonewall-belts">
+        <!-- 稲荷曲輪北・西縁 -->
+        <a-box position="59 2.7 151" width="1.4" height="5.4" depth="30" color="#777" opacity="0.92"></a-box>
+        <a-box position="79 2.7 178" width="42" height="5.4" depth="1.4" color="#777" opacity="0.92"></a-box>
+
+        <!-- 本丸北・東・南縁 -->
+        <a-box position="105 4.8 139" width="54" height="5.8" depth="1.6" color="#777" opacity="0.92"></a-box>
+        <a-box position="132 4.0 157" width="1.6" height="7.4" depth="34" color="#777" opacity="0.92"></a-box>
+        <a-box position="104 4.0 174" width="54" height="4.6" depth="1.6" color="#777" opacity="0.92"></a-box>
+
+        <!-- 天守曲輪・数寄屋曲輪東縁 -->
+        <a-box position="144 2.7 181" width="1.6" height="5.4" depth="42" color="#777" opacity="0.92"></a-box>
+        <a-box position="102 2.2 205" width="64" height="4.2" depth="1.6" color="#777" opacity="0.92"></a-box>
+
+        <!-- 鍛冶曲輪南縁・西縁 -->
+        <a-box position="39 1.9 217" width="78" height="3.6" depth="1.6" color="#777" opacity="0.92"></a-box>
+        <a-box position="3 1.9 195" width="1.6" height="3.6" depth="46" color="#777" opacity="0.92"></a-box>
+
+        <!-- 二の丸西・南縁 -->
+        <a-box position="-7 1.7 153" width="1.6" height="3.2" depth="50" color="#777" opacity="0.92"></a-box>
+        <a-box position="18 1.6 180" width="50" height="3.0" depth="1.6" color="#777" opacity="0.92"></a-box>
+
+        <!-- 楽屋曲輪西・南縁 -->
+        <a-box position="-27 1.2 188" width="1.5" height="2.4" depth="28" color="#777" opacity="0.88"></a-box>
+        <a-box position="-8 1.2 202" width="38" height="2.4" depth="1.5" color="#777" opacity="0.88"></a-box>
+      </a-entity>
+
+      <!-- 南側内堀：現存する水堀を優先して模型の連続性を出す。 -->
+      <a-box id="v77-south-moat" position="57 0.03 222" width="124" height="0.08" depth="7" color="#426b86" opacity="0.68"></a-box>
+
+      <!-- 山手口の外側空間：堀→土橋→門郭の連続を確認するための低い水面。 -->
+      <a-box id="v77-yamate-moat" position="0 0.02 -23" width="28" height="0.06" depth="12" color="#426b86" opacity="0.58"></a-box>
+      <a-box id="v77-yamate-tsuchibashi" position="0 0.28 -16" width="5.0" height="0.55" depth="14" color="#8c7451" opacity="0.92"></a-box>
+
+      <a-text id="v77-structure-label" value="V77 模型構造プレビュー\n曲輪・石垣・堀・山手口の連続構造\n※相対配置の確認用／最終GPS確定前" position="70 10 220" align="center" color="#ffd166" width="12" side="double"></a-text>
     </a-entity>
 
   </a-scene>
 
   <script>
     // =========================================================
-    // v76 runtime: 模型完全再現準備・対象棚卸し・方位補正・調査モード・距離表示・診断
+    // v77 runtime: 模型完全再現準備・対象棚卸し・方位補正・調査モード・距離表示・診断
     // =========================================================
     const V72_ANCHOR = { lat: 35.667180, lon: 138.570780 };
     const V72_FEATURES = {
@@ -1011,7 +1065,7 @@
     // 「模型に存在する対象」を漏らさず管理するための棚卸し。
     // 位置未確定のものを勝手に正確な座標へ固定しない。
     // =========================================================
-    const V76_MODEL_COVERAGE = [
+    const V77_MODEL_COVERAGE = [
       {name:'山手門', kind:'門', render:'implemented', confidence:'A/B'},
       {name:'山手渡櫓門', kind:'櫓門', render:'implemented', confidence:'A/B'},
       {name:'稲荷櫓', kind:'櫓', render:'implemented', confidence:'B'},
@@ -1036,21 +1090,29 @@
       {name:'土橋・橋', kind:'交通構造', render:'terrain-needed', confidence:'B/C'}
     ];
 
-    const V76_MODEL_INVENTORY_RULE =
+    const V77_MODEL_INVENTORY_RULE =
       '最重要目的=公式復元模型の完全再現。Web資料は模型の形状・寸法・位置関係を補強するためだけに使用。';
+
+    const V77_MODEL_CHANGELOG = [
+      '山手御門：現地確認結果を反映し、山手門をGPSアンカー(0,0,0)として固定。山手渡櫓門を相対的に西側へ再配置し、城内側から見た左右関係を優先。',
+      '曲輪：v76の矩形フットプリントを、模型写真で確認できる曲輪単位の段差構造へ置換。',
+      '石垣：外周の直線4本だけだったv76プレビューを、主要曲輪の縁を示す複数の石垣帯へ分解。',
+      '堀：南側水堀に加え、山手口の堀→土橋→門郭の連続を確認用に追加。',
+      '模型に存在するが位置未確定の対象は、通常GPS確定扱いにせずプレビュー層で管理。'
+    ];
 
     // V74 MODEL MASTER PRE-FLIGHT
 
     // 公式復元模型を最上位基準とし、Web資料は模型の読解・形状検証の補助に限定する。
     // =========================================================
-    const V76_MODEL_PREFLIGHT = {
+    const V77_MODEL_PREFLIGHT = {
       priority: 'MODEL_FIRST',
       masterSource: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
       modelUpdateBasis: '2020年度の最新調査成果を元に改修、2021-03-14お披露目',
       webRole: '補助資料。模型と矛盾する場合は模型を優先し、矛盾は記録する',
       coordinateRule: '模型上の相対配置を先に確定し、実寸化後にGPSへ変換',
-      currentBlocker: '高解像度・平面に近い模型全体写真が不足。遠近補正なしに模型画像から距離を数値化しない',
-      nextBestInput: '模型全体を真上または正面に近い複数方向から撮影した高解像度画像',
+      currentBlocker: '精密な真上画像がないため模型画像だけからの厳密なピクセル→実寸校正は未確定。ただし相対構造の実装・整理は既存写真で継続可能',
+      nextBestInput: '追加写真を待たずに進行し、次回現地確認では模型→実寸→GPSの基準点を固定する',
       fidelityGate: [
         '模型に存在する主要建物・門・石垣・堀・曲輪を一覧化する',
         '模型上の相対位置・向き・接続関係を確定する',
@@ -1065,7 +1127,7 @@
     // 「模型の世界をAR空間に復元する」を最上位方針として管理する。
     // 数値が未確定の箇所は、勝手に補間せず「未確定」のまま保持する。
     // =========================================================
-    const V76_MODEL_MASTER = {
+    const V77_MODEL_MASTER = {
       source: '2021年更新・稲荷櫓2階展示の甲府城復元模型',
       sourceBasis: '2020年度の最新調査成果を元に改修・2021-03-14公開',
       scaleRule: '模型上の相対関係 → 実寸スケール → 現地GPSの順に変換',
@@ -1076,7 +1138,7 @@
 
     // 公式計画・復元資料から確認できる「関係」。
     // これは座標そのものではなく、模型を読み解くためのトポロジー情報。
-    const V76_MODEL_RELATIONS = [
+    const V77_MODEL_RELATIONS = [
       ['山手御門', '北側入口', '稲荷曲輪へ接続', '公式復元報告＋現地確認'],
       ['稲荷曲輪', '本丸の北側', '数寄屋曲輪・鍛冶曲輪・屋形曲輪・清水曲輪へ接続', '2022整備基本計画'],
       ['数寄屋曲輪', '稲荷曲輪の南側', '数寄屋勝手門で稲荷曲輪、数寄屋表門で鍛冶曲輪へ接続', '2022整備基本計画'],
@@ -1113,7 +1175,7 @@
         });
         const badge = document.getElementById('fidelity-badge');
         if (badge) {
-          badge.textContent = 'MODEL TERRAIN PREVIEW / v76';
+          badge.textContent = 'MODEL STRUCTURE PREVIEW / v77';
           badge.style.background = 'rgba(180,120,0,.92)';
         }
         window.__diagPush('FULL MODEL PREVIEW: 候補・地形参照を表示。位置は未確定のものを含む。');
@@ -1309,8 +1371,8 @@
 
     function refreshDiag() {
       const parts = [];
-      parts.push('=== 甲府城AR v76 診断 ===');
-      parts.push('v76模型完全再現プレビュー版：公式復元模型を最上位基準。?model=1 で模型照合モード、?coverage=1 で模型対象棚卸し・候補表示、?full=1 で模型全体プレビュー、?research=all で研究対象を表示');
+      parts.push('=== 甲府城AR v77 診断 ===');
+      parts.push('v77模型構造再現版：公式復元模型を最上位基準。?model=1 で模型照合モード、?coverage=1 で模型対象棚卸し・候補表示、?modelterrain=1 で曲輪/石垣/堀構造プレビュー、?research=all で研究対象を表示');
       parts.push(`AFRAME: ${typeof AFRAME !== 'undefined' ? AFRAME.version : '❌なし'}`);
       parts.push(`gps-projected-camera: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-camera'] ? 'あり' : '❌'}`);
       parts.push(`gps-projected-entity-place: ${typeof AFRAME !== 'undefined' && !!AFRAME.components['gps-projected-entity-place'] ? 'あり' : '❌'}`);
@@ -1350,18 +1412,18 @@
       parts.push('');
       parts.push('=== 模型マスター方針 ===');
       parts.push(`=== MODEL FIRST PREFLIGHT ===`);
-      parts.push(`最上位基準: ${V76_MODEL_PREFLIGHT.masterSource}`);
-      parts.push(`Web資料の役割: ${V76_MODEL_PREFLIGHT.webRole}`);
-      parts.push(`現在の阻害要因: ${V76_MODEL_PREFLIGHT.currentBlocker}`);
-      parts.push(`次に必要な入力: ${V76_MODEL_PREFLIGHT.nextBestInput}`);
-      V76_MODEL_PREFLIGHT.fidelityGate.forEach((x,i)=>parts.push(`${i+1}. ${x}`));
-      parts.push(`基準模型: ${V76_MODEL_MASTER.source}`);
-      parts.push(`根拠: ${V76_MODEL_MASTER.sourceBasis}`);
-      parts.push(`変換: ${V76_MODEL_MASTER.scaleRule}`);
-      parts.push(`原則: ${V76_MODEL_MASTER.absoluteRule}`);
+      parts.push(`最上位基準: ${V77_MODEL_PREFLIGHT.masterSource}`);
+      parts.push(`Web資料の役割: ${V77_MODEL_PREFLIGHT.webRole}`);
+      parts.push(`現在の阻害要因: ${V77_MODEL_PREFLIGHT.currentBlocker}`);
+      parts.push(`次に必要な入力: ${V77_MODEL_PREFLIGHT.nextBestInput}`);
+      V77_MODEL_PREFLIGHT.fidelityGate.forEach((x,i)=>parts.push(`${i+1}. ${x}`));
+      parts.push(`基準模型: ${V77_MODEL_MASTER.source}`);
+      parts.push(`根拠: ${V77_MODEL_MASTER.sourceBasis}`);
+      parts.push(`変換: ${V77_MODEL_MASTER.scaleRule}`);
+      parts.push(`原則: ${V77_MODEL_MASTER.absoluteRule}`);
       parts.push('');
       parts.push('=== 模型上の関係（座標化前） ===');
-      V76_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
+      V77_MODEL_RELATIONS.forEach(r => parts.push(`${r[0]} → ${r[1]} / ${r[2]} / ${r[3]}`));
       parts.push('');
       parts.push('=== 次回現地調査：模型→実寸→GPSの固定項目 ===');
       V72_SURVEY_TARGETS.forEach(r => parts.push(`${r[0]}：${r[1]} / ${r[2]}`));
@@ -1370,6 +1432,9 @@
       V72_RESEARCH_REGISTRY.forEach(r => parts.push(`${r[0]} [${r[1]}] ${r[2]}`));
       parts.push('--- 主要参照資料 ---');
       V72_SOURCES.forEach(x => parts.push(`${x.name} | ${x.url}`));
+      parts.push('');
+      parts.push('=== V77 変更点 ===');
+      V77_MODEL_CHANGELOG.forEach(x => parts.push('- ' + x));
       parts.push('');
       parts.push('=== ログ ===');
       parts.push((window.__diagLog || []).slice(-40).join('\n'));
@@ -1412,9 +1477,9 @@
         world.appendChild(overlay);
       }
       overlay.innerHTML = '';
-      const lines = V76_MODEL_COVERAGE.map((x,i)=>`${String(i+1).padStart(2,'0')} ${x.name} / ${x.kind} / ${x.render} / ${x.confidence}`);
+      const lines = V77_MODEL_COVERAGE.map((x,i)=>`${String(i+1).padStart(2,'0')} ${x.name} / ${x.kind} / ${x.render} / ${x.confidence}`);
       const text = document.createElement('a-text');
-      text.setAttribute('value', ['MODEL COVERAGE v76','公式復元模型の完全再現対象を棚卸し',...lines].join('\\n'));
+      text.setAttribute('value', ['MODEL COVERAGE v77','公式復元模型の完全再現対象を棚卸し',...lines].join('\\n'));
       text.setAttribute('position','-35 12 -20');
       text.setAttribute('width','5.5');
       text.setAttribute('color','#ffffff');
@@ -1450,7 +1515,7 @@
         document.getElementById('survey-controls').style.display = 'flex';
       }
       if (window.__AR_TEST_MODE__) document.getElementById('test-mode-banner').style.display = 'block';
-      window.__diagPush('v76: 模型完全再現準備版を初期化');
+      window.__diagPush('v77: 模型構造再現版を初期化');
     });
   </script>
 
@@ -1458,10 +1523,10 @@
 <script>
 (() => {
   const q = new URLSearchParams(location.search);
-  const terrain = q.get('terrain') === '1';
-  const el = document.getElementById('v76-model-terrain-preview');
+  const terrain = q.get('modelterrain') === '1';
+  const el = document.getElementById('v77-model-structure-preview');
   if (el) el.setAttribute('visible', terrain ? 'true' : 'false');
-  if (terrain && window.__diagPush) window.__diagPush('MODEL TERRAIN PREVIEW / v76: 曲輪・石垣・南側水堀の骨格を確認用表示');
+  if (terrain && window.__diagPush) window.__diagPush('MODEL STRUCTURE PREVIEW / v77: 曲輪・石垣・堀・山手口の連続構造を確認用表示');
 })();
 </script>
 
