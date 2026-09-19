@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型完全再現 v79</title>
+  <title>甲府城AR PoC - 模型完全再現 v80</title>
 
   <script>
     // ============================================
@@ -569,9 +569,9 @@
 
   <div id="fidelity-modal">
     <div class="card">
-      <h2>v79の復元方針</h2>
+      <h2>v80の復元方針</h2>
       <p>
-        v79は、v78を技術的な土台として、甲府城復元模型と測量図を
+        v80は、v79を技術的な土台として、甲府城復元模型・1705年頃の城絵図・甲府城下町絵図を
         「全体配置のマスター」として再設計した現地調査用ビルドです。
       </p>
       <table>
@@ -599,21 +599,21 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v79
+    build: v80
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v79]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v80]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v79(模型地形骨格・曲輪面・高低差・連続水堀強化)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v80(模型・城絵図照合型の曲輪平面骨格・高低差・連続堀・石垣強化)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR v79・模型地形骨格強化版</strong><br>
+    <strong>甲府城AR v80・模型＋城絵図照合型地形骨格版</strong><br>
     公式復元資料・復元模型・現地確認を優先し、城郭全体を1つのローカル座標系で構成しています。<br>
-    v79では、公式復元模型を最上位基準とし、模型写真から読み取れる曲輪面・高低差・連続水堀・通路を地形骨格として追加しています。位置・寸法・標高は模型照合用の仮配置です。
+    v80では、公式復元模型を最上位基準とし、1705年頃の城絵図と城下町絵図を平面位置関係の補助資料として照合。主要曲輪の平面形・高低差・堀・石垣・塀・通路を連続した骨格として追加しています。位置・寸法・標高は模型照合用の仮配置です。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -1535,7 +1535,7 @@
 <script>
 (() => {
   const q = new URLSearchParams(location.search);
-  const show = q.get('modelhardscape') === '1' || q.get('testall') === '1';
+  const show = q.get('modelhardscape') === '1';
   const root = document.getElementById('v78-model-hardscape');
   if (!root) return;
   root.setAttribute('visible', show ? 'true' : 'false');
@@ -1676,7 +1676,7 @@
 <script>
 (() => {
   const q = new URLSearchParams(location.search);
-  const terrain = q.get('modelterrain') === '1' || q.get('testall') === '1';
+  const terrain = q.get('modelterrain') === '1';
   const el = document.getElementById('v77-model-structure-preview');
   if (el) el.setAttribute('visible', terrain ? 'true' : 'false');
   if (terrain && window.__diagPush) window.__diagPush('MODEL STRUCTURE PREVIEW / v77: 曲輪・石垣・堀・山手口の連続構造を確認用表示');
@@ -1694,7 +1694,7 @@
    ===================================================== */
 (() => {
   const q = new URLSearchParams(location.search);
-  const show = q.get('modelterrain79') === '1' || q.get('testall') === '1';
+  const show = q.get('modelterrain79') === '1';
   if (!show) return;
 
   const scene = document.querySelector('a-scene');
@@ -1825,6 +1825,293 @@
   root.appendChild(label);
 
   if (window.__diagPush) window.__diagPush('v79: 模型地形骨格（曲輪面・高低差・連続水堀・通路）をテスト表示');
+})();
+</script>
+
+
+<script>
+/* =====================================================
+   V80 MODEL + MAP PLAN SKELETON
+   目的：
+   ・模型写真（特に今回追加された IMG_4592）を3D形状の最上位基準にする
+   ・1705年頃の城絵図と甲府城下町絵図を平面位置関係の補助資料として照合する
+   ・主要曲輪を「面」、石垣を「帯」、堀を「面」、通路を「接続」として構築する
+   ・建物を増やす前に、甲府城そのものの空間骨格をAR上で確認できるようにする
+   ?modelterrain80=1 または ?testall=1 で表示。
+   ※座標・高さは現地測量確定値ではなく、模型照合用の相対仮配置。
+   ===================================================== */
+(() => {
+  const q = new URLSearchParams(location.search);
+  const show = q.get('modelterrain80') === '1' || q.get('testall') === '1';
+  if (!show) return;
+  const scene = document.querySelector('a-scene');
+  if (!scene || !window.THREE) return;
+
+  // 旧ハードスケープ／旧地形骨格の重複表示を止める。
+  ['v78-model-hardscape','v79-model-terrain-skeleton','v77-model-structure-preview'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('visible','false');
+  });
+
+  const root = document.createElement('a-entity');
+  root.id = 'v80-model-map-plan-skeleton';
+  scene.appendChild(root);
+
+  const C = {
+    water:'#203b50',
+    ground:'#76664b',
+    ninomaru:'#817254',
+    honmaru:'#8d7854',
+    tenshu:'#967c55',
+    sukiya:'#806e4e',
+    kaji:'#79694d',
+    inari:'#827351',
+    green:'#52684b',
+    path:'#a28660',
+    stone:'#4e514f',
+    wallTop:'#d6d0bd'
+  };
+
+  const material = (color, opacity=1, roughness=1) => new THREE.MeshStandardMaterial({
+    color, transparent: opacity < 1, opacity, roughness, metalness:0, side:THREE.DoubleSide
+  });
+
+  const poly = (id, pts, y, color, opacity=1, holes=[]) => {
+    const shape = new THREE.Shape();
+    pts.forEach((p,i)=> i ? shape.lineTo(p[0],-p[1]) : shape.moveTo(p[0],-p[1]));
+    shape.closePath();
+    holes.forEach(h=>{
+      const path=new THREE.Path();
+      h.forEach((p,i)=> i ? path.lineTo(p[0],-p[1]) : path.moveTo(p[0],-p[1]));
+      path.closePath(); shape.holes.push(path);
+    });
+    const geo=new THREE.ShapeGeometry(shape);
+    const mesh=new THREE.Mesh(geo,material(color,opacity));
+    mesh.rotation.x=-Math.PI/2;
+    mesh.position.y=y;
+    mesh.renderOrder = y < 0.2 ? 0 : 2;
+    const el=document.createElement('a-entity');
+    el.id=id; el.object3D.add(mesh); root.appendChild(el); return el;
+  };
+
+  // 水平な細長い面を作る。石垣天端・堀端・通路の読み取り補助用。
+  const ribbon=(id, pts, y, width, color, opacity=1)=>{
+    const left=[], right=[];
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i], prev=pts[Math.max(0,i-1)], next=pts[Math.min(pts.length-1,i+1)];
+      let dx=next[0]-prev[0], dz=next[1]-prev[1];
+      const len=Math.hypot(dx,dz)||1; const nx=-dz/len, nz=dx/len;
+      left.push([p[0]+nx*width/2,p[1]+nz*width/2]);
+      right.push([p[0]-nx*width/2,p[1]-nz*width/2]);
+    }
+    return poly(id,left.concat(right.reverse()),y,color,opacity);
+  };
+
+  // 石垣を「箱の列」ではなく、折れ線に沿った連続帯＋高さで表現。
+  const wall=(id, pts, baseY, height, width=1.15, opacity=0.97)=>{
+    const topY=baseY+height;
+    const el=ribbon(id+'-top',pts,topY,width,C.wallTop,0.96);
+    const group=document.createElement('a-entity'); group.id=id; root.appendChild(group);
+    // 各区間を独立メッシュ化し、折れ角でも連続して見えるようにする。
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i], b=pts[i+1], dx=b[0]-a[0], dz=b[1]-a[1];
+      const len=Math.hypot(dx,dz)||1, mx=(a[0]+b[0])/2, mz=(a[1]+b[1])/2;
+      const yaw=Math.atan2(dx,dz);
+      const geo=new THREE.BoxGeometry(len,height,width);
+      const mesh=new THREE.Mesh(geo,material(C.stone,opacity));
+      mesh.position.set(mx,baseY+height/2,mz); mesh.rotation.y=yaw;
+      group.object3D.add(mesh);
+    }
+    return el;
+  };
+
+  const path=(id, pts, y, width=2.5, opacity=0.86)=>ribbon(id,pts,y,width,C.path,opacity);
+  const water=(id, pts, y=0.03, opacity=0.82)=>poly(id,pts,y,C.water,opacity);
+
+  // ---------------------------------------------------------
+  // 1. 模型と城絵図の双方で追える「主要外周」
+  // ---------------------------------------------------------
+  const outerMoat = [
+    [-18,113],[26,106],[77,108],[121,112],[148,125],[158,146],
+    [160,171],[154,196],[143,218],[121,232],[91,239],[58,240],
+    [29,234],[2,225],[-18,211],[-32,191],[-38,168],[-36,143],[-28,124]
+  ];
+  const outerLand = [
+    [-10,121],[29,115],[77,117],[116,121],[139,133],[149,150],
+    [151,172],[145,193],[134,211],[114,222],[89,229],[59,230],
+    [33,224],[9,216],[-10,202],[-23,185],[-29,165],[-27,145],[-20,129]
+  ];
+  water('v80-outer-moat',outerMoat,0.02,0.84);
+  poly('v80-main-land',outerLand,0.24,C.ground,0.72);
+
+  // 模型写真で見える「大きな水面」の直線＋折れを別面として強調。
+  water('v80-east-south-water',[
+    [111,120],[144,131],[154,148],[154,172],[147,193],[134,209],
+    [117,218],[105,211],[119,198],[128,180],[130,158],[121,143]
+  ],0.055,0.88);
+  water('v80-south-water',[
+    [8,215],[32,224],[59,230],[89,229],[114,222],[132,211],
+    [124,201],[105,208],[84,216],[58,218],[34,213],[17,205]
+  ],0.055,0.82);
+
+  // ---------------------------------------------------------
+  // 2. 主要曲輪：平面形を独立面として積み上げる
+  //    （位置は現行AR座標系に合わせ、形状は模型・絵図照合で整理）
+  // ---------------------------------------------------------
+  const ninomaru=[
+    [-2,139],[17,128],[42,125],[59,132],[69,145],[65,161],
+    [55,171],[47,183],[31,191],[16,199],[4,189],[-2,169],[-6,151]
+  ];
+  const inari=[
+    [26,127],[51,119],[82,119],[103,126],[104,143],[96,151],
+    [79,151],[64,145],[49,150],[30,146],[20,137]
+  ];
+  const honmaru=[
+    [62,145],[84,135],[112,138],[129,151],[133,164],[126,176],
+    [113,181],[102,174],[92,188],[74,184],[61,168]
+  ];
+  const tenshudai=[
+    [88,136],[111,139],[126,150],[130,162],[123,171],[111,176],
+    [100,166],[91,157]
+  ];
+  const sukiya=[
+    [124,169],[141,178],[148,190],[143,202],[126,211],[108,207],
+    [96,195],[102,181],[114,177]
+  ];
+  const kaji=[
+    [102,204],[87,216],[62,223],[36,218],[17,204],[25,191],[42,184],
+    [61,191],[72,181],[86,193]
+  ];
+  const gakuya=[
+    [-9,178],[-1,169],[13,169],[22,179],[20,194],[8,207],[-8,203],[-16,192]
+  ];
+
+  poly('v80-ninomaru',ninomaru,1.05,C.ninomaru,0.86);
+  poly('v80-inari',inari,1.85,C.inari,0.86);
+  poly('v80-honmaru',honmaru,3.10,C.honmaru,0.90);
+  poly('v80-tenshudai',tenshudai,5.85,C.tenshu,0.94);
+  poly('v80-sukiya',sukiya,2.45,C.sukiya,0.88);
+  poly('v80-kaji',kaji,1.60,C.kaji,0.86);
+  poly('v80-gakuya',gakuya,0.75,C.ninomaru,0.72);
+
+  // 人質曲輪・帯曲輪など、建物を置く前の低い空間帯。
+  poly('v80-hitojichi-low',[
+    [18,124],[39,117],[60,117],[70,124],[67,133],[51,138],[31,137],[17,132]
+  ],0.72,C.green,0.66);
+  poly('v80-obi-low',[
+    [128,132],[143,137],[151,149],[151,164],[145,169],[133,160],[129,148]
+  ],0.92,C.green,0.62);
+
+  // ---------------------------------------------------------
+  // 3. 曲輪間の接続。模型で目立つ「道の帯」を面として置く。
+  // ---------------------------------------------------------
+  path('v80-north-approach',[[0,0],[0,30],[4,58],[9,87],[17,113],[20,129]],0.42,4.2,0.82);
+  path('v80-yamate-masu',[[0,-20],[0,-7],[0,7],[8,18]],0.48,4.0,0.90);
+  path('v80-ninomaru-honmaru',[[24,185],[35,176],[47,166],[58,157],[67,149]],1.22,3.1,0.86);
+  path('v80-honmaru-tenshu',[[81,164],[92,158],[103,154],[114,157]],4.25,2.7,0.80);
+  path('v80-honmaru-sukiya',[[116,177],[126,181],[135,188]],2.75,3.0,0.82);
+  path('v80-sukiya-kaji',[[108,202],[96,203],[84,207],[68,212]],1.90,3.0,0.82);
+  path('v80-gakuya-otemon',[[3,201],[7,211],[10,220]],0.72,3.2,0.82);
+
+  // ---------------------------------------------------------
+  // 4. 模型で視認性の高い主要石垣。高さを段階化する。
+  // ---------------------------------------------------------
+  wall('v80-wall-ninomaru-west',[
+    [-2,139],[17,128],[42,125],[59,132],[69,145]
+  ],0.25,2.7,1.35);
+  wall('v80-wall-ninomaru-east',[
+    [69,145],[65,161],[55,171],[47,183],[31,191]
+  ],0.30,3.0,1.35);
+  wall('v80-wall-honmaru-north',[
+    [62,145],[84,135],[112,138],[129,151],[133,164]
+  ],1.00,5.0,1.45);
+  wall('v80-wall-tenshudai',[
+    [88,136],[111,139],[126,150],[130,162],[123,171],[111,176]
+  ],1.30,5.8,1.55);
+  wall('v80-wall-honmaru-south',[
+    [111,176],[102,174],[92,188],[74,184],[61,168]
+  ],0.90,4.4,1.35);
+  wall('v80-wall-sukiya',[
+    [124,169],[141,178],[148,190],[143,202],[126,211],[108,207]
+  ],0.72,4.0,1.25);
+  wall('v80-wall-kaji',[
+    [102,204],[87,216],[62,223],[36,218],[17,204]
+  ],0.42,3.2,1.25);
+  wall('v80-wall-inari',[
+    [26,127],[51,119],[82,119],[103,126],[104,143],[96,151]
+  ],0.60,3.6,1.20);
+  wall('v80-wall-gakuya',[
+    [-9,178],[-1,169],[13,169],[22,179],[20,194],[8,207]
+  ],0.25,2.5,1.10);
+
+  // 外周石垣：地図上の外郭と模型の連続石垣を合わせる。
+  wall('v80-wall-outer-west',[
+    [-10,121],[29,115],[77,117],[116,121]
+  ],0.18,2.9,1.20);
+  wall('v80-wall-outer-east',[
+    [139,133],[149,150],[151,172],[145,193],[134,211]
+  ],0.18,3.5,1.20);
+  wall('v80-wall-outer-south',[
+    [134,211],[114,222],[89,229],[59,230],[33,224],[9,216]
+  ],0.18,2.8,1.20);
+
+  // ---------------------------------------------------------
+  // 5. 低い塀・柵：石垣の上／曲輪境界として細く配置。
+  // ---------------------------------------------------------
+  const fence=(id,pts,y=1.5,h=1.2,w=0.16)=>{
+    const g=document.createElement('a-entity'); g.id=id; root.appendChild(g);
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);
+      const m=new THREE.Mesh(new THREE.BoxGeometry(len,h,w),material('#5c4c3b',0.90));
+      m.position.set((a[0]+b[0])/2,y+h/2,(a[1]+b[1])/2);m.rotation.y=Math.atan2(dx,dz);g.object3D.add(m);
+    }
+    return g;
+  };
+  fence('v80-fence-inari-south',[[29,151],[49,150],[64,145]],0.55,1.05);
+  fence('v80-fence-central',[[44,184],[57,173],[68,160]],1.0,1.15);
+  fence('v80-fence-sukiya',[[116,187],[135,187],[143,194]],2.2,1.15);
+  fence('v80-fence-kaji',[[34,198],[51,198],[67,206]],1.0,1.1);
+  fence('v80-fence-ninomaru',[[17,166],[34,166],[49,171]],0.75,1.1);
+
+  // ---------------------------------------------------------
+  // 6. 緑地・斜面帯。模型の「土＋緑＋樹木」の空間を残す。
+  // ---------------------------------------------------------
+  poly('v80-green-west',[
+    [-25,145],[-7,139],[17,145],[28,160],[28,180],[18,199],[-7,205],[-24,187],[-30,165]
+  ],0.38,C.green,0.62);
+  poly('v80-green-central',[
+    [35,154],[52,151],[68,160],[61,174],[49,184],[34,178],[28,166]
+  ],0.58,C.green,0.60);
+  poly('v80-green-east',[
+    [139,196],[151,201],[148,216],[132,223],[116,220],[126,209]
+  ],0.35,C.green,0.60);
+
+  // ---------------------------------------------------------
+  // 7. 山手御門：現地確認済みアンカーと模型上の門郭を接続。
+  // ---------------------------------------------------------
+  poly('v80-yamate-ground',[
+    [-28,-31],[28,-31],[28,-18],[20,-11],[10,-7],[-10,-7],[-20,-12],[-28,-18]
+  ],0.20,C.ground,0.68);
+  water('v80-yamate-moat',[
+    [-30,-31],[30,-31],[30,-24],[25,-20],[-25,-20],[-30,-24]
+  ],0.03,0.86);
+  path('v80-yamate-bridge',[[0,-29],[0,-18]],0.52,5.4,0.90);
+  wall('v80-yamate-west-wall',[[-27,-18],[-9,-10],[-9,-4]],0.20,2.5,1.1);
+  wall('v80-yamate-east-wall',[[9,-4],[9,-10],[27,-18]],0.20,2.5,1.1);
+
+  // ---------------------------------------------------------
+  // 8. 照合用のラベル。実際の建物を隠さず、骨格の名称だけを表示。
+  // ---------------------------------------------------------
+  const label=(id,text,pos,width=10)=>{
+    const el=document.createElement('a-text'); el.id=id;
+    el.setAttribute('value',text);el.setAttribute('position',pos);el.setAttribute('align','center');
+    el.setAttribute('color','#ffe08a');el.setAttribute('width',String(width));el.setAttribute('side','double');
+    root.appendChild(el); return el;
+  };
+  label('v80-label-core','V80 主要曲輪・堀・石垣骨格\n模型＋1705年頃城絵図 照合用\n※相対仮配置','50 13 235',13);
+  label('v80-label-yamate','山手御門\n現地確認済みアンカー','0 8 -12',8);
+
+  if(window.__diagPush) window.__diagPush('v80: 模型＋城絵図照合型の曲輪平面・高低差・連続堀・石垣・塀をテスト表示');
 })();
 </script>
 
