@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型完全再現 v78</title>
+  <title>甲府城AR PoC - 模型完全再現 v79</title>
 
   <script>
     // ============================================
@@ -569,9 +569,9 @@
 
   <div id="fidelity-modal">
     <div class="card">
-      <h2>v77の復元方針</h2>
+      <h2>v79の復元方針</h2>
       <p>
-        v77は、v76を技術的な土台として、甲府城復元模型と測量図を
+        v79は、v78を技術的な土台として、甲府城復元模型と測量図を
         「全体配置のマスター」として再設計した現地調査用ビルドです。
       </p>
       <table>
@@ -599,21 +599,21 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v78
+    build: v79
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v78]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v79]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v78(模型写真読み取り・石垣/堀/塀ハードスケープ強化)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v79(模型地形骨格・曲輪面・高低差・連続水堀強化)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR v78・模型写真ハードスケープ強化版</strong><br>
+    <strong>甲府城AR v79・模型地形骨格強化版</strong><br>
     公式復元資料・復元模型・現地確認を優先し、城郭全体を1つのローカル座標系で構成しています。<br>
-    v78では、公式復元模型を最上位基準とし、模型写真から読み取れる石垣・堀・塀をテスト用ハードスケープとして最大限反映しています。位置・寸法が未確定のものは模型照合用の仮配置です。
+    v79では、公式復元模型を最上位基準とし、模型写真から読み取れる曲輪面・高低差・連続水堀・通路を地形骨格として追加しています。位置・寸法・標高は模型照合用の仮配置です。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -1669,7 +1669,7 @@
     value:'V78 模型写真読み取り\n①石垣 ②堀 ③塀\n※模型照合用・仮配置',
     position:'40 8 240',align:'center',color:'#ffd166',width:'10',side:'double'
   });
-  if(window.__diagPush) window.__diagPush('v78: 模型写真から読み取れる石垣・堀・塀ハードスケープをテスト表示');
+  if(window.__diagPush) window.__diagPush('v79: 模型写真から読み取れる地形・曲輪・石垣・堀・塀の連続骨格をテスト表示');
 })();
 </script>
 
@@ -1680,6 +1680,151 @@
   const el = document.getElementById('v77-model-structure-preview');
   if (el) el.setAttribute('visible', terrain ? 'true' : 'false');
   if (terrain && window.__diagPush) window.__diagPush('MODEL STRUCTURE PREVIEW / v77: 曲輪・石垣・堀・山手口の連続構造を確認用表示');
+})();
+</script>
+
+
+<script>
+/* =====================================================
+   V79 MODEL TERRAIN SKELETON
+   目的：模型写真で確認できる「面」と「高低差」を追加し、
+   石垣・堀・塀を単独オブジェクトではなく連続した地形骨格として見せる。
+   ?modelterrain79=1 または ?testall=1 で表示。
+   座標は山手御門GPSアンカー基準の相対案。現地測量確定値ではない。
+   ===================================================== */
+(() => {
+  const q = new URLSearchParams(location.search);
+  const show = q.get('modelterrain79') === '1' || q.get('testall') === '1';
+  if (!show) return;
+
+  const scene = document.querySelector('a-scene');
+  if (!scene || !window.THREE) return;
+  const oldPreview = document.getElementById('v77-model-structure-preview');
+  if (oldPreview) oldPreview.setAttribute('visible','false');
+
+  const root = document.createElement('a-entity');
+  root.id = 'v79-model-terrain-skeleton';
+  root.setAttribute('visible','true');
+  scene.appendChild(root);
+
+  const mat = (color, opacity=1) => new THREE.MeshStandardMaterial({
+    color, transparent: opacity < 1, opacity, roughness: 1, metalness: 0,
+    side: THREE.DoubleSide
+  });
+
+  const polygon = (id, pts, y, color, opacity=1, holes=[]) => {
+    const shape = new THREE.Shape();
+    pts.forEach((p,i) => i ? shape.lineTo(p[0],-p[1]) : shape.moveTo(p[0],-p[1]));
+    shape.closePath();
+    holes.forEach(h => {
+      const path = new THREE.Path();
+      h.forEach((p,i) => i ? path.lineTo(p[0],-p[1]) : path.moveTo(p[0],-p[1]));
+      path.closePath();
+      shape.holes.push(path);
+    });
+    const geo = new THREE.ShapeGeometry(shape);
+    const mesh = new THREE.Mesh(geo, mat(color,opacity));
+    mesh.rotation.x = -Math.PI/2;
+    mesh.position.y = y;
+    mesh.renderOrder = y < 0.2 ? 0 : 1;
+    const el = document.createElement('a-entity');
+    el.id = id;
+    el.object3D.add(mesh);
+    root.appendChild(el);
+    return el;
+  };
+
+  const box = (id, x,y,z,w,h,d,color,opacity=1,rot=0) => {
+    const el = document.createElement('a-box');
+    el.id=id;
+    el.setAttribute('position',`${x} ${y} ${z}`);
+    el.setAttribute('width',w); el.setAttribute('height',h); el.setAttribute('depth',d);
+    el.setAttribute('rotation',`0 ${rot} 0`);
+    el.setAttribute('material',`color:${color}; opacity:${opacity}; transparent:${opacity<1}`);
+    root.appendChild(el);
+    return el;
+  };
+
+  // 1) 模型外周の水堀を「線」ではなく、連続したリング面として再現。
+  const outer = [
+    [-31,120],[34,111],[106,115],[153,133],[166,170],[159,212],
+    [134,233],[72,240],[16,234],[-29,213],[-47,178],[-44,143]
+  ];
+  const inner = [
+    [-24,129],[35,120],[98,124],[143,141],[153,173],[148,204],
+    [125,220],[72,228],[23,222],[-19,202],[-34,174],[-32,148]
+  ];
+  polygon('v79-outer-moat-surface',outer,0.035,'#243f55',0.68,[inner]);
+
+  // 2) 堀の内側：模型の芝地・土の面を大きく確保し、石垣との境界を明確化。
+  polygon('v79-main-castle-base',inner,0.12,'#6f654f',0.50);
+
+  // 3) 曲輪を「箱」ではなく、不整形の面として段階的に積む。
+  //    y は模型から読み取った相対的な段差の可視化用で、絶対標高ではない。
+  polygon('v79-ninomaru-terrace',[
+    [4,142],[28,131],[52,136],[63,145],[59,158],[49,169],[34,166],
+    [28,188],[18,200],[6,183],[-1,160]
+  ],0.75,'#817253',0.72);
+
+  polygon('v79-honmaru-terrace',[
+    [65,145],[91,136],[119,143],[130,157],[126,169],[113,177],
+    [101,171],[91,187],[72,181],[61,166]
+  ],3.0,'#8a7654',0.78);
+
+  polygon('v79-tenshudai-terrace',[
+    [91,136],[119,143],[130,157],[126,169],[113,177],[104,163],[91,155]
+  ],5.9,'#907a55',0.84);
+
+  polygon('v79-sukiya-terrace',[
+    [113,177],[126,169],[144,181],[139,197],[121,207],[101,205],
+    [92,193],[101,181]
+  ],2.35,'#7f6f50',0.74);
+
+  polygon('v79-kaji-terrace',[
+    [101,205],[87,216],[58,220],[31,214],[18,201],[28,188],[43,184],
+    [61,192],[72,181],[84,193]
+  ],1.65,'#7a6a4d',0.74);
+
+  polygon('v79-inari-terrace',[
+    [65,145],[59,151],[50,151],[31,151],[28,141],[35,132],[54,126],
+    [91,126],[103,132],[103,145],[91,136]
+  ],1.85,'#7f704f',0.72);
+
+  polygon('v79-inner-low-terrace',[
+    [43,184],[57,173],[68,160],[80,149],[91,155],[104,163],[113,177],
+    [101,181],[92,193],[84,193],[72,181],[61,192],[50,172],[34,166]
+  ],1.15,'#887553',0.58);
+
+  // 4) 曲輪間の接続を、薄い坂道として可視化。
+  box('v79-ramp-ninomaru-honmaru',48,1.55,169,24,0.18,3.4,'#b39a70',0.88,-28);
+  box('v79-ramp-honmaru-sukiya',120,2.7,180,18,0.18,3.2,'#b39a70',0.88,58);
+  box('v79-ramp-kaji-inner',66,1.0,193,22,0.16,3.0,'#b39a70',0.88,35);
+
+  // 5) 山手口から城内へ入る「堀→土橋→枡形」の連続を地形面として追加。
+  polygon('v79-yamate-outer-ground',[
+    [-30,-31],[30,-31],[30,-18],[17,-12],[7,-8],[-7,-8],[-17,-12],[-30,-18]
+  ],0.18,'#7c6b4e',0.60);
+  box('v79-yamate-tsuchibashi',0.0,0.42,-16,5.4,0.55,15,'#9b805a',0.92,0);
+
+  // 6) 模型の緑地帯を完全な地形面ではなく、帯状の芝面として補助表示。
+  polygon('v79-west-green-belt',[
+    [-20,145],[5,140],[18,151],[17,166],[28,188],[18,200],[-8,204],[-28,181],[-30,160]
+  ],0.28,'#536b4a',0.70);
+  polygon('v79-central-green-belt',[
+    [50,172],[61,166],[72,181],[61,192],[43,184],[28,188],[34,166]
+  ],0.48,'#536b4a',0.64);
+
+  const label = document.createElement('a-text');
+  label.id='v79-terrain-label';
+  label.setAttribute('value','V79 模型地形骨格\n曲輪面＋高低差＋連続水堀＋通路\n※模型写真読取りによる仮配置');
+  label.setAttribute('position','40 11 246');
+  label.setAttribute('align','center');
+  label.setAttribute('color','#ffe08a');
+  label.setAttribute('width','12');
+  label.setAttribute('side','double');
+  root.appendChild(label);
+
+  if (window.__diagPush) window.__diagPush('v79: 模型地形骨格（曲輪面・高低差・連続水堀・通路）をテスト表示');
 })();
 </script>
 
