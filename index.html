@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>甲府城AR PoC - 模型完全再現 v80</title>
+  <title>甲府城AR PoC - 模型完全再現 v81</title>
 
   <script>
     // ============================================
@@ -599,21 +599,21 @@
   </div>
 
   <div id="version-label" style="display:none; position:fixed; top:2px; left:6px; z-index:1003; color:#fff; font-size:10px; font-family:monospace; text-shadow:0 0 3px #000;">
-    build: v80
+    build: v81
   </div>
 
   <div id="test-mode-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:1002; background:#ffb300; color:#000; text-align:center; font-weight:bold; font-size:13px; padding:6px;">
-    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v80]
+    🧪 テストモード中(位置情報は偽装座標を使用しています) [build: v81]
   </div>
 
   <script>
-    if (window.__diagPush) window.__diagPush('コードのバージョン: v80(模型・城絵図照合型の曲輪平面骨格・高低差・連続堀・石垣強化)');
+    if (window.__diagPush) window.__diagPush('コードのバージョン: v81(模型全資料統合型・曲輪/石垣/堀/塀/地形/植生/通路・模型骨格高密度化)');
   </script>
 
   <div id="info-panel">
-    <strong>甲府城AR v80・模型＋城絵図照合型地形骨格版</strong><br>
+    <strong>甲府城AR v81・模型全資料統合型 空間骨格高密度版</strong><br>
     公式復元資料・復元模型・現地確認を優先し、城郭全体を1つのローカル座標系で構成しています。<br>
-    v80では、公式復元模型を最上位基準とし、1705年頃の城絵図と城下町絵図を平面位置関係の補助資料として照合。主要曲輪の平面形・高低差・堀・石垣・塀・通路を連続した骨格として追加しています。位置・寸法・標高は模型照合用の仮配置です。
+    v81では、これまでの模型写真群・1705年頃の城絵図・甲府城下町絵図・既存の公式資料由来寸法・現地確認済み山手御門アンカーを統合し、模型の空間骨格を高密度化しています。模型未確認部分は捏造せず、模型写真から読み取れる形状を最上位基準にした照合用仮配置です。
   </div>
 
   <button id="start-button">ARを開始する(位置情報・カメラを許可)</button>
@@ -2112,6 +2112,387 @@
   label('v80-label-yamate','山手御門\n現地確認済みアンカー','0 8 -12',8);
 
   if(window.__diagPush) window.__diagPush('v80: 模型＋城絵図照合型の曲輪平面・高低差・連続堀・石垣・塀をテスト表示');
+})();
+</script>
+
+
+<!-- =========================================================
+     V81 MODEL WORLD / FULL MATERIAL INTEGRATION
+     目的：
+       ・これまで提供された模型写真群を最上位基準として空間骨格を高密度化
+       ・1705年頃城絵図／甲府城下町絵図を平面形の補助基準として照合
+       ・曲輪を「面」、石垣を「帯＋高さ」、堀を「水面＋護岸」、
+         塀を「連続柵」、通路を「面＋階段」、植生を「樹木群」として再構成
+       ・既存建物モデルの周囲を埋め、模型に近い「空間」を作る
+       ・現地確認済みの山手御門アンカーを維持
+     表示： ?modelworld81=1 または ?testall=1
+     備考：位置・寸法・高さは現地測量前の模型照合用相対仮配置。
+           不明部分は意図的に「作らない」か、低視認の補助表現に留める。
+     ========================================================= -->
+<script>
+(() => {
+  const q = new URLSearchParams(location.search);
+  const show = q.get('modelworld81') === '1' || q.get('testall') === '1';
+  if (!show) return;
+  const scene = document.querySelector('a-scene');
+  if (!scene || !window.THREE) return;
+
+  // v80以下の構造プレビューを停止し、v81を唯一の骨格表示にする。
+  [
+    'v78-model-hardscape',
+    'v79-model-terrain-skeleton',
+    'v77-model-structure-preview',
+    'v80-model-map-plan-skeleton'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('visible','false');
+  });
+
+  const root = document.createElement('a-entity');
+  root.id = 'v81-model-world-integrated';
+  scene.appendChild(root);
+
+  const C = {
+    water: '#173f55',
+    water2:'#275a72',
+    soil:'#7e6a4e',
+    soil2:'#927957',
+    stone:'#72706b',
+    stoneDark:'#514f4c',
+    cap:'#d8d4c9',
+    green:'#6f8a63',
+    green2:'#58734f',
+    path:'#9a7a56',
+    wood:'#5c4733',
+    context:'#a38b68',
+    label:'#ffe7a1'
+  };
+
+  const mat=(color,opacity=1)=>new THREE.MeshLambertMaterial({
+    color,
+    transparent:opacity<1,
+    opacity,
+    depthWrite:opacity>=0.95
+  });
+
+  const poly=(id,pts,y,color,opacity=1)=>{
+    const shape=new THREE.Shape();
+    pts.forEach((p,i)=>i?shape.lineTo(p[0],-p[1]):shape.moveTo(p[0],-p[1]));
+    shape.closePath();
+    const geo=new THREE.ShapeGeometry(shape);
+    const mesh=new THREE.Mesh(geo,mat(color,opacity));
+    mesh.rotation.x=-Math.PI/2;
+    mesh.position.y=y;
+    mesh.renderOrder=y<0.2?0:2;
+    const el=document.createElement('a-entity');
+    el.id=id;
+    el.object3D.add(mesh);
+    root.appendChild(el);
+    return el;
+  };
+
+  const ribbon=(id,pts,y,width,color,opacity=1)=>{
+    const left=[],right=[];
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i], prev=pts[Math.max(0,i-1)], next=pts[Math.min(pts.length-1,i+1)];
+      const dx=next[0]-prev[0], dz=next[1]-prev[1];
+      const len=Math.hypot(dx,dz)||1, nx=-dz/len, nz=dx/len;
+      left.push([p[0]+nx*width/2,p[1]+nz*width/2]);
+      right.push([p[0]-nx*width/2,p[1]-nz*width/2]);
+    }
+    return poly(id,left.concat(right.reverse()),y,color,opacity);
+  };
+
+  const box=(id,x,y,z,w,h,d,color,opacity=1,rot=0,materialOverride=null)=>{
+    const el=document.createElement('a-entity');
+    el.id=id;
+    const m=document.createElement('a-box');
+    m.setAttribute('position',`${x} ${y} ${z}`);
+    m.setAttribute('width',w); m.setAttribute('height',h); m.setAttribute('depth',d);
+    if(rot) m.setAttribute('rotation',`0 ${rot} 0`);
+    if(materialOverride) m.setAttribute('material',materialOverride);
+    else { m.setAttribute('color',color); m.setAttribute('opacity',opacity); }
+    el.appendChild(m); root.appendChild(el); return el;
+  };
+
+  const plate=(id,pts,topY,thickness,color,opacity=1,sideColor=color)=>{
+    poly(id+'-top',pts,topY,color,opacity);
+    const g=document.createElement('a-entity'); g.id=id+'-sides'; root.appendChild(g);
+    for(let i=0;i<pts.length;i++){
+      const a=pts[i], b=pts[(i+1)%pts.length], dx=b[0]-a[0], dz=b[1]-a[1];
+      const len=Math.hypot(dx,dz)||1, mx=(a[0]+b[0])/2, mz=(a[1]+b[1])/2;
+      const yaw=Math.atan2(dx,dz);
+      const m=document.createElement('a-box');
+      m.setAttribute('position',`${mx} ${topY-thickness/2} ${mz}`);
+      m.setAttribute('width',len+0.03); m.setAttribute('height',thickness); m.setAttribute('depth',0.20);
+      m.setAttribute('rotation',`0 ${yaw*180/Math.PI} 0`);
+      m.setAttribute('color',sideColor); m.setAttribute('opacity',String(Math.max(opacity,0.80)));
+      g.appendChild(m);
+    }
+    return g;
+  };
+
+  // 石垣：主壁＋天端＋要所の控え（写真で見える「巨大な一枚の石垣帯」を優先）。
+  const wall=(id,pts,baseY,height,width=1.25,opacity=0.98)=>{
+    const g=document.createElement('a-entity'); g.id=id; root.appendChild(g);
+    ribbon(id+'-cap',pts,baseY+height+0.05,width+0.08,C.cap,0.96);
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1];
+      const len=Math.hypot(dx,dz)||1, mx=(a[0]+b[0])/2, mz=(a[1]+b[1])/2;
+      const yaw=Math.atan2(dx,dz)*180/Math.PI;
+      const m=document.createElement('a-box');
+      m.setAttribute('position',`${mx} ${baseY+height/2} ${mz}`);
+      m.setAttribute('width',len); m.setAttribute('height',height); m.setAttribute('depth',width);
+      m.setAttribute('rotation',`0 ${yaw} 0`);
+      m.setAttribute('material','src:#tex-stone-wall; repeat:4 3');
+      m.setAttribute('opacity',String(opacity));
+      g.appendChild(m);
+      // 要所の石垣の厚みを見せる控え。
+      if (i>0 && i<pts.length-1) {
+        const p=pts[i];
+        const b=document.createElement('a-box');
+        b.setAttribute('position',`${p[0]} ${baseY+height*0.32} ${p[1]}`);
+        b.setAttribute('width',Math.min(2.0,width*1.45));
+        b.setAttribute('height',Math.min(height*0.72,2.8));
+        b.setAttribute('depth',Math.min(2.0,width*1.45));
+        b.setAttribute('material','src:#tex-stone-wall; repeat:1 2');
+        b.setAttribute('opacity',String(Math.min(opacity,0.96)));
+        g.appendChild(b);
+      }
+    }
+    return g;
+  };
+
+  const water=(id,pts,y=0.03,opacity=0.86)=>poly(id,pts,y,C.water,opacity);
+  const path=(id,pts,y,width=2.5,opacity=0.90)=>ribbon(id,pts,y,width,C.path,opacity);
+
+  const fence=(id,pts,baseY=1.0,height=1.2,width=0.13,opacity=0.94)=>{
+    const g=document.createElement('a-entity'); g.id=id; root.appendChild(g);
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz)||1;
+      const yaw=Math.atan2(dx,dz)*180/Math.PI;
+      const m=document.createElement('a-box');
+      m.setAttribute('position',`${(a[0]+b[0])/2} ${baseY+height/2} ${(a[1]+b[1])/2}`);
+      m.setAttribute('width',len);m.setAttribute('height',height);m.setAttribute('depth',width);
+      m.setAttribute('rotation',`0 ${yaw} 0`);m.setAttribute('color',C.wood);m.setAttribute('opacity',opacity);g.appendChild(m);
+      const count=Math.max(1,Math.floor(len/2.5));
+      for(let j=0;j<=count;j++){
+        const t=j/count;
+        const x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;
+        const post=document.createElement('a-box');
+        post.setAttribute('position',`${x} ${baseY+height*0.55} ${z}`);
+        post.setAttribute('width',0.09);post.setAttribute('height',height*1.08);post.setAttribute('depth',0.09);
+        post.setAttribute('color',C.wood);post.setAttribute('opacity',opacity);g.appendChild(post);
+      }
+    }
+    return g;
+  };
+
+  const stair=(id,x,z,y,w,steps,run,rot=0)=>{
+    const g=document.createElement('a-entity');g.id=id;root.appendChild(g);
+    for(let i=0;i<steps;i++){
+      const b=document.createElement('a-box');
+      b.setAttribute('position',`${x+Math.sin(rot*Math.PI/180)*i*run} ${y+(i+1)*0.16/2} ${z+Math.cos(rot*Math.PI/180)*i*run}`);
+      b.setAttribute('width',w);b.setAttribute('height',(i+1)*0.16);b.setAttribute('depth',run);
+      b.setAttribute('rotation',`0 ${rot} 0`);b.setAttribute('color',C.path);b.setAttribute('opacity','0.92');g.appendChild(b);
+    }
+    return g;
+  };
+
+  const tree=(id,x,y,z,s=1)=>{
+    const g=document.createElement('a-entity');g.id=id;g.setAttribute('position',`${x} ${y} ${z}`);root.appendChild(g);
+    const t=document.createElement('a-cylinder');t.setAttribute('radius',0.08*s);t.setAttribute('height',0.85*s);t.setAttribute('color','#5a4635');t.setAttribute('position',`0 ${0.43*s} 0`);g.appendChild(t);
+    const c=document.createElement('a-cone');c.setAttribute('radius-bottom',0.48*s);c.setAttribute('radius-top',0.08*s);c.setAttribute('height',1.15*s);c.setAttribute('color','#51704a');c.setAttribute('position',`0 ${1.15*s} 0`);g.appendChild(c);
+    return g;
+  };
+
+  const label=(id,text,x,y,z,width=8)=>{
+    const el=document.createElement('a-text');el.id=id;el.setAttribute('value',text);el.setAttribute('position',`${x} ${y} ${z}`);el.setAttribute('align','center');el.setAttribute('color',C.label);el.setAttribute('width',String(width));el.setAttribute('side','double');root.appendChild(el);return el;
+  };
+
+  // =========================================================
+  // A. 外郭・堀：模型写真で特に明瞭な「水面＋護岸」を分割再現
+  // =========================================================
+  water('v81-moat-north',[
+    [-16,111],[28,105],[74,106],[115,111],[120,118],[78,116],[29,114],[-12,120]
+  ],0.035,0.80);
+  water('v81-moat-east',[
+    [112,116],[139,126],[153,142],[158,161],[157,183],[151,203],[141,217],[132,211],[143,193],[148,173],[147,150],[134,134]
+  ],0.04,0.90);
+  water('v81-moat-south',[
+    [-12,210],[12,216],[37,226],[63,231],[90,231],[116,224],[135,212],[129,202],[109,211],[87,218],[60,220],[34,215],[10,205]
+  ],0.04,0.90);
+  water('v81-moat-west',[
+    [-12,121],[-24,136],[-30,158],[-29,179],[-21,198],[-12,208],[10,205],[-1,193],[-12,178],[-15,158],[-10,139]
+  ],0.04,0.82);
+
+  // 堀の内側護岸。直線だけでなく、曲がり角をはっきりさせる。
+  wall('v81-bank-north',[[-11,121],[31,115],[77,117],[115,121]],0.16,2.8,1.10,0.95);
+  wall('v81-bank-east',[[139,130],[149,149],[151,172],[146,194],[134,211]],0.16,3.2,1.15,0.96);
+  wall('v81-bank-south',[[134,211],[114,222],[88,229],[60,230],[34,224],[9,215]],0.16,2.8,1.15,0.96);
+  wall('v81-bank-west',[[-10,203],[-22,186],[-29,165],[-27,145],[-19,129]],0.16,2.3,1.05,0.92);
+
+  // =========================================================
+  // B. 曲輪：模型の段差を「面＋厚み」にする
+  // =========================================================
+  const pNino=[[-2,139],[14,128],[41,123],[59,130],[69,144],[65,160],[55,172],[45,184],[31,192],[16,199],[4,190],[-2,169],[-6,151]];
+  const pInari=[[22,128],[49,118],[81,118],[102,125],[106,139],[100,150],[79,153],[63,147],[48,151],[28,146],[19,137]];
+  const pHon=[[61,145],[83,134],[112,137],[130,149],[134,163],[127,176],[113,182],[102,175],[92,189],[74,184],[61,168]];
+  const pTenshu=[[88,136],[111,138],[126,149],[130,162],[123,171],[111,176],[100,166],[91,157]];
+  const pSukiya=[[124,169],[141,178],[148,190],[143,202],[126,212],[108,207],[96,195],[102,181],[114,177]];
+  const pKaji=[[102,204],[87,216],[62,223],[36,218],[17,204],[25,191],[42,184],[61,191],[72,181],[86,193]];
+  const pGaku=[[-10,178],[-1,168],[12,168],[22,179],[20,194],[8,208],[-8,204],[-16,192]];
+
+  plate('v81-plate-ninomaru',pNino,1.12,0.92,C.soil,0.92,C.soil2);
+  plate('v81-plate-inari',pInari,1.92,1.05,C.soil2,0.92,C.soil);
+  plate('v81-plate-honmaru',pHon,3.18,1.45,C.soil,0.94,C.soil2);
+  plate('v81-plate-tenshu',pTenshu,5.90,2.10,C.soil2,0.96,C.soil);
+  plate('v81-plate-sukiya',pSukiya,2.52,1.15,C.soil,0.93,C.soil2);
+  plate('v81-plate-kaji',pKaji,1.66,0.92,C.soil2,0.92,C.soil);
+  plate('v81-plate-gakuya',pGaku,0.82,0.60,C.soil,0.82,C.soil2);
+
+  // 低い曲輪・帯状空間（模型写真で広く見える緑地・空地）。
+  plate('v81-plate-hitojichi',[[14,124],[38,116],[59,116],[72,123],[67,133],[51,139],[31,137],[16,132]],0.78,0.35,C.green,0.72,C.green2);
+  plate('v81-plate-obi',[[127,132],[143,137],[151,149],[151,164],[145,169],[133,160],[129,148]],0.98,0.30,C.green,0.72,C.green2);
+
+  // =========================================================
+  // C. 石垣：v80より細分化し、段差と入隅を追加
+  // =========================================================
+  wall('v81-wall-nino-west',[[-2,139],[14,128],[41,123],[59,130],[69,144]],0.24,2.75,1.35);
+  wall('v81-wall-nino-east',[[69,144],[65,160],[55,172],[45,184],[31,192]],0.26,3.10,1.35);
+  wall('v81-wall-nino-south',[[31,192],[16,199],[4,190]],0.22,2.45,1.20);
+
+  wall('v81-wall-inari-north',[[22,128],[49,118],[81,118],[102,125]],0.60,3.75,1.25);
+  wall('v81-wall-inari-east',[[102,125],[106,139],[100,150]],0.64,3.70,1.25);
+  wall('v81-wall-inari-south',[[100,150],[79,153],[63,147],[48,151],[28,146]],0.55,3.25,1.15);
+  wall('v81-wall-inari-west',[[28,146],[19,137],[22,128]],0.56,2.90,1.10);
+
+  wall('v81-wall-hon-north',[[61,145],[83,134],[112,137],[130,149]],0.95,5.05,1.45);
+  wall('v81-wall-hon-east',[[130,149],[134,163],[127,176]],0.95,5.15,1.48);
+  wall('v81-wall-hon-south',[[127,176],[113,182],[102,175],[92,189],[74,184],[61,168]],0.82,4.45,1.38);
+
+  wall('v81-wall-tenshu',[ [88,136],[111,138],[126,149],[130,162],[123,171],[111,176] ],1.30,5.90,1.52);
+  wall('v81-wall-tenshu-south',[[111,176],[100,166],[91,157]],1.20,4.60,1.30);
+
+  wall('v81-wall-sukiya-north',[[124,169],[141,178],[148,190]],0.70,4.20,1.25);
+  wall('v81-wall-sukiya-east',[[148,190],[143,202],[126,212]],0.70,3.95,1.25);
+  wall('v81-wall-sukiya-south',[[126,212],[108,207],[96,195]],0.68,3.55,1.15);
+
+  wall('v81-wall-kaji-north',[[102,204],[87,216],[62,223]],0.42,3.35,1.25);
+  wall('v81-wall-kaji-south',[[62,223],[36,218],[17,204]],0.40,3.05,1.20);
+  wall('v81-wall-kaji-west',[[17,204],[25,191],[42,184]],0.38,2.75,1.10);
+
+  wall('v81-wall-gaku',[[-10,178],[-1,168],[12,168],[22,179],[20,194],[8,208]],0.22,2.55,1.10);
+  wall('v81-wall-gaku-south',[[8,208],[-8,204],[-16,192]],0.22,2.35,1.05);
+
+  // 内部の短い石垣・段差。模型写真で目立つ「一段低い壁」を再現。
+  wall('v81-inner-wall-a',[[31,151],[48,151],[63,147]],0.50,1.90,0.85,0.88);
+  wall('v81-inner-wall-b',[[48,184],[58,173],[72,181]],0.78,2.10,0.82,0.88);
+  wall('v81-inner-wall-c',[[58,173],[68,160],[91,157]],0.86,2.00,0.82,0.88);
+  wall('v81-inner-wall-d',[[72,181],[84,193],[96,195]],0.60,2.15,0.80,0.88);
+  wall('v81-inner-wall-e',[[91,157],[103,164],[111,176]],1.25,2.20,0.80,0.88);
+  wall('v81-inner-wall-f',[[28,188],[42,184],[50,172]],0.50,1.65,0.78,0.86);
+
+  // =========================================================
+  // D. 塀・柵・土塀。写真で「石垣の上に細い線」が見える箇所を密度追加
+  // =========================================================
+  fence('v81-fence-north-1',[[-12,132],[16,132]],0.42,1.20);
+  fence('v81-fence-north-2',[[18,129],[48,129],[69,130]],0.48,1.25);
+  fence('v81-fence-north-3',[[82,127],[103,128],[126,129]],0.58,1.18);
+  fence('v81-fence-east-1',[[132,133],[145,142],[148,154]],0.55,1.20);
+  fence('v81-fence-east-2',[[150,159],[151,176],[147,190]],0.58,1.12);
+  fence('v81-fence-south-1',[[137,207],[124,214],[109,219]],0.55,1.15);
+  fence('v81-fence-south-2',[[95,223],[72,226],[50,224]],0.52,1.08);
+  fence('v81-fence-south-3',[[38,220],[21,212]],0.48,1.10);
+  fence('v81-fence-west-1',[[-5,204],[-18,195]],0.42,1.08);
+  fence('v81-fence-west-2',[[-23,185],[-27,167],[-25,150]],0.42,1.08);
+  fence('v81-fence-central-1',[[30,151],[49,151],[62,146]],0.82,1.10);
+  fence('v81-fence-central-2',[[36,199],[51,198],[67,205]],0.85,1.10);
+  fence('v81-fence-central-3',[[105,187],[120,187],[136,188],[143,194]],2.55,1.15);
+
+  // =========================================================
+  // E. 通路・土橋・階段。写真の「茶色い帯」を空間接続として復元
+  // =========================================================
+  path('v81-path-yamate',[[0,-28],[0,-18],[0,-7],[0,6],[8,18]],0.54,4.8,0.95);
+  path('v81-path-north',[[0,6],[1,30],[4,57],[8,86],[16,112],[21,126]],0.48,4.3,0.88);
+  path('v81-path-ninomaru-core',[[21,193],[31,182],[43,169],[56,157],[68,148]],1.18,3.2,0.88);
+  path('v81-path-inari-core',[[69,149],[80,143],[91,140],[103,139]],1.96,2.6,0.86);
+  path('v81-path-hon-tenshu',[[84,166],[94,159],[105,154],[114,156]],4.25,2.6,0.84);
+  path('v81-path-hon-sukiya',[[113,178],[125,182],[136,189]],2.70,2.9,0.84);
+  path('v81-path-sukiya-kaji',[[109,204],[96,205],[83,209],[68,214]],1.86,3.1,0.84);
+  path('v81-path-gakuya',[[2,202],[6,210],[10,219]],0.78,3.0,0.84);
+
+  // 段差の視認性を上げる階段。模型写真上「段差が明瞭」な接続部を優先。
+  stair('v81-stair-nino-core',42,174,1.16,3.0,6,0.55,38);
+  stair('v81-stair-hon-tenshu',91,160,3.20,2.6,6,0.42,45);
+  stair('v81-stair-hon-sukiya',116,181,2.45,2.5,5,0.44,55);
+  stair('v81-stair-kaji',77,207,1.45,2.6,5,0.48,78);
+  stair('v81-stair-inari',59,149,1.86,2.4,4,0.45,20);
+
+  // =========================================================
+  // F. 緑地＋樹木群。模型の「白い建物だけでない」質感を追加
+  // =========================================================
+  poly('v81-green-west',[[ -24,143],[-7,136],[16,143],[29,158],[28,179],[19,198],[-5,205],[-23,187],[-29,166]],0.48,C.green,0.74);
+  poly('v81-green-central',[[33,153],[48,150],[65,158],[61,173],[49,184],[34,178],[28,166]],1.05,C.green2,0.72);
+  poly('v81-green-east',[[137,198],[151,202],[148,216],[132,223],[116,219],[125,209]],0.46,C.green,0.68);
+  poly('v81-green-north',[[66,118],[83,117],[103,124],[104,137],[84,133],[70,127]],0.76,C.green,0.64);
+
+  const trees=[
+    [-14,0.5,151,1.0],[-10,0.5,162,0.9],[-8,0.5,174,1.1],[0,0.5,184,0.9],[8,0.5,176,1.0],
+    [15,0.5,158,0.8],[20,0.5,171,0.9],[29,0.5,162,0.85],[36,1.05,156,1.0],[42,1.05,161,0.9],
+    [49,1.05,170,0.95],[56,1.05,178,1.1],[35,1.05,179,0.85],[44,1.05,186,0.9],
+    [68,1.96,129,0.85],[76,1.96,126,0.75],[89,1.96,128,0.9],[96,1.96,135,0.8],
+    [134,0.46,210,0.85],[141,0.46,206,0.75],[129,0.46,216,0.90]
+  ];
+  trees.forEach((t,i)=>tree('v81-tree-'+i,t[0],t[1],t[2],t[3]));
+
+  // =========================================================
+  // G. 山手御門：模型上の門郭＋現地確認済みアンカーを統合
+  // =========================================================
+  plate('v81-yamate-outer-yard',[[ -31,-33],[31,-33],[31,-20],[25,-13],[12,-7],[-12,-7],[-24,-13],[-31,-20]],0.25,0.35,C.soil,0.82,C.soil2);
+  water('v81-yamate-water',[[-31,-33],[31,-33],[31,-25],[25,-20],[-25,-20],[-31,-25]],0.04,0.92);
+  path('v81-yamate-bridge',[[0,-30],[0,-18]],0.60,5.5,0.96);
+  wall('v81-yamate-west',[[-27,-18],[-9,-10],[-9,-4]],0.25,2.65,1.20);
+  wall('v81-yamate-east',[[9,-4],[9,-10],[27,-18]],0.25,2.65,1.20);
+  wall('v81-yamate-inner',[[-9,-4],[9,-4]],0.28,2.30,1.05);
+  fence('v81-yamate-fence-w',[[-18,-15],[-6,-15],[-6,-9]],0.55,1.05);
+  fence('v81-yamate-fence-e',[[6,-9],[6,-10],[20,-11]],0.55,1.05);
+
+  // =========================================================
+  // H. 模型写真で見える「周辺コンテキスト」の低密度再現
+  //     城郭本体と混同しないよう高さを抑えた地面＋建物塊にする。
+  // =========================================================
+  // 北側・駅側の広い平坦地（写真4592,4589等から確認できる）。
+  poly('v81-context-north-yard',[[-34,76],[24,71],[63,76],[70,96],[38,111],[-15,112]],0.18,'#9b805a',0.58);
+  poly('v81-context-east-yard',[[105,74],[153,81],[163,106],[154,118],[113,114]],0.18,'#a58c68',0.58);
+  poly('v81-context-west-yard',[[-58,110],[-26,108],[-14,126],[-31,141],[-58,137]],0.18,'#a58c68',0.55);
+  // 低層の建物フットプリント：写真で明確に見える「長い棟」を抽象化。
+  const ctx=(id,x,z,w,d,h=0.9,rot=0)=>box(id,x,0.25,z,w,h,d,C.context,0.70,rot);
+  ctx('v81-context-building-n1',-8,90,18,6,0.9,0);
+  ctx('v81-context-building-n2',20,88,16,5,0.85,0);
+  ctx('v81-context-building-n3',47,89,20,6,0.90,0);
+  ctx('v81-context-building-n4',132,92,16,5,0.90,0);
+  ctx('v81-context-building-n5',147,107,8,20,0.95,90);
+  ctx('v81-context-building-w1',-40,119,12,22,1.0,0);
+  ctx('v81-context-building-w2',-46,141,9,14,0.95,0);
+
+  // =========================================================
+  // I. 地図・模型照合用の基準線／スケール
+  // =========================================================
+  box('v81-scale-50m',-10,0.70,64,50,0.08,0.12,C.cap,0.90,0);
+  box('v81-scale-50m-a',-35,0.75,64,0.12,0.18,0.30,C.cap,0.90,0);
+  box('v81-scale-50m-b',15,0.75,64,0.12,0.18,0.30,C.cap,0.90,0);
+  label('v81-scale-label','50m',-10,1.15,64,4.2);
+  label('v81-label-yamate','山手御門\n現地確認済みアンカー',0,8,-10,8);
+  label('v81-label-hon','本丸',96,11,158,5.5);
+  label('v81-label-tenshu','天守台',112,14,150,5.5);
+  label('v81-label-inari','稲荷曲輪',60,10,132,5.5);
+  label('v81-label-nino','二の丸',31,8,165,5.0);
+  label('v81-label-sukiya','数寄屋曲輪',132,10,192,5.5);
+  label('v81-label-kaji','鍛冶曲輪',61,8,210,5.5);
+  label('v81-label-note','V81：模型写真＋城絵図＋城下町図を統合した高密度骨格\n※現地測量前／不確実部分は意図的に仮配置',52,16,238,12);
+
+  if(window.__diagPush) window.__diagPush('v81: 現有資料を統合し、曲輪・石垣・堀・塀・通路・高低差・植生・周辺コンテキストを高密度化');
 })();
 </script>
 
