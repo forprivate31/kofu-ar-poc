@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><title>甲府城AR｜端末設定の読み取り</title>
+<style>
+:root{--ink:#183934;--muted:#56706a;--paper:#fff;--bg:#eef3ee;--accent:#176f5c;--gold:#b58132;--line:#d3dfd6}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#153a32;color:#fff;padding:34px max(20px,calc((100vw - 900px)/2));border-bottom:4px solid #be9a59}
+header small{letter-spacing:.18em;color:#d1ddc5}h1{font-size:28px;line-height:1.5;margin:8px 0}header p{margin:0;color:#d1e1d7}
+main{max-width:940px;margin:auto;padding:24px 20px 50px}.card{background:var(--paper);padding:22px;border:1px solid var(--line);border-radius:12px;margin-bottom:18px}
+h2{font-size:20px;margin:0 0 12px}h3{font-size:17px}.banner{border-left:4px solid var(--gold);padding:12px 16px;background:#fff8e9;margin:16px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.stat{border:1px solid var(--line);border-radius:8px;padding:17px;background:#fafcf9}.stat small{color:var(--muted);display:block}
+.value{font-size:23px;overflow-wrap:anywhere}.good{color:var(--accent)}.warn{color:#946419}.small{color:var(--muted);font-size:13px}
+button,a.btn{font:inherit;padding:10px 17px;border:1px solid #abc1b2;border-radius:7px;background:#fff;color:var(--ink);cursor:pointer;text-decoration:none}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}button:disabled{opacity:.4;cursor:not-allowed}.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+label{display:block;margin:14px 0}input{width:18px;height:18px;vertical-align:middle;margin-right:7px}
+summary{cursor:pointer;font-weight:600}textarea{width:100%;min-height:260px;resize:vertical;font:12px/1.5 ui-monospace,monospace;border:1px solid var(--line);padding:12px;border-radius:6px}
+code{overflow-wrap:anywhere}.path{padding:12px;background:#edf4ee;border-radius:6px;overflow-wrap:anywhere;font-size:14px}
+[hidden]{display:none!important}#runtime-overlay{position:fixed;inset:0;background:black;z-index:100}#frame-host,#legacy-frame{position:absolute;inset:0;width:100%;height:100%;border:0}
+.runtime-bar{position:absolute;bottom:10px;left:10px;right:10px;padding:12px;border-radius:9px;background:#11382fed;color:white;z-index:102}
+.runtime-bar button{padding:8px 12px}.runtime-bar p{font-size:12px;margin:7px 0}footer{font-size:12px;color:var(--muted);padding:10px 3px}
+@media(max-width:600px){header{padding:24px 17px}h1{font-size:24px}main{padding:18px 13px 40px}.card{padding:18px}.grid{grid-template-columns:1fr}.value{font-size:21px}.buttons button{flex:1}.stat{padding:12px}}
+</style></head><body>
+<header><small>KOFU CASTLE / STAGE 03</small><h1>旧ARの表示条件を引き継ぐ</h1><p>旧設定は読み取りだけ。元のARページも、保存されている補正値も書き換えません。</p></header>
+<main>
+<section class="card"><h2>1．当時と同じブラウザーで開く</h2>
+<p>山手渡櫓門が比較的合っていたスマートフォンとブラウザーで、このページを開いてください。現地へ行く必要はありません。</p>
+<div class="stat"><small>実行場所</small><div id="context" class="value">確認中</div><code id="place"></code></div>
+<div class="banner" id="explanation"></div>
+<p class="small">正しい配置先：<code>kofu-ar-poc/kofu-check.html</code>。既存の <code>index.html</code> は置き換えません。</p>
+<label><input type="checkbox" id="same-browser">当時と同じ端末・同じブラウザーで開いています</label>
+</section>
+<section class="card"><h2>2．現在の方位補正を確認する</h2>
+<div class="grid"><div class="stat"><small>旧キーに保存されている内容</small><div class="value" id="raw">未取得</div><code>kofuV72Heading</code></div>
+<div class="stat"><small>旧コードが現在使う方位補正</small><div class="value" id="resolved">未取得</div><span class="small">現在値。当時の再現を保証する値ではありません。</span></div></div>
+<div class="buttons"><button id="refresh">読み取りを更新</button><button id="check-source">公開HTMLも照合する（任意）</button></div>
+<p id="source-status" class="small">HTMLの照合をしなくても補正値を保存できます。照合は公開ページへのGETのみで、旧ARのスクリプトを実行しません。</p>
+</section>
+<section class="card"><h2>3．結果を保存してチャットへ</h2>
+<p>下のボタンで <code>kofu-device-capture.json</code> を保存し、このチャットへ添付してください。</p>
+<div class="buttons"><button class="primary" id="download">結果をJSON保存</button><button id="copy">結果をコピー</button></div>
+<p id="save-note" role="status" class="small"></p>
+<details id="details"><summary>保存する内容を確認する</summary><p class="small">ブラウザー情報・画面寸法・対象の方位補正値だけを記録します。画像や他の保存キーは読み取りません。外部への自動送信はありません。</p><textarea id="result" readonly aria-label="JSON結果"></textarea></details>
+</section>
+<details class="card"><summary>追加診断：旧ARを起動して状態を記録する（今回は不要）</summary>
+<p>端末設定だけでは足りない場合の診断です。公開中の旧ARを同じサイト内の全面フレームで開きます。旧版の動作により、カメラ・位置情報・向きセンサーの許可が求められる場合があります。</p>
+<p>旧コードの変更や新しい精密復元ではありません。安全な場所に停止して使ってください。画面サイズ・ブラウザーによる違いは記録しますが、当時の見え方と同じとは保証しません。</p>
+<label><input type="checkbox" id="include-pose">JSONに現在地を推定できるAR位置・姿勢・行列情報も含める</label>
+<p class="small">未選択の場合は位置・姿勢・ワールド行列を除外します。撮影画像はどちらの場合も記録しません。</p>
+<button id="open-runtime">旧ARを開く（許可が求められる場合あり）</button>
+</details>
+<footer>第3工程・読み取り用ツール。GPS精度や模型の実寸を保証するものではありません。<br>参照：提供URLの公開ソース、AR.js 3.4.7、MDN localStorage。詳細は同梱の解析レポートに記載。</footer>
+</main>
+<div id="runtime-overlay" hidden><div id="frame-host"></div><div class="runtime-bar"><button id="capture-runtime">実行状態を記録</button> <button id="close-runtime">閉じて保存へ</button><p id="runtime-note">公開中の旧ページを読み込んでいます…</p></div></div>
+<script>/* Kofu Stage 3 diagnostics. Project-owned code; no remote calls or storage writes. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.KofuRuntime=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+'use strict';
+const TARGET='https://forprivate31.github.io/kofu-ar-poc/';
+const KEY='kofuV72Heading';
+const BASELINE_SHA='0ad01907437971f08bf927f7949b3b55cfb19b6dc2f20b4a82b12c351f81feb2';
+const wrap=x=>((x+180)%360+360)%360-180;
+const number=x=>typeof x==='number'&&Number.isFinite(x);
+const array=(a,n)=>Array.isArray(a)&&a.length===n&&a.every(number);
+function allowedLocation(href) {
+ try {const a=new URL(href),b=new URL(TARGET);return a.origin===b.origin&&a.pathname.startsWith(b.pathname);}catch(e){return false;}
+}
+function readLegacyHeading(storage,sourceURL=TARGET){
+ let urlValue=null,raw=null,status='absent',error=null;
+ try{urlValue=new URL(sourceURL).searchParams.get('heading');}catch(e){return {status:'bad-url',effectiveDegrees:null,historyVerified:false};}
+ // Match the original implementation's parseFloat/Number precedence exactly.
+ const parsed=parseFloat(urlValue);
+ try {raw=storage.getItem(KEY);status=raw===null?'absent':'present';}catch(e){status='inaccessible';error=String(e&&e.name||'StorageError');}
+ let effective,source;
+ if(Number.isFinite(parsed)){effective=parsed;source='url';}
+ else if(status==='inaccessible'){effective=null;source='storage-unreadable';}
+ else {effective=Number(raw||0);if(!Number.isFinite(effective)){effective=0;source='invalid-storage-fallback';}else source=raw===null?'default-zero':'storage';}
+ return {key:KEY,status,rawValue:raw,storageError:error,urlValue,
+  effectiveDegrees:effective,normalizedDegrees:effective===null?null:wrap(effective),source,
+  historyVerified:false,
+  note:'今このブラウザーで解決される値です。当時の値と同じことは、この読取だけでは確認できません。'};
+}
+function modeFlags(sourceURL=TARGET){
+ const p=new URL(sourceURL).searchParams;
+ return {v81:p.get('modelworld81')==='1'||p.get('testall')==='1'||p.get('field')==='1'||p.get('v82field')==='1',
+  v82:p.get('field')==='1'||p.get('v82field')==='1',simulation:p.has('simLat'),headingSpecified:p.has('heading')};
+}
+function validateCapture(d){
+ if(!d||d.schema!=='kofu-device-capture-v1')throw new Error('端末設定ファイルの形式が異なります。');
+ if(d.targetURL!==TARGET||d.expectedBaselineSHA256!==BASELINE_SHA)throw new Error('対象の公開ページ・基準版が異なります。');
+ if(d.captureContext?.correctOrigin!==true)throw new Error('公開ページと同じサイトで読み取った設定ではありません。');
+ if(!number(d.heading?.effectiveDegrees)||Math.abs(d.heading.effectiveDegrees)>1e7)throw new Error('読み取れた方位補正がありません。');
+ return {degrees:wrap(d.heading.effectiveDegrees),source:'実機の読取JSON（今回の値。当時一致は未確認）',
+  observed:true,historyVerified:false,sameBrowserConfirmed:d.captureContext.sameBrowserConfirmed===true,
+  rawLegacyValue:d.heading.rawValue??null};
+}
+function transformPoint(m,p) {
+ const x=p[0],y=p[1],z=p[2],w=m[3]*x+m[7]*y+m[11]*z+m[15];
+ return [(m[0]*x+m[4]*y+m[8]*z+m[12])/w,(m[1]*x+m[5]*y+m[9]*z+m[13])/w,(m[2]*x+m[6]*y+m[10]*z+m[14])/w];
+}
+function projectPoint(projection,inverseCamera,world,p){
+ if(!array(projection,16)||!array(inverseCamera,16)||!array(world,16)||!array(p,3))throw new Error('投影計算の入力が不正です。');
+ const c=transformPoint(inverseCamera,transformPoint(world,p));
+ const w=projection[3]*c[0]+projection[7]*c[1]+projection[11]*c[2]+projection[15];
+ if(w<=0)return {visible:false,ndc:null};
+ const q=transformPoint(projection,c);
+ return {visible:q.every(Number.isFinite)&&Math.abs(q[0])<=1&&Math.abs(q[1])<=1&&q[2]>=-1&&q[2]<=1,ndc:q};
+}
+function makeGPSBridge(gps,initialFactor){
+ if(!gps||typeof gps.latLonToWorld!=='function')throw new Error('GPS部品の座標変換APIが見つかりません。');
+ if(gps.__kofuScaleBridge)throw new Error('同じGPS部品へ補正を二重に適用しようとしました。');
+ let scale=1,disposed=false;
+ const original=gps.latLonToWorld;
+ const check=v=>{if(!number(v)||v<=0||v>10)throw new Error('不正な座標縮尺です。');return v;};
+ scale=check(initialFactor);
+ const wrapped=function(lat,lon){const p=original.call(this,lat,lon);if(!array(p,2))throw new Error('GPS変換値が不正です。');return [p[0]*scale,p[1]*scale];};
+ gps.latLonToWorld=wrapped;
+ const handle={get factor(){return scale;},setFactor(value){if(disposed)throw new Error('停止済みです。');scale=check(value);},
+ dispose(){if(disposed)return;if(gps.latLonToWorld===wrapped)gps.latLonToWorld=original;delete gps.__kofuScaleBridge;disposed=true;},
+ get disposed(){return disposed;}};
+ gps.__kofuScaleBridge=handle;return handle;
+}
+function validGPS(c,maxAccuracy=100){return !!c&&number(c.latitude)&&number(c.longitude)&&number(c.accuracy)&&c.accuracy>=0&&c.accuracy<=maxAccuracy&&Math.abs(c.latitude)<85&&Math.abs(c.longitude)<=180;}
+return {TARGET,KEY,BASELINE_SHA,wrap,number,array,allowedLocation,readLegacyHeading,modeFlags,validateCapture,transformPoint,projectPoint,makeGPSBridge,validGPS};
+});
+</script><script>
+(function(){
+'use strict';
+const R=KofuRuntime,$=id=>document.getElementById(id);
+let sourceCheck=null,frame=null,lastRuntime=null,frameError=null;
+const contextOK=()=>R.allowedLocation(location.href);
+function heading(){return R.readLegacyHeading({getItem:k=>localStorage.getItem(k)},R.TARGET);}
+function status(){
+ const ok=contextOK(),h=ok?heading():null;
+ $('context').textContent=ok?'公開サイト上で読取可能':'この場所では旧設定を取得しません';
+ $('context').className=ok?'value good':'value warn';
+ $('place').textContent=location.origin==='null'?'ローカルファイル':location.origin;
+ $('raw').textContent=!h?'未取得':h.status==='inaccessible'?'読取不可':h.rawValue===null?'保存値なし':h.rawValue===''?'空文字':h.rawValue;
+ $('resolved').textContent=!h||h.effectiveDegrees===null?'未取得':`${h.effectiveDegrees}°`;
+ $('explanation').textContent=!ok
+ ?'このファイルを kofu-ar-poc の index.html と同じ階層に追加し、当時と同じスマートフォン・同じブラウザーで開いてください。ローカルファイルやChatGPTのプレビューでは旧サイトの設定は読めません。'
+ :h.status==='inaccessible'
+ ?'ブラウザーが保存領域へのアクセスを拒否しています。許可状態をご確認ください。'
+ :h.source==='default-zero'
+ ?'現在、このブラウザーには旧方位補正の保存値がありません。旧コードはこの状態なら0°を使いますが、当時も0°だったとは断定できません。'
+ :h.source==='invalid-storage-fallback'
+ ?'保存値を旧コードが数値として扱えないため、現在は0°へのフォールバックになります。保存内容は変更していません。'
+ :'現在の保存値を読み取りました。当時と同じ値かどうかは別途確認が必要です。';
+ $('download').disabled=!ok;
+ $('copy').disabled=!ok;
+ $('check-source').disabled=!ok;
+ $('open-runtime').disabled=!ok;
+ $('result').value=JSON.stringify(snapshot(),null,2);
+}
+function safeVec(v){return v&&[v.x,v.y,v.z].every(R.number)?[v.x,v.y,v.z]:null;}
+function safeMatrix(m){const a=m?.elements?Array.from(m.elements):null;return R.array(a,16)?a:null;}
+function snapshot(){
+ const ok=contextOK();
+ const sensitive=$('include-pose').checked;
+ return {schema:'kofu-device-capture-v1',createdAt:new Date().toISOString(),targetURL:R.TARGET,
+ expectedBaselineSHA256:R.BASELINE_SHA,
+ captureContext:{origin:location.origin,path:location.pathname,correctOrigin:ok,
+  sameBrowserConfirmed:$('same-browser').checked,historyMatchVerified:false,
+  caveat:'同じ端末・同じブラウザーという自己確認は、当時の保存値と一致する証明ではありません。'},
+ heading:ok?heading():{status:'wrong-origin',effectiveDegrees:null,historyVerified:false},
+ targetModeFlags:R.modeFlags(R.TARGET),productionSourceVerification:sourceCheck,
+ userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight,dpr:devicePixelRatio||1},
+ runtime:lastRuntime?sanitizeRuntime(lastRuntime,sensitive):null,runtimeError:frameError,
+ privacy:{imagesIncluded:false,precisePoseIncluded:!!(sensitive&&lastRuntime),uploadsPerformedByThisTool:false,legacyStorageWrittenByThisTool:false},
+ fieldAlignmentVerified:false};
+}
+function sanitizeRuntime(r,sensitive){
+ const out={...r};
+ if(!sensitive){
+  out.currentCoords=null;out.originProjected=null;out.cameraWorld=null;out.cameraInverse=null;
+  out.gateWorld=null;out.compassHeading=null;out.orientation=null;
+  out.redacted='現在地を推定できる位置・姿勢・原点・ワールド行列を除外しました。';
+ }
+ return out;
+}
+function readRuntime(){
+ if(!frame)return null;
+ try{
+  const w=frame.contentWindow,d=w.document;
+  if(w.location.origin!==new URL(R.TARGET).origin||w.location.pathname!==new URL(R.TARGET).pathname)throw new Error('対象ページ以外にはアクセスしません。');
+  const c=d.getElementById('ar-camera'),g=d.getElementById('yamate-watariyagura-mon'),world=d.getElementById('castle-world');
+  const gps=c?.components?.['gps-projected-camera'],camera=c?.getObject3D?.('camera'),v=d.querySelector('video');
+  const pos=gps?.currentCoords;
+  const coords=pos?Object.fromEntries(['latitude','longitude','altitude','accuracy','altitudeAccuracy'].map(k=>[k,R.number(pos[k])?pos[k]:null])):null;
+  return {sampledAt:new Date().toISOString(),captureKind:'same-origin-iframe-readonly',
+   aframeVersion:w.AFRAME?.version??null,legacyScenePresent:!!d.getElementById('ar-scene'),
+   scenePlaying:d.getElementById('ar-scene')?.isPlaying===true,
+   actualModelYawDegrees:R.number(world?.object3D?.rotation?.y)?world.object3D.rotation.y*180/Math.PI:null,
+   gateLocalPosition:safeVec(g?.object3D?.position),gateLocalRotationRadians:safeVec(g?.object3D?.rotation),
+   currentCoords:coords,originProjected:Array.isArray(gps?.originCoords)?gps.originCoords.slice():null,
+   cameraProjection:safeMatrix(camera?.projectionMatrix),cameraInverse:safeMatrix(camera?.matrixWorldInverse),
+   cameraWorld:safeMatrix(camera?.matrixWorld),gateWorld:safeMatrix(g?.object3D?.matrixWorld),
+   compassHeading:R.number(gps?.heading)?gps.heading:null,
+   orientation:w.__lastOrientation?{alpha:w.__lastOrientation.alpha,beta:w.__lastOrientation.beta,gamma:w.__lastOrientation.gamma}:null,
+   video:v?{width:v.videoWidth,height:v.videoHeight,readyState:v.readyState}:null,
+   viewport:{width:w.innerWidth,height:w.innerHeight,dpr:w.devicePixelRatio||1},
+   visibility:{v81:!!d.getElementById('v81-model-world-integrated'),v82:!!d.getElementById('v82-field-candidates')},
+   actualPixelAlignmentVerified:false};
+ }catch(e){frameError=String(e.message);return null;}
+}
+async function inspectSource(){
+ $('source-status').textContent='公開中のHTMLを読み取っています…';$('check-source').disabled=true;
+ const controller=new AbortController(),t=setTimeout(()=>controller.abort(),15000);
+ try{
+  const r=await fetch(R.TARGET,{method:'GET',cache:'no-store',signal:controller.signal});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  if(r.url!==R.TARGET&&!r.url.startsWith(R.TARGET+'?'))throw new Error('対象URL以外へ転送されました。');
+  const bytes=await r.arrayBuffer(),hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
+  const html=new TextDecoder().decode(bytes),d=new DOMParser().parseFromString(html,'text/html');
+  const gate=d.getElementById('yamate-watariyagura-mon'),anchor=d.getElementById('castle-anchor');
+  sourceCheck={checkedAt:new Date().toISOString(),sourceURL:R.TARGET,method:'GET-only-no-script-execution',
+   status:'retrieved',sha256:hash,byteCount:bytes.byteLength,byteIdenticalToSuppliedBaseline:hash===R.BASELINE_SHA,
+   gateAttributes:{position:gate?.getAttribute('position')??null,rotation:gate?.getAttribute('rotation')??null},
+   anchorAttribute:anchor?.getAttribute('gps-projected-entity-place')??null,
+   title:d.title,
+   scriptURLs:Array.from(d.querySelectorAll('script[src]'),s=>s.getAttribute('src'))};
+  $('source-status').textContent=hash===R.BASELINE_SHA?'公開HTMLは、添付されていた基準HTMLとバイト単位で一致しました。':'公開HTMLのハッシュを記録しました。基準HTMLとはバイト単位では一致しません。勝手に置換せず、差分確認に使います。';
+ }catch(e){sourceCheck={status:'unavailable',message:String(e.message)};$('source-status').textContent='HTMLの取得はできませんでした。補正値の保存は別に利用できます。';}
+ finally{clearTimeout(t);$('check-source').disabled=!contextOK();status();}
+}
+function save(){
+ if(!contextOK())return;
+ status();const data=$('result').value;
+ const blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='kofu-device-capture.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
+ $('save-note').textContent='保存操作を開始しました。保存できない場合は「結果をコピー」を使ってください。';
+}
+async function copy(){
+ if(!contextOK())return;status();
+ try{await navigator.clipboard.writeText($('result').value);$('save-note').textContent='結果をコピーしました。';}
+ catch(e){$('details').open=true;$('result').focus();$('result').select();$('save-note').textContent='コピーを許可されなかったため本文を選択しました。手動でコピーしてください。';}
+}
+function openRuntime(){
+ if(!contextOK())return;
+ $('runtime-overlay').hidden=false;
+ frame=document.createElement('iframe');frame.id='legacy-frame';frame.title='変更していない公開中の旧AR';
+ frame.allow='camera; geolocation; accelerometer; gyroscope; magnetometer; autoplay';
+ frame.src=R.TARGET;
+ frame.addEventListener('load',()=>{$('runtime-note').textContent='旧ページを表示しました。必要な許可を与え、旧ページの開始操作をしてください。';});
+ $('frame-host').replaceChildren(frame);
+}
+function closeRuntime(){
+ if(frame){
+  try{
+   const w=frame.contentWindow,d=w.document;
+   d.querySelectorAll('video').forEach(v=>v.srcObject?.getTracks?.().forEach(t=>t.stop()));
+   d.getElementById('ar-camera')?.components?.['gps-projected-camera']?.pause?.();
+  }catch(e){}
+  frame.remove();frame=null;
+ }
+ $('runtime-overlay').hidden=true;
+}
+$('refresh').onclick=status;$('download').onclick=save;$('copy').onclick=copy;$('check-source').onclick=inspectSource;
+$('same-browser').onchange=status;$('include-pose').onchange=status;$('open-runtime').onclick=openRuntime;
+$('capture-runtime').onclick=()=>{lastRuntime=readRuntime();$('runtime-note').textContent=lastRuntime?'現在の実行状態を記録しました。閉じてJSON保存へ進んでください。':frameError||'旧ARの準備を待ってから押してください。';status();};
+$('close-runtime').onclick=closeRuntime;
+window.addEventListener('storage',e=>{if(e.key===R.KEY)status();});
+window.addEventListener('pageshow',status);
+window.addEventListener('pagehide',closeRuntime);
+window.KOFU_COLLECTOR={snapshot,refresh:status,readRuntime,inspectSource,closeRuntime};
+status();
+})();
+</script></body></html>
